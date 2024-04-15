@@ -332,7 +332,7 @@ export default {
 
 @media screen and (max-width: 1024px) {
   .first_line {
-    width: 44%;
+    width: 90%;
   }
   .sec_body {
     height: 220vw;
@@ -581,54 +581,55 @@ export default {
 }
 
 .bottom {
-  width: 100%;
-  height: 65px;
-  top: 0px;
+  width: 100vw;
+  height: 48.75px;
+  position: fixed;
+  bottom: 0px;
   box-shadow: 0px -4px 8px rgba(0, 0, 0, 0.1);
   background-color: white;
-  position: relative;
+  z-index: 100;
 }
 
 .privacy {
-  width: 116px;
-  height: 23px;
-  font-size: 19px;
+  width: 87px;
+  height: 17.25px;
+  font-size: 14.25px;
   font-family: "Noto Sans TC";
-  line-height: 23px;
+  line-height: 17.25px;
   position: absolute;
   top: 50%;
   transform: translate(0, -50%);
-  letter-spacing: 0.15px;
+  letter-spacing: 0.1125px;
   cursor: pointer;
   color: #120406;
   text-decoration: none;
 }
 
 .contact {
-  width: 271px;
-  height: 23px;
-  font-size: 19px;
+  width: 203.25px;
+  height: 17.25px;
+  font-size: 14.25px;
   font-family: "Noto Sans TC";
-  line-height: 23px;
+  line-height: 17.25px;
   position: absolute;
   top: 50%;
   transform: translate(0, -50%);
-  letter-spacing: 0.15px;
+  letter-spacing: 0.1125px;
   cursor: pointer;
   color: #120406;
   text-decoration: none;
 }
 
 .photo {
-  width: 357px;
-  height: 23px;
-  font-size: 19px;
+  width: 267.75px;
+  height: 17.25px;
+  font-size: 14.25px;
   font-family: "Noto Sans TC";
-  line-height: 23px;
+  line-height: 17.25px;
   position: absolute;
   top: 50%;
   transform: translate(0, -50%);
-  letter-spacing: 0.15px;
+  letter-spacing: 0.1125px;
   color: #c7c2c2;
 }
 
@@ -636,15 +637,85 @@ export default {
   color: #c7c2c2;
 }
 
-.privacy {
-  left: 540px;
+@media screen and (min-width: 1920px) {
+  .bg {
+    height: 712.5px;
+  }
+
+  .privacy {
+    left: 405px;
+  }
+
+  .contact {
+    left: 516px;
+  }
+
+  .photo {
+    right: 405px;
+  }
 }
 
-.contact {
-  left: 688px;
+@media screen and (min-width: 1600px) {
+  .bg {
+    height: 100vh;
+  }
+
+  .privacy {
+    left: 285px;
+  }
+
+  .contact {
+    left: 396px;
+  }
+
+  .photo {
+    right: 285px;
+  }
 }
 
-.photo {
-  right: 540px;
+/* iPad Mini 直放的寬度 = 768px */
+@media screen and (min-width: 768px) and (max-width: 1599px) {
+  /* OKay */
+
+  .bg {
+    height: 90vh;
+  }
+
+  .privacy {
+    left: 8%;
+  }
+
+  .contact {
+    left: 20%;
+  }
+
+  .photo {
+    left: 60%;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .bg {
+    height: 100vh;
+  }
+
+  .privacy {
+    font-size: 13px;
+    top: 30%;
+    left: 23%;
+  }
+
+  .contact {
+    font-size: 13px;
+    top: 30%;
+    left: 40%;
+  }
+
+  .photo {
+    display: block;
+    font-size: 10px;
+    top: 35px;
+    left: 30%;
+  }
 }
 </style>

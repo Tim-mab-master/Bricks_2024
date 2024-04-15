@@ -225,13 +225,11 @@
 </template>
 
 <script>
-import Register_second from "./Register_second.vue";
+import Register from "./Register.vue";
 import axios from "axios";
 export default {
-  name: "Reigster_2",
-   components: {
-       Register_second
-   },
+  name: "Reigster",
+
   data() {
     return {
       showpassword_1: false,
@@ -469,29 +467,30 @@ export default {
     // }
 
     // }
-  //},
-  // computed: {
-  //     front_block() {
-  //         if (this.counter != 4) {
-  //             this.errorMessage = "請填寫所有欄位";
+    //},
+    // computed: {
+    //     front_block() {
+    //         if (this.counter != 4) {
+    //             this.errorMessage = "請填寫所有欄位";
 
-  //             // 帳號（信箱）一定要包含@且，@一定不能在第一個或最後一個
-  //         } else if (this.email.indexOf('@') == -1 || this.email.indexOf('@') == 0 || this.email.indexOf('@') == this.email.length - 1) {
-  //             this.errorMessage = "帳號或密碼格式錯誤";
+    //             // 帳號（信箱）一定要包含@且，@一定不能在第一個或最後一個
+    //         } else if (this.email.indexOf('@') == -1 || this.email.indexOf('@') == 0 || this.email.indexOf('@') == this.email.length - 1) {
+    //             this.errorMessage = "帳號或密碼格式錯誤";
 
-  //         } else if (this.password1 !== this.password2) {
-  //             this.errorMessage = "您輸入的兩個密碼並不相符，請再試一次";
-  //         } else if (this.account.length < 2 || this.account.length > 10) {
-  //             this.errorMessage = "請輸入2~10個字元的使用者名稱";
-  //         } else if (checked) {
-  //             this.errorMessage = "請勾選隱私權政策";
-  //         } else {
-  //             this.errorMessage = "pass";
-  //         }
-  //     },
+    //         } else if (this.password1 !== this.password2) {
+    //             this.errorMessage = "您輸入的兩個密碼並不相符，請再試一次";
+    //         } else if (this.account.length < 2 || this.account.length > 10) {
+    //             this.errorMessage = "請輸入2~10個字元的使用者名稱";
+    //         } else if (checked) {
+    //             this.errorMessage = "請勾選隱私權政策";
+    //         } else {
+    //             this.errorMessage = "pass";
+    //         }
+    //     },
 
-  // },
-  created() {},
+    // },
+    created() {},
+  },
 };
 </script>
 
@@ -570,15 +569,15 @@ export default {
   }
 
   .privacy {
-    left: 540px;
+    left: 405px;
   }
 
   .contact {
-    left: 688px;
+    left: 516px;
   }
 
   .photo {
-    right: 540px;
+    right: 405px;
   }
 }
 
@@ -597,15 +596,15 @@ export default {
   }
 
   .privacy {
-    left: 380px;
+    left: 285px;
   }
 
   .contact {
-    left: 528px;
+    left: 396px;
   }
 
   .photo {
-    right: 380px;
+    right: 285px;
   }
 }
 
@@ -624,15 +623,15 @@ export default {
   }
 
   .privacy {
-    left: 300px;
+    left: 285px;
   }
 
   .contact {
-    left: 448px;
+    left: 396px;
   }
 
   .photo {
-    right: 300px;
+    right: 285px;
   }
 }
 
@@ -874,53 +873,54 @@ input::placeholder {
 
 .bottom {
   width: 100vw;
-  height: 65px;
+  height: 48.75px;
   position: fixed;
   bottom: 0px;
   box-shadow: 0px -4px 8px rgba(0, 0, 0, 0.1);
   background-color: white;
+  z-index: 100;
 }
 
 .privacy {
-  width: 116px;
-  height: 23px;
-  font-size: 19px;
+  width: 87px;
+  height: 17.25px;
+  font-size: 14.25px;
   font-family: "Noto Sans TC";
-  line-height: 23px;
+  line-height: 17.25px;
   position: absolute;
   top: 50%;
   transform: translate(0, -50%);
-  letter-spacing: 0.15px;
+  letter-spacing: 0.1125px;
   cursor: pointer;
   color: #120406;
   text-decoration: none;
 }
 
 .contact {
-  width: 271px;
-  height: 23px;
-  font-size: 19px;
+  width: 203.25px;
+  height: 17.25px;
+  font-size: 14.25px;
   font-family: "Noto Sans TC";
-  line-height: 23px;
+  line-height: 17.25px;
   position: absolute;
   top: 50%;
   transform: translate(0, -50%);
-  letter-spacing: 0.15px;
+  letter-spacing: 0.1125px;
   cursor: pointer;
   color: #120406;
   text-decoration: none;
 }
 
 .photo {
-  width: 357px;
-  height: 23px;
-  font-size: 19px;
+  width: 267.75px;
+  height: 17.25px;
+  font-size: 14.25px;
   font-family: "Noto Sans TC";
-  line-height: 23px;
+  line-height: 17.25px;
   position: absolute;
   top: 50%;
   transform: translate(0, -50%);
-  letter-spacing: 0.15px;
+  letter-spacing: 0.1125px;
   color: #c7c2c2;
 }
 

@@ -58,11 +58,11 @@ const routes = [
     name: "questionnaire",
     component: () => import("../views/Questionnaire.vue"),
   },
-  // {
-  //   path: "/register",
-  //   name: "register",
-  //   component: () => import("../views/Register.vue"),
-  // },
+  {
+    path: "/register",
+    name: "register",
+    component: () => import("../views/Register.vue"),
+  },
   {
     path: "/personalHomepage",
     name: "personalHomepage",
