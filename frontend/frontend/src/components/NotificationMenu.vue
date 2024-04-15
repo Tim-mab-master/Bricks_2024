@@ -3,6 +3,7 @@
         <span class="el-dropdown-link">
             <el-icon class="icon"><bell/></el-icon>
         </span>
+        
         <template #dropdown>
             <el-dropdown-menu class="dropDown" >
                 <div id="content">
@@ -59,6 +60,7 @@ export default {
 <style scoped>
 
     .dropDown{
+        /* zoom:75%; */
         width: fit-content;
         padding: 12px;
         overflow:auto;

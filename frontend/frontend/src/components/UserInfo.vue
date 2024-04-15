@@ -1,4 +1,4 @@
-<template>
+<template >
     <el-dropdown trigger="click">
         <span class="el-dropdown-link">
             <div id="userInfo">
@@ -6,7 +6,8 @@
                 <p>{{ user_name }}</p>
             </div>
         </span>
-        <template #dropdown>
+        <template  #dropdown >
+        <div id="all">
           <el-dropdown-menu id="dropDown">
             <el-dropdown-item :icon="Plus" class="firstDrop">
                 <div id="userInfoInside">
@@ -35,6 +36,7 @@
                 </div>
             </el-dropdown-item>
           </el-dropdown-menu>
+          </div>
         </template>
       </el-dropdown>    
     
@@ -56,6 +58,9 @@ export default {
 </script>
 
 <style scoped>
+    #all{
+        /* zoom:75%; */
+    }
     #userInfo{
         display: flex;
         /* padding: 0px 0px; */

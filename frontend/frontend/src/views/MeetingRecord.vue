@@ -1,10 +1,15 @@
 <template>
   <div class="sharon" @contextmenu.prevent>
-      <!-- <side-bar class="sideBar"  ></side-bar>-->
+      <!-- <side-bar class="sideBar"></side-bar>-->
       <nav-bar-main class="navBar"></nav-bar-main> 
 
     <!-- 新增、會議記錄主頁 -->
     <div class="navAndCont"  id="new" v-if="showedInfo">
+      <!-- <el-backtop visibility-height="0" class="backtop">
+      <div id="backtop">
+          <el-icon class="icon"><upload/></el-icon>
+        </div>
+      </el-backtop> -->
       <div :class="meetingClass">
         <div class="info"><meeting ></meeting></div>
         <div class="textBlock">
@@ -13,19 +18,19 @@
         
       </div>
     </div>
-
-      <div class="result" v-else>    
-            <el-backtop visibility-height="0" class="backtop">
-            <div id="backtop">
-                <el-icon class="icon"><upload/></el-icon>
-            </div>
-            </el-backtop>
+    <div class="result" v-else>    
             <div class="toolBar">
             <ordering/>
             <sort/>
         </div>
             <document-with-info v-for="item in 10" :key="item"/>
       </div>
+    <el-backtop visibility-height="0" class="backtop">
+      <div id="backtop">
+          <el-icon class="icon"><upload/></el-icon>
+        </div>
+      </el-backtop>
+      
 
       <!-- 標籤 -->
       <div trigger="click" class="tagsPlace" @click="showTags">
@@ -130,10 +135,10 @@ export default {
 
 <style scoped>
  .sharon{
-    position: relative;
+    position: absolute;
  }
   .navBar{
-    position: absolute;
+    position: relative;
     top: 0;
     left: 200px;
     right: 0;
@@ -141,27 +146,27 @@ export default {
  }
  .sideBar{
     /* grid-area: sideBar; */
-    position: absolute;
+    position: relative;
     top: 0;
     left: 0;
     bottom: 0;
+    height: 100vh;
  }
  .navAndCont{
-  background-color: #DCDFE6;
+  background-color: #F2F3F5;
   position: absolute;
   left: 200px;
-  width:auto;
   top: 0;
   right: 0;
+  
  }
  .info{
-  position: absolute;
+  position: relative;
  }
 
  .textBlock{
-  position: absolute;
-  
-  top: 350px;
+  position: relative;
+  top:8px;
   left: -65px;
   display: grid;
   grid-row-gap: 8px;
@@ -169,15 +174,18 @@ export default {
  }
 
  .meeting{
-  position: absolute;
+  position: relative;
   top: 68px;
   left:248px;
-  
+  /* width:200px;  */
+  /* right:0; */
+  /* width: auto; */
  }
 
  .tagsPlace{
   position: absolute;
-  right: 32px;
+  left: 97rem;
+  width:65px;
   top: 68px;
   border-radius: var(--radius-button-large-radius, 4px);
   border: 1px solid var(--base-color-border-el-border-color, #DCDFE6);
@@ -197,9 +205,10 @@ export default {
 
  .tagInside{
   position: absolute;
-  right: 32px;
+  left: 1280px;
   top: 114px;
   z-index: 10;
+  width: 372px;
  }
 
  .tagMenu{
@@ -226,7 +235,7 @@ export default {
  }
 
  .backtop{
-    
+    position: fixed;
  }
 
  #backtop{
@@ -236,9 +245,9 @@ export default {
     color: #C91F2F;
     padding: 9px 16px;
     justify-content: left;
-    position: fixed;
-    left: 255px;
-    top: 70px;
+    /* position: relative; */
+    /* left: 255px; */
+    top: fixed(70px);
  }
 
  .icon{
