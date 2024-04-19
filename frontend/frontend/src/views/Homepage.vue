@@ -96,7 +96,7 @@
       </div>
     </div>
 
-    <div class="bottom">
+    <div class="bottom" v-if="!scroll">
       <a href="" class="privacy"
         ># <span style="text-decoration: underline">隱私權政策</span></a
       >

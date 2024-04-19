@@ -100,7 +100,7 @@
           <!-- <div v-if="loggedIn">
             <p>The email is: {{ user.email }}</p>
           </div> -->
-          <!-- <GoogleLogin :callback="callback" prompt auto-login /> -->
+          <!-- <GoogleLogin :callback="callback" /> -->
 
           <a href="">
             <div id="FB_login_btn">
