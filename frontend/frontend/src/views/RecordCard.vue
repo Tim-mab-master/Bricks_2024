@@ -1,12 +1,13 @@
 <template>
-
-    <div class="navAndCont" id="cards">
-      <nav-bar-all class="navBar"></nav-bar-all>
-      <div class="cards">
-        <!--  -->
-        <meeting-cards v-for="(item,index) in name" :key="index" :recordName = "item.name" :tags="tags[index]" @click="handleCardClick(item.id)" :record_id = "item.id"></meeting-cards>
-      </div>
-      <router-view></router-view>
+    <div>
+        <side-bar class="side"></side-bar>
+        <div class="navAndCont" id="cards">
+            <nav-bar-all class="navBar"></nav-bar-all>
+            <div class="cards">
+            <meeting-cards v-for="item in name" :key="item.id" :recordName = "item.name" :tags="item.tags[index]" @click="handleCardClick(item.id)" :record_id = "item.id"></meeting-cards>
+            </div>
+            <router-view></router-view>
+        </div>
     </div>
     
 </template>
@@ -15,65 +16,61 @@
 import NavBarAll from '../components/NavBarAll.vue';
 import SideBar from '../components/SideBar.vue';
 import MeetingCards from '../components/MeetingCards.vue';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 
 export default {
-    name: 'recordCard',
+    name: 'RecordCard',
     components: {
         SideBar,
         NavBarAll,
         MeetingCards,
-        
     },
-    setup(props,{emit}){
+    setup(props, { emit }) {
         const router = useRouter();
-        const name = ref([{name:"Sprint5_計畫會議", id:1},{name:"Sprint5_demo",id:2}]);
+        const name = ref([]);
         const recordName = ref("會議記錄");
-        const projectID = ref("94");//之後要放動態ID
-        const tags = ref([["會議紀錄","API"],[]]);
+        const projectID = ref("94"); // 之後要放動態ID
+        const tags = ref([]);
         const currentActive = ref("1-1");
+        const currentID = ref(0);
+
+        onMounted(() => {
+            axios.get("http://35.194.196.179:5000/get_record_index", { params: { project_id: 94 } })
+                .then(res => {
+                    res.data.record.forEach(item => {
+                        currentID.value += 1;
+                        name.value.push({
+                            id: currentID.value,
+                            name: item.record_name,
+                            tags: item.tags
+                        });
+                        console.log(name.value);
+                    });
+                })
+                .catch((error) => {
+                    console.error("Error:", error.message); // 更详细的错误信息
+                });
+        });
+
         const handleCardClick = (cardId) => {
-      // 根据卡片点击情况进行路由导航
+            // 根据卡片点击情况进行路由导航
             router.push(`/all/cards/meetingRecord/${cardId}`);
         };
 
-        const click = () =>{
-            axios.get("http://35.194.196.179:5000/get_record_index",{params:{"project_id" : 94}}).then(res => {
-            this.name.value.push(res.data.record.record_name);
-            console.log(this.name.value);
-        })
-        .catch((error) => {
-            // Handle error
-            console.error("Error:", "failed");
-        });
-        };
-
-        return{
+        return {
             currentActive,
             name,
             projectID,
             recordName,
             tags,
             handleCardClick,
-            click,
-
         };
     },
-    mounted(){
-        axios.get("http://35.194.196.179:5000/get_record_index",{params:{"project_id" : 94}}).then(res => {
-            this.name.value.push(res.data.record.record_name);
-            console.log(this.name.value);
-        })
-        .catch((error) => {
-            // Handle error
-            console.error("Error:", "找不到阿");
-        });
-    }
-
 }
 </script>
+
 
 <style scoped>
 

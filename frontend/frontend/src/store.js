@@ -1,14 +1,18 @@
 import { createStore } from "vuex";
 
-const store = createStore({
-    state:{
-        activeIndex: '/',
+export default createStore({
+    state() {
+        return {
+            activeIndex: 0,
+            testNum:0,
+        };
     },
-    mutations:{
-        updateActiveIndex(state,index){
+    mutations: {
+        changePage(state, index) {
             state.activeIndex = index;
         },
-    },
+        increment(state){
+            state.testNum++;
+        }
+    }
 });
-
-export default store;

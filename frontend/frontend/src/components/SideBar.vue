@@ -29,11 +29,8 @@
             <el-icon><list /></el-icon>
             <span>會議記錄</span>
           </template>
-          <!-- <router-link to="/recordCards" class="link"></router-link> -->
             <el-menu-item index="1-1" >全部</el-menu-item>
-            <!-- <router-link to="/trashBox" class="link"></router-link> -->
             <el-menu-item index="1-2" >垃圾桶</el-menu-item>
-            <!-- @click="goTrashBox" -->
         </el-sub-menu>
         <el-sub-menu index="2" class="menu">
         <template #title>
@@ -55,15 +52,13 @@
     </el-col>
   </el-row>
 
-  </div> <!-- menuBar -->
-  </div> <!-- container -->
+  </div> 
+  </div> 
 </div>
 </template> 
 
 <script>
 import { ref } from 'vue';
-// import {mapState, mapMutations} from 'vuex';
-// import store from '@/store';
 import { useRouter } from 'vue-router';
 
 export default {

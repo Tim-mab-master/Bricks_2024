@@ -34,16 +34,19 @@ export default {
     }
 
 }
-</script>
+</script> 
 
 <style scoped>
-    #all{
-        zoom:75%;
-    }
+    #all{ 
+        /* transform-origin: top left;
+        transform: scale(0.75); */
+        /* zoom:75%; */ 
+     }
     .sideBar{
         position: absolute;
         left: 0;
         top: 0;
+        bottom:0;
         height: 100vh;
     }
 

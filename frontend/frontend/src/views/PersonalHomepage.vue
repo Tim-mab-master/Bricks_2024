@@ -3,15 +3,6 @@
       <div class="nav">
           <img src="../assets/brickslogo.svg" @click=" ">
           <div class="tri_btn">
-              <!-- <div class="search-container">
-                  <input type="text" placeholder='查詢專案' class="add_search_project" v-model="search_input" @keyup.enter="list_add_a_search" @focus="show_his_search_list = true"  @blur="show_his_search_list = false">
-                  <div class="clear-search" @click="clear_search_bar">&#10006;</div>
-                  <div class="his_search_list" v-show="show_his_search_list" ref="his_search_list">
-                  <div v-for="(history, index) in his_search_list.slice().reverse().slice(0,6)" :key="index" class="add_history_search" @click="his_search_choosen(history)" >
-                      {{ history}}
-                  </div>
-              </div>
-          </div> -->
               <input type="text" placeholder='查詢專案' class="add_search_project" v-model="search_input" @keyup.enter="list_add_a_search" @focus="click_search_bar"  @blur="show_his_search_list = false">
               <div class="his_search_list" v-show="show_his_search_list" ref="his_search_list">
                   <div v-for="(history, index) in his_search_list.slice().reverse().slice(0,6)" :key="index" class="add_history_search" @click="his_search_choosen(history)" >
@@ -108,13 +99,6 @@
                   </div>
                   <!-- 已結束專案 -->
                   <div class="over_page" v-show="middle_show_over_page">
-                      <!-- <div class="uncategorized cart" ref="uncategorized">
-                          <p class="cart_title">未分類</p>
-                          <div class="title_underline"></div>
-                          <div class="box_container">
-                              <div class="box" v-for="(proj_name,index) in uncategorized_projs" :key="index">{{ proj_name }}</div>
-                          </div>
-                      </div> -->
                       <div class="uncategorized cart" ref="uncategorized">
                           <p class="cart_title">已結束專案</p>
                           <div class="title_underline"></div>
@@ -292,9 +276,9 @@ export default {
            console.log("add_new_project:", add_new_project);
            
            axios
-          .post(path,add_new_project,{ timeout: 5000 })
+          .post(path,add_new_project,{ timeout: 10000 })
           .then((res) =>{
-              console.log("Response Data:", res.data);
+              console.log("status:"+ res.data.status);
               this.token = res.data;
               this.decode_token_json.status = this.decodeToken(this.token);
               if(this.decode_token_json.status == 'success'){

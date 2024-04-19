@@ -183,7 +183,7 @@ export default {
  }
 
  .tagsPlace{
-  position: absolute;
+  position: relative;
   left: 97rem;
   width:65px;
   top: 68px;
