@@ -168,7 +168,7 @@
             <img
               src="../assets/checkbox/CheckBox_off.svg"
               class="agree_checkbox agree_checkbox_off"
-              v-if="checked"
+              v-if="!checked"
               @click="check_btn"
             />
             <img
@@ -253,7 +253,7 @@ export default {
     return {
       showpassword_1: false,
       showpassword_2: false,
-      checked: true,
+      checked: false,
       account: "",
       password1: "",
       password2: "",
@@ -306,7 +306,7 @@ export default {
         this.errorMessage3 = false;
       }
 
-      if (this.checked) {
+      if (!this.checked) {
         this.errorMessage4 = true;
         // console.log("t", this.errorMessage4);
       } else {
@@ -665,15 +665,15 @@ export default {
   }
 
   .privacy {
-    left: 285px;
+    left: 405px;
   }
 
   .contact {
-    left: 396px;
+    left: 516px;
   }
 
   .photo {
-    right: 285px;
+    right: 405px;
   }
 }
 
@@ -718,15 +718,15 @@ export default {
   }
 
   .privacy {
-    left: 285px;
+    left: 8%;
   }
 
   .contact {
-    left: 396px;
+    left: 20%;
   }
 
   .photo {
-    right: 285px;
+    right: 10%;
   }
 }
 
