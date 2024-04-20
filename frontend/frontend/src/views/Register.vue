@@ -343,7 +343,7 @@ export default {
               console.log(this.userId);
               console.log("註冊成功");
               this.$router.push({
-                path: "/login",
+                path: "/questionnaire",
                 // params: { user_id: this.userId },
               });
             } else {
