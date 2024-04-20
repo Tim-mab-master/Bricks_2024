@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="nav">
-      <a href="./homepage_2">
+      <a href="./homepage">
         <img src="../assets/brickslogo.svg" alt="" />
       </a>
       <div class="tribtn">
@@ -16,7 +16,7 @@
           "
           >登入</a
         >
-        <a href="./register_2" class="btn" style="margin-right: 0px">註冊</a>
+        <a href="./register" class="btn" style="margin-right: 0px">註冊</a>
       </div>
     </div>
     <div class="bg">
@@ -310,7 +310,7 @@ export default {
         // this.$router.push({ name: 'Register_second', params: { user_id: 111 } });
 
         console.log("success");
-        const path = "http://34.81.186.58:5000/register";
+        const path = "http://35.194.196.179:5000/register";
         const user = {
           user_email: this.email,
           user_password: this.password1,
