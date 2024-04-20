@@ -84,23 +84,38 @@
             v-else
             @click="check_btn"
           />
-          <p style="user-select: none; cursor: pointer" @click="check_btn">
+          <p
+            style="
+              user-select: none;
+              cursor: pointer;
+              font-size: 15.4px;
+              margin-top: 1.4px;
+            "
+            @click="check_btn"
+          >
             保持登入
           </p>
         </div>
         <!-- 點擊登入按鈕的事件放在這邊 -->
         <div class="login_btn" @click="goToPersonalPage">登入</div>
-        <div class="forget_password">忘記密碼</div>
+        <div
+          class="forget_password"
+          style="font-size: 15.4px; margin-top: 1.4px"
+        >
+          忘記密碼
+        </div>
         <div class="line">
           <div class="left_line"></div>
           <div class="right_line"></div>
           <p>或</p>
         </div>
         <div class="other_resource">
-          <!-- <div v-if="loggedIn">
-            <p>The email is: {{ user.email }}</p>
-          </div> -->
-          <!-- <GoogleLogin :callback="callback" prompt auto-login /> -->
+          <a href="">
+            <div id="Google_login_btn">
+              <img src="../assets/Google_login.svg" alt="" />
+              <p>Google 登入</p>
+            </div>
+          </a>
 
           <a href="">
             <div id="FB_login_btn">
@@ -110,9 +125,9 @@
           </a>
         </div>
         <div class="register">
-          <p>還沒有帳戶？</p>
+          <p style="font-size: 16px; margin-top: 1.4px">還沒有帳戶？</p>
           <a href="./register">
-            <p>註冊</p>
+            <p style="font-size: 16px; margin-top: 1.4px">註冊</p>
           </a>
         </div>
       </div>
@@ -137,6 +152,7 @@
 import axios from "axios";
 import { Base64 } from "js-base64";
 import { GoogleLogin, decodeCredential } from "vue3-google-login";
+import PersonalHomepageVue from "./PersonalHomepage.vue";
 
 export default {
   name: "Login",
@@ -230,11 +246,44 @@ export default {
       }
     },
     goToPersonalPage() {
+      axios
+        .post("http://104.199.143.218:5000/bricks_login", {
+          user_email: this.account,
+          user_password: this.password,
+        })
+        .then((res) => {
+          // 請求成功會觸發/執行這個 function 函式
+          // 確認用戶是否存在資料庫
+          if (res.data.status === "success") {
+            console.log("yes");
+            this.$router.push({
+              path: "personalHomepage",
+              params: { user_id: "25" },
+            });
+            if (this.checked) {
+              console.log("keeplogin");
+              // localStorage.setItem("account", this.account);
+              // localStorage.setItem("Flag", "isLogin");
+              // that.$store.dispatch("checked", true);
+              // that$.$router.push("/");
+            }
+          } else {
+            console.log("no");
+          }
+          console.log(res);
+          alert("登入成功");
+        })
+        .catch((error) => {
+          // 請求失敗則觸發/執行這個 function 函式
+          console.log(error);
+          alert("登入失敗");
+        });
       console.log("goToPersonalPage");
-      this.$router.push({
-        name: "personalHomepage",
-        params: {},
-      });
+
+      // this.$router.push({
+      //   name: "personalHomepage",
+      //   params: {},
+      // });
     },
     decodeToken(token) {
       // 获取Token的第二部分（Payload）
@@ -269,7 +318,7 @@ export default {
 }
 .nav {
   width: 100vw;
-  height: 48.75px;
+  height: 65px;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   position: fixed;
   left: 0;
@@ -278,36 +327,36 @@ export default {
 }
 
 .nav img {
-  height: 24.045px;
+  height: 32.06px;
   width: auto;
   position: absolute;
-  top: 12.3525px;
+  top: 16.47px;
   left: 5.21%;
 }
 
 .tribtn {
-  width: 215px;
-  height: 30.75px;
+  width: 284px;
+  height: 41px;
   position: absolute;
-  top: 9px;
+  top: 12px;
   right: 5.21%;
 }
 
 .btn {
-  width: 57px;
-  height: 29.25px;
+  width: 76px;
+  height: 39px;
   border: 1px solid #120405;
   background-color: white;
   border-radius: 10px;
   float: left;
-  margin-right: 18.75px;
+  margin-right: 25px;
   cursor: pointer;
-  font-size: 10.5px;
+  font-size: 14px;
   font-weight: 500;
-  line-height: 29.25px;
+  line-height: 39px;
   font-family: "Noto Sans TC";
   text-align: center;
-  letter-spacing: 0.9375px;
+  letter-spacing: 1.25px;
   user-select: none;
   text-decoration: none;
   color: black;
@@ -320,7 +369,6 @@ export default {
 .nav_login_btn:hover {
   background-color: rgba(212, 128, 131, 1) !important;
 }
-
 .bg {
   background-image: url(../assets/bricks_bg.svg);
   height: 80%;
@@ -541,7 +589,7 @@ input::placeholder {
 }
 
 .register {
-  width: 150.75px;
+  width: 160px;
   height: 24px;
   position: absolute;
   bottom: 0px;
@@ -700,7 +748,7 @@ input::placeholder {
   }
 
   .photo {
-    left: 60%;
+    right: 10%;
   }
 }
 

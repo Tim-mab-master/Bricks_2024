@@ -188,7 +188,7 @@
 import axios from 'axios';
 import { Base64 } from 'js-base64';
 export default {
-  name: 'Personal_homepage',
+  name: 'Personalhomepage',
   
   data() {
       return {
