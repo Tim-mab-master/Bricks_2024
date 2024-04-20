@@ -52,6 +52,9 @@ const routes = [
     path: "/login",
     name: "login",
     component: () => import("../views/Login.vue"),
+    meta: {
+      isLogin: false,
+    },
   },
   {
     path: "/questionnaire",
@@ -62,11 +65,17 @@ const routes = [
     path: "/register",
     name: "register",
     component: () => import("../views/Register.vue"),
+    meta: {
+      isLogin: false,
+    },
   },
   {
     path: "/personalHomepage",
     name: "personalHomepage",
     component: () => import("../views/PersonalHomepage.vue"),
+    meta: {
+      isLogin: true,
+    },
   },
   {
     path: "/empty",

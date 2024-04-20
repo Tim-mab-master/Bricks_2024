@@ -6,6 +6,7 @@ import ElementPlus from "element-plus";
 import "element-plus/dist/index.css";
 import vue3GoogleLogin from "vue3-google-login";
 import Vuex from "vuex";
+import VueAxios from "vue-axios";
 import store from "./store.js";
 
 // 导入 Element Plus 的图标组件
@@ -30,10 +31,23 @@ app.use(vue3GoogleLogin, {
   // prompt: "consent",
 });
 
+// router.beforeEach((to, from, next) => {
+//   let getFlag = localStorage.getItem("Flag");
+//   let getid = localStorage.getItem("account");
+//   if (getFlag === "isLogin" && getid !== null) {
+//     store.state.isLogin = true;
+//     next();
+//   }
+// });
+// router.afterEach(() => {
+//   window.scroll(0, 0);
+// });
+
 app.use(ElementPlus);
 app.use(router);
 app.use(ResizeTextarea);
 app.use(Vuex);
+app.use(VueAxios);
 app.use(store);
 app.mount("#app");
 // createApp(App).use(router).mount("#app");
