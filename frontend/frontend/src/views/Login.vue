@@ -256,7 +256,10 @@ export default {
           // 確認用戶是否存在資料庫
           if (res.data.status === "success") {
             console.log("yes");
-            this.$router.push({ path: "personalHomepage" });
+            this.$router.push({
+              path: "personalHomepage",
+              params: { user_id: "25" },
+            });
             if (this.checked) {
               console.log("keeplogin");
               // localStorage.setItem("account", this.account);
