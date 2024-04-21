@@ -740,9 +740,10 @@ export default {
 
 /* 左側欄的部分 起點 */
 .left_bar {
-  width: 260px;
-  /* width: calc(260px * 0.9); */
-  height: calc(100vh - 48px);
+  zoom:80%;
+  width: 270px;
+  /* width: calc(125vh - 675px); */
+  height: calc(125vh - 48px);
 
   background-color: #f2eeee;
   border-radius: 0px 14px 14px 0px;
@@ -827,6 +828,7 @@ export default {
 
 .three_pointer input[type='radio']:hover+label {
   background-color: #e1dcdc;
+  cursor: pointer;
 }
 
 .three_pointer input[type='radio']:checked+label {
@@ -862,8 +864,8 @@ export default {
 
 .close_add_proj_box {
   position: relative;
-  width: 12px;
-  height: 12px;
+  width: 24px;
+  height: 24px;
   cursor: pointer;
   top: 25px;
   left: 307px;
@@ -1189,8 +1191,11 @@ export default {
 
 /* 中間的部分 起點 */
 .bg {
-  width: calc(100vw - 272px);
-  height: calc(100vh - 48px);
+  zoom: 79%;
+  width: calc(120vw - 220px);
+  height: calc(125vh - 48px);
+  /* width: calc(100vw - 260px);
+  height: calc(100vh - 48px); */
   position: fixed;
   bottom: 0px;
   right: 12px;
