@@ -2,7 +2,6 @@
     <div id="all">
         <side-bar @update="activeChange" class="sideBar"/>
         <router-view></router-view>
-        <!-- <router-view name="meetingRecord"></router-view> -->
     </div>
   
 </template>
@@ -50,4 +49,4 @@ export default {
         height: 100vh;
     }
 
-</style>
+</style> 

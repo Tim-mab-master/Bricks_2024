@@ -29,8 +29,8 @@
             <el-icon><list /></el-icon>
             <span>會議記錄</span>
           </template>
-            <el-menu-item index="1-1" >全部</el-menu-item>
-            <el-menu-item index="1-2" >垃圾桶</el-menu-item>
+            <el-menu-item index="1-1" ><router-link to="/all/cards" class="menuText">全部</router-link></el-menu-item>
+            <el-menu-item index="1-2" ><router-link to="/all/trashBox" class="menuText">垃圾桶</router-link></el-menu-item>
         </el-sub-menu>
         <el-sub-menu index="2" class="menu">
         <template #title>
@@ -96,7 +96,7 @@ export default {
     const addClicked = (value) =>{
       value = true;
       // emit('showAdd',value);
-      router.push('/meetingRecord');
+      router.push('cards/newRecord');
     };
 
     const selected = () =>{
@@ -238,6 +238,11 @@ export default {
   .selected{
     background-color: #FAE4E7;
     color:#C91F2F;
+  }
+  
+  .menuText{
+    text-decoration: none;
+    color: black;
   }
 
   

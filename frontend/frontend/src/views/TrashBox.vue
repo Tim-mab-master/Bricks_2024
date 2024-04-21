@@ -1,13 +1,18 @@
 <template>
-    <div class="navAndCont" id="trash">
-        <trash-bar class="navBar"></trash-bar>
-        <div class="cards">
-            <trash-cards v-for="items in 16" :key="items"></trash-cards>
+    <div>
+        <side-bar></side-bar>
+        <div class="navAndCont" id="trash">
+            <trash-bar class="navBar"></trash-bar>
+            <div class="cards">
+                <trash-cards v-for="items in 16" :key="items"></trash-cards>
+            </div>
         </div>
     </div>
+    
 </template>
 
 <script>
+import SideBar from '../components/SideBar.vue';
 import TrashBar from '../components/TrashBar.vue';
 import TrashCards from '../components/TrashCards.vue';
 export default {
@@ -15,7 +20,7 @@ export default {
     components : {
         TrashBar,
         TrashCards,
-
+        SideBar,
     },
     setup(){
         return{

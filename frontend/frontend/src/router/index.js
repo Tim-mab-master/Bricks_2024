@@ -58,11 +58,6 @@ const routes = [
     name: "questionnaire",
     component: () => import("../views/Questionnaire.vue"),
   },
-  // {
-  //   path: "/register",
-  //   name: "register",
-  //   component: () => import("../views/Register.vue"),
-  // },
   {
     path: "/personalHomepage",
     name: "personalHomepage",
@@ -81,7 +76,8 @@ const routes = [
   {
     path: "/all",
     name: "all",
-    component: () => import("../views/meetingAll.vue"),
+    redirect: "/all/cards",
+    // component: () => import("../views/meetingAll.vue"),
     children: [
       {
         path: "cards",
@@ -92,13 +88,11 @@ const routes = [
         component: () => import("../views/TrashBox.vue"),
       },
       {
-        path: "empty",
-        component: () => import("../views/Empty.vue"),
-      },
-      {
         path: "cards/meetingRecord/:cardId",
+        alias: "cards/newRecord",
         name: "meetingRecord",
         component: () => import("../views/MeetingRecord.vue"),
+        
       },
     ],
   },
@@ -108,13 +102,5 @@ const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
 });
-
-// router.beforeEach((to, from) => {
-//   if (to.path === "/personalHomepage") {
-//     next("/login");
-//   } else {
-//     next("/personalHomepage");
-//   }
-// });
 
 export default router;

@@ -261,7 +261,7 @@ export default {
           this.selectOption = 'option1';
           this.show_add_proj_type_list = false;
           this.proj_type_color = '#b6aeae';
-          const path = "http://34.81.186.58:5000/add_project";
+          const path = "http://104.199.143.218:5000/add_project";
           const add_new_project = {
               "project_type": [this.proj_type],
               "project_image": this.project_image,
@@ -307,7 +307,7 @@ export default {
                   this.carts.push(new_cart);
                   this.add_proj_type_options.push(new_cart.title_word)
 
-                  const path = "http://34.81.186.58:5000/add_type";
+                  const path = "http://104.199.143.218:5000/add_type";
                   const add_type ={
                       "user_id": this.user_id,
                       "project_ended": false,

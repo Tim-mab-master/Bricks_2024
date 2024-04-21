@@ -1,6 +1,6 @@
 <template>
   <div class="sharon" @contextmenu.prevent>
-      <!-- <side-bar class="sideBar"></side-bar>-->
+      <side-bar class="sideBar"></side-bar>
       <nav-bar-main class="navBar"></nav-bar-main> 
 
     <!-- 新增、會議記錄主頁 -->
