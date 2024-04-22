@@ -13,10 +13,12 @@
 </template>
 
 <script>
+import { useRouter } from 'vue-router';
 export default {
   setup(props,{emit}){
+    const router = useRouter();
     const addClicked = () => {
-      emit('showAdd',true);
+      router.push("cards/newRecord");
     };
 
     return{
