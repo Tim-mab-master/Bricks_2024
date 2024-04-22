@@ -60,8 +60,8 @@
                       <div class="uncategorized cart" ref="uncategorized">
                           <p class="cart_title">未分類</p>
                           <div class="title_underline"></div>
-                          <div class="box_container">
-                              <router-link to="/all"><div class="box" v-for="(proj_name,index) in uncategorized_projs" :key="index" @contextmenu.prevent="right_click_box" @click="getInPage">{{ proj_name }}</div></router-link>
+                          <div class="box_container"> <!-- @click="getInPage" -->
+                              <router-link to="/all"><div class="box" v-for="(proj_name,index) in uncategorized_projs" :key="index" @contextmenu.prevent="right_click_box" >{{ proj_name }}</div></router-link>
                           </div>
                       </div>
                       <div v-for="(cart,index1) in carts" :key="index1" >
@@ -171,10 +171,112 @@
 <script>
 import axios from 'axios';
 import { Base64 } from 'js-base64';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useStore } from 'vuex';
 export default {
   name: 'Personal_homepage',
+  // setup(){
+  //   const middle_show_overview_page = true;
+  //   const middle_show_over_page = false;
+  //   const middle_show_trash_page = false;
+  //   const add_proj_show = false;
+  //   const showOverlay = false;
+  //   const add_proj_type = ref('');
+  //   const isFocused = false;
+  //   const carts = [];
+  //   const cart_titles = '';
+  //   const cart_title_input = '';
+  //   const selectOption = 'option1';
+  //   const show_add_proj_type_list = false;
+
+  //   const add_proj_type_arrow = '';
+  //   const add_proj_type_options = [];
+  //   const proj_type = '選擇專案類型';
+  //   const proj_type_color = '#b6aeae';
+  //   const add_proj_type_text = '';
+  //   const add_proj_name = '';
+  //   const add_search = '';
+  //   const uncategorized_projs = [];
+  //   const cart_box_name_list = [];
+  //   const trash_boxes = [];
+  //   const checked_trash_box = [];
+  //   const recover = true;
+  //   const trashcan = true;
+  //   const recovered = false;
+  //   const forever_delete_confirm = false;
+  //   const showOverlay_trash = false;
+  //   const mouseTop = 0;
+  //   const mouseLeft = 0;
+  //   const right_click_box_overview_show = false;
+  //   const delete_confirm = false;
+  //   const showOverlay_delete = false;
+  //   const right_click_box_trash_show = false;
+  //   const search_input = '';
+  //   const click_search_bar_time = 0;
+  //   const his_search_list = [];
+  //   const show_his_search_list = false;
+  //         //現在正在找的專案
+  //   const search_project = '';
+  //   const user_id = 0;
+  //   const project_status = "normal";
+  //   const project_image = " ";
+  //   const project_id = 0;
+  //   const project_creation_date = " ";
+  //   const project_edit_data = " ";
+  //   return{
+  //     middle_show_overview_page,
+  //         middle_show_over_page,
+  //         middle_show_trash_page,
+  //         add_proj_show,
+  //         showOverlay,
+  //         add_proj_type,
+  //         isFocused,
+  //         carts,
+  //         cart_titles,
+  //         cart_title_input,
+  //         selectOption,
+  //         show_add_proj_type_list,
+  //         show_his_search_list,
+
+  //         add_proj_type_arrow,
+  //         add_proj_type_options,
+  //         proj_type,
+  //         proj_type_color,
+  //         add_proj_type_text,
+  //         add_proj_name,
+  //         add_search,
+  //         uncategorized_projs,
+  //         cart_box_name_list,
+  //         trash_boxes,
+  //         checked_trash_box,
+  //         recover,
+  //         trashcan,
+  //         recovered,
+  //         forever_delete_confirm,
+  //         showOverlay_trash,
+  //         mouseTop,
+  //         mouseLeft,
+  //         right_click_box_overview_show,
+  //         delete_confirm,
+  //         showOverlay_delete,
+  //         right_click_box_trash_show,
+  //         search_input,
+  //         click_search_bar_time,
+  //         his_search_list,
+  //         show_his_search_list,
+  //         search_input,
+  //         //現在正在找的專案
+  //         search_project,
+  //         user_id,
+  //         project_status,
+  //         project_image,
+  //         project_id,
+  //         project_creation_date,
+  //         project_edit_data,
+
+  //   };
+
+  // },
   
   data() {
       return {
@@ -233,11 +335,11 @@ export default {
   methods: {
 
       // 跳轉至專案內部，從 vuex 中取得專案名稱
-      getInPage(){
-        const store = useStore();
-        store.commit('showName',this.proj_name);
-        console.log("現在點的專案："+store.state.projectName);
-      },
+      // getInPage(){
+      //   const store = useStore();
+      //   store.commit('showName',this.proj_name);
+      //   console.log("現在點的專案："+store.state.projectName);
+      // },
       // 點擊上角新增專案
       
       add_btn() {
@@ -1668,6 +1770,10 @@ export default {
   background-color: black;
   width: 20px;
   height: 30px;
+}
+
+router-link{
+  color: black;
 }
 /* 垃圾桶的部分 終點 */
 
