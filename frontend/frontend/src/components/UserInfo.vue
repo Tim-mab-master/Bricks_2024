@@ -98,6 +98,7 @@ export default {
     }
 
     .dropDown .text{
+        zoom:75%;
         display: block;
         color: var(--base-color-text-el-text-color-primary, #303133);
         /* CN regular/body1-Regular */

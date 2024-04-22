@@ -39,6 +39,7 @@ export default {
 
 <style scoped>
     #navBar{
+        /* zoom:75%; */
         z-index: 5;
         position: fixed;
         /* position: relative; */

@@ -246,22 +246,6 @@
         value: '',
         placeholder: "輸入會議名稱",
 
-        // height: '30px',
-        // basicComponent: null,
-        // date: '',
-        // value2: [
-        //   new Date(2016, 9, 10, 8, 40),
-        //   new Date(2016, 9, 10, 9, 40),
-        // ],
-
-        // height: '30px',
-        // basicComponent: null,
-        // value1: '',
-        // value2: [
-        //   new Date(), 
-        //   new Date(),
-        // ],
-
         valueA: [],
         optionsA: [],
         valueB: [],
@@ -429,33 +413,13 @@
   
   
   .button-container {
-      /* position: absolute; */
       display: flex;
       height:40px;
       width:910px;
       margin-bottom: 14px;
-      margin-left: 696px;
-      /* top: 20px;
-      left: 248px; */
-      /* margin-bottom: 0px; */
+      justify-content: flex-end;
+      
   }
-   /* .button-container button:first-child {
-     margin-left: 400px;
-      width: 50px;
-      background-color: white;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-  } */
-  /* .button-container button:nth-child(2) {
-    margin-right: 20px;
-    width: 140px;
-    background-color: white;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    
-  }  */
   .button-container button:nth-child(2) .el-icon {
     margin: 10px; /* 设置图标与文本之间的右边距 */
   }
