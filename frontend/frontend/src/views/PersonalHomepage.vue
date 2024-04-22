@@ -45,7 +45,7 @@
                   {{ option }}
               </div>
               <div class="add_proj_type_list_line"></div>
-              <input type="text" class="add_proj_type_text" placeholder="新增類別" v-model="add_proj_type_text" @keyup.enter="list_add_a_cart">
+              <input type="text" class="add_proj_type_text" placeholder="新增類別" v-model="add_proj_type_text" @keyup.enter="list_add_a_cart()">
               <div class="add_proj_type_text_plus" @click="list_add_a_cart"></div>
           </div>
           <div class="add_proj_build" @click="new_project_btn">建立專案</div>
@@ -61,7 +61,7 @@
                           <p class="cart_title">未分類</p>
                           <div class="title_underline"></div>
                           <div class="box_container">
-                              <div class="box" v-for="(proj_name,index) in uncategorized_projs" :key="index" @contextmenu.prevent="right_click_box">{{ proj_name }}</div>
+                              <router-link to="/all"><div class="box" v-for="(proj_name,index) in uncategorized_projs" :key="index" @contextmenu.prevent="right_click_box" @click="getInPage">{{ proj_name }}</div></router-link>
                           </div>
                       </div>
                       <div v-for="(cart,index1) in carts" :key="index1" >
@@ -171,6 +171,8 @@
 <script>
 import axios from 'axios';
 import { Base64 } from 'js-base64';
+import { computed } from 'vue';
+import { useStore } from 'vuex';
 export default {
   name: 'Personal_homepage',
   
@@ -229,6 +231,13 @@ export default {
       };
   },
   methods: {
+
+      // 跳轉至專案內部，從 vuex 中取得專案名稱
+      getInPage(){
+        const store = useStore();
+        store.commit('showName',this.proj_name);
+        console.log("現在點的專案："+store.state.projectName);
+      },
       // 點擊上角新增專案
       
       add_btn() {
@@ -261,31 +270,24 @@ export default {
           this.selectOption = 'option1';
           this.show_add_proj_type_list = false;
           this.proj_type_color = '#b6aeae';
-          const path = "http://104.199.143.218:5000/add_project";
-          const add_new_project = {
-              "project_type": [this.proj_type],
-              "project_image": this.project_image,
-              "project_name": this.add_proj_name,
-              "project_trashcan": true,
-              "project_ended": true,
-              "project_isEdit": false,
-              "project_isVisible": false,
-              "project_isComment": false,
-              "user_id": this.user_id
-           };
-           console.log("add_new_project:", add_new_project);
+          const path = "http://104.199.143.218:5000/project_index";
+          const newProject = {
+            "project_type": this.proj_type,
+            "project_image": this.project_image,
+            "project_name": this.add_proj_name,
+            "project_trashcan": false,
+            "project_ended": false,
+            "project_isEdit": false,
+            "project_isVisible": false,
+            "project_isComment": false,
+            "user_id": "25"
+          }
+          console.log("add_new_project:", newProject);
            
-           axios
-          .post(path,add_new_project,{ timeout: 10000 })
+          axios
+          .post(path,newProject,{ timeout: 10000 })
           .then((res) =>{
               console.log("status:"+ res.data.status);
-              this.token = res.data;
-              this.decode_token_json.status = this.decodeToken(this.token);
-              if(this.decode_token_json.status == 'success'){
-                  console.log("成功新增專案");
-                  const list = this.decode_token_json.items;
-                  console.log(list.message)
-              }
           })
           .catch((error) =>{
               console.error("Error: ", error);
@@ -308,23 +310,15 @@ export default {
                   this.add_proj_type_options.push(new_cart.title_word)
 
                   const path = "http://104.199.143.218:5000/add_type";
-                  const add_type ={
-                      "user_id": this.user_id,
-                      "project_ended": false,
-                      "project_type": "this.proj_type"
-                  }
+                  const type ={
+                    "user_id": 25,
+                    "project_id": 87,
+                    "project_type": this.add_proj_type_text,
+                  };
                   axios 
-                      .post(path, add_type)
+                      .post(path,type)
                       .then((res) =>{
-                          this.token = res.data;
-                          this.decode_token_json = this.decodeToken(this.token);
-                      
-                          if(this.decode_token_json.status == 'success'){
-                              console.log("新增類型成功");
-                              if(this.user_id === this.decode_token_json.user_id){
-                              console.log(this.decode_token_json.proj_name) 
-                         }
-                          }
+                          console.log(res.data.status);
                       })
               }
           }
@@ -448,18 +442,16 @@ export default {
               this.proj_type_color = 'black';
               this.add_proj_type_text = '';
 
-              const path="http://35.194.196.179:5000/add_type"
-              const insert_type={
-                  
-                      "user_id": 1,
-                      "project_ended": false,
-                      "project_type": "課業＿高中"
-
-              }
+              const path="http://104.199.143.218:5000/add_type"
+              const type ={
+                    "user_id": "25",
+                    "project_id": 87,
+                    "project_type": this.proj_type,
+              };
               axios
-                  .post(path,insert_type)
+                  .post(path,type)
                   .then((res)=>{
-                      console.log(res)
+                      console.log(res.data.status);
                   })
           }
       },

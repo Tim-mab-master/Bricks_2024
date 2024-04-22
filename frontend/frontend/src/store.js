@@ -5,6 +5,7 @@ export default createStore({
         return {
             activeIndex: 0,
             testNum:0,
+            projectName: "專案名稱",
         };
     },
     mutations: {
@@ -13,6 +14,9 @@ export default createStore({
         },
         increment(state){
             state.testNum++;
-        }
+        },
+        showName(state, name){
+            state.projectName = name;
+        },
     }
 });
