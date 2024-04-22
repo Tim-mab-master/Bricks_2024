@@ -395,7 +395,7 @@ export default {
               console.error("Error: ", error);
           })
           if(this.add_proj_name !== ''){
-              if(this.proj_type === '選擇專案類型'|| this.proj_type === '未分類'){
+              if(this.proj_type === '選擇專案類型'|| this.proj_type === '未分類'){//歸類未分類
                   this.uncategorized_projs.push(this.add_proj_name);
                   this.add_proj_name = '';
               }
@@ -434,37 +434,64 @@ export default {
               this.middle_show_over_page = false
               this.middle_show_trash_page = false
 
-              const path = "http://35.194.196.179:5000/project_index";
+              const path = "http://104.199.143.218:5000/project_index";
               const get_proj = {
-                  "user_id":1,
-                  "project_status":"ended"
+                  "user_id":25,
+                  "project_status":"normal"
               };
-              axios
-                  .post(path,get_proj)
+              axios.post(path,get_proj)
                   .then((res) =>{
-                      console.log(res.data)
-                      this.token = res.data;
-                      this.decode_token_json = this.decodeToken(this.token);
+  
+                  // console.log("Response data:", JSON.stringify(res.data));
+                  console.log("Response data:", res.data);
+                  // console.log("Message:", res.data.message); 
+                  // console.log("Status:", res.data.status);
+                  // console.log("Items:", res.data.items); 
+                  // console.log(this.token);
+                  //   this.token = res.data;
+                  //   console.log(this.token.parse())
+                  //   this.decode_token_json = this.decodeToken(this.token);
 
                       if(res.data.status == 'success'){
-                          const items = this.decode_token_json.items
-                          const index = 0
+                        console.log("jijij")
+                          const items = res.data.items
+                          let index = 0
                           items.forEach(element => {
-                              this.proj_type = Object.keys(element)[index];
-                              index = index +1
-                              const projects = element[this.proj_type];
-                              cart_title_input = this.project_type
-                              add_a_cart()
+                            console.log("ooooooo")
+                            console.log(element.id);
 
-                              projects.forEach(project =>{
-                                  this.project_id = project.project_id
-                                  this.project_image = project.project_image
-                                  this.add_proj_name = project.project_name
-                                  this.project_creation_date = project.project_creation_date
-                                  this.project_edit_data = project.project_edit_data
-                                  this.user_id = project.user_id
-                                  new_project_btn()
-                              })
+                            this.proj_type = element.project_type;
+                            this.proj_name = element.project_name;
+                            
+                            //沒有這個類別我才顯示顯示專案
+                            if(this.add_proj_type_options.includes(this.proj_type) === false){
+                              const new_cart={
+                                title_word: this.proj_type,
+                                project_box: [this.proj_name],
+                              }
+                              this.carts.push(new_cart);
+                              this.add_proj_type_options.push(new_cart.title_word)
+                            }
+                                                
+
+                              // this.proj_type = Object.keys(element)[index];
+                              // index = index +1
+                              // const projects = element[this.proj_type];
+                              // cart_title_input = this.project_type
+                              // console.log(projects)
+                              
+                              // add_a_cart()
+
+
+                              // projects.forEach(project =>{
+                              //     this.project_id = project.project_id
+                              //     this.project_image = project.project_image
+                              //     this.add_proj_name = project.project_name
+                              //     this.project_creation_date = project.project_creation_date
+                              //     this.project_edit_data = project.project_edit_data
+                              //     this.user_id = project.user_id
+                              //     new_project_btn()
+                              // })
                       });
                       }
                   }) 
@@ -1285,7 +1312,7 @@ export default {
 
 /* 中間的部分 起點 */
 .bg {
-  zoom: 79%;
+  zoom: 80%;
   width: calc(120vw - 220px);
   height: calc(125vh - 48px);
   /* width: calc(100vw - 260px);
@@ -1300,7 +1327,7 @@ export default {
 
 .middle {
   width: 94%;
-  height: calc(90vh - 20.3px);
+  height: calc(120vh - 20.3px);
   /* height: 500px; */
   position: absolute;
   overflow-y: auto;
