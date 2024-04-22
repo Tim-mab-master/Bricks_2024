@@ -1,6 +1,30 @@
 import { createStore } from "vuex";
 
-const store = createStore({
+export default createStore({
+    state() {
+        return {
+            activeIndex: "/",
+  //        isLogin: false,
+            activeIndex: 0,
+            testNum:0,
+            projectName: "專案名稱",
+        };
+    },
+    mutations: {
+        changePage(state, index) {
+            state.activeIndex = index;
+        },
+        increment(state){
+            state.testNum++;
+        },
+        showName(state, name){
+            state.projectName = name;
+        },
+    // userStatus(state, flag) {
+    //   state.isLogin = flag;
+    // },
+    }
+
   //   state: {
   //     activeIndex: "/",
   //     isLogin: false,

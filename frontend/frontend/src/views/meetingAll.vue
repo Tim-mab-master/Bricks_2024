@@ -1,8 +1,7 @@
 <template>
-    <div>
+    <div id="all">
         <side-bar @update="activeChange" class="sideBar"/>
         <router-view></router-view>
-        <!-- <router-view name="meetingRecord"></router-view> -->
     </div>
   
 </template>
@@ -34,13 +33,20 @@ export default {
     }
 
 }
-</script>
+</script> 
 
 <style scoped>
+    #all{ 
+        /* transform-origin: top left;
+        transform: scale(0.75); */
+        /* zoom:75%; */ 
+     }
     .sideBar{
         position: absolute;
         left: 0;
         top: 0;
+        bottom:0;
+        height: 100vh;
     }
 
-</style>
+</style> 
