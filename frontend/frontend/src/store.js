@@ -23,24 +23,20 @@ export default createStore({
     // userStatus(state, flag) {
     //   state.isLogin = flag;
     // },
+<<<<<<< Updated upstream
   },
 
   //   state: {
   //     activeIndex: "/",
   //     isLogin: false,
   //   },
+=======
+    },
+>>>>>>> Stashed changes
 
   //   getters: {
   //     isLogin: (state) => state.isLogin,
   //   },
-  mutations: {
-    // userStatus(state, flag) {
-    //   state.isLogin = flag;
-    // },
-    updateActiveIndex(state, index) {
-      state.activeIndex = index;
-    },
-  },
   //   actions: {
   //     setUser({ commit }, flag) {
   //       commit("userStatus", flag);
