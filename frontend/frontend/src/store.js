@@ -14,6 +14,24 @@ export default createStore({
     changePage(state, index) {
       state.activeIndex = index;
     },
+    state() {
+      return {
+        activeIndex: 0,
+        testNum: 0,
+        projectName: "專案名稱",
+      };
+    },
+    mutations: {
+      changePage(state, index) {
+        state.activeIndex = index;
+      },
+      increment(state) {
+        state.testNum++;
+      },
+      showName(state, name) {
+        state.projectName = name;
+      },
+    },
     increment(state) {
       state.testNum++;
     },
@@ -23,16 +41,9 @@ export default createStore({
     // userStatus(state, flag) {
     //   state.isLogin = flag;
     // },
-<<<<<<< Updated upstream
   },
 
-  //   state: {
-  //     activeIndex: "/",
-  //     isLogin: false,
-  //   },
-=======
-    },
->>>>>>> Stashed changes
+  //actions: {
 
   //   getters: {
   //     isLogin: (state) => state.isLogin,

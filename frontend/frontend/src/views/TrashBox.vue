@@ -62,4 +62,13 @@ export default {
   top: 0;
   right: 0;
 }
+
+@media screen and (max-width: 1440px) and (min-width: 1024px) {
+  .cards {
+    transform: scale(0.75);
+    transform-origin: left top;
+    /* grid-column-gap:;
+        grid-row-gap:0; */
+  }
+}
 </style>

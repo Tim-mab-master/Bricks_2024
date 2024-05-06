@@ -143,4 +143,10 @@ export default {
   top: 30vh;
   bottom: 0;
 }
+
+@media screen and (max-width: 1440px) and (min-width: 1024px) {
+  .navAndCont {
+    left: 180px;
+  }
+}
 </style>

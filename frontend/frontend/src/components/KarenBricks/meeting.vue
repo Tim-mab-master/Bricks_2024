@@ -321,6 +321,7 @@
     gap: 14px;
     width: 910px;
     border-collapse: collapse;
+    zoom: 75%;
   }
   
   .left-bar {
@@ -346,6 +347,7 @@
     outline: none;
     /* -webkit-appearance: none; */
     font-size: 14px;
+    zoom: 0.75;
   }
   
   
@@ -461,4 +463,9 @@
       justify-content: flex-end; /* 将内容靠右对齐 */
   }
   
+  @media screen and (min-width: 1240px) and (max-width: 1440px) {
+    .form , .form-container{
+      transform: scale(0.75);
+    }
+  }
   </style>
