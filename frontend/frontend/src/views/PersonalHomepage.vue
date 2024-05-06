@@ -3,20 +3,26 @@
       <div class="nav">
           <img src="../assets/brickslogo.svg" @click=" ">
           <div class="tri_btn">
-              <!-- <div class="search-container">
-                  <input type="text" placeholder='查詢專案' class="add_search_project" v-model="search_input" @keyup.enter="list_add_a_search" @focus="show_his_search_list = true"  @blur="show_his_search_list = false">
-                  <div class="clear-search" @click="clear_search_bar">&#10006;</div>
-                  <div class="his_search_list" v-show="show_his_search_list" ref="his_search_list">
-                  <div v-for="(history, index) in his_search_list.slice().reverse().slice(0,6)" :key="index" class="add_history_search" @click="his_search_choosen(history)" >
+              <input type="text" placeholder='查詢專案' class="add_search_project" v-model.trim="search_project" 
+              @keyup.enter="list_add_a_search" @keyup="keyboardEvent"
+              @blur="show_his_search_list = false">
+              <div class="his_search_list" v-show="show_his_search_list">
+                  <div v-for="(history, index) in this.projects.slice().reverse().slice(0,6)" :key="index" 
+                  class="add_history_search"  @click="his_search_choosen" >
                       {{ history}}
-                  </div>
               </div>
-          </div> -->
-              <input type="text" placeholder='查詢專案' class="add_search_project" v-model="search_input" @keyup.enter="list_add_a_search" @focus="click_search_bar"  @blur="show_his_search_list = false">
-              <div class="his_search_list" v-show="show_his_search_list" ref="his_search_list">
-                  <div v-for="(history, index) in his_search_list.slice().reverse().slice(0,6)" :key="index" class="add_history_search" @click="his_search_choosen(history)" >
+                  <!-- <div v-for="(history, index) in projectsAll.slice().reverse().slice(0,6)" :key="index" class="add_history_search" @click="his_search_choosen(history)" >
                       {{ history}}
-                  </div>
+                  </div> -->
+                  <ul class="autoComplete position-absolute box-shadow bg-white w-100 w-md-50 z-index-3"
+                    :class=" autoComplete ? '' : 'd-none'">
+                    <!--     控制按鈕事件的選取背景 -->
+                      <li class="searchHover p-2 w-100" v-for="(item,index) in filterProjects" :key="index"
+                      :class=" selectedIndex === i ?'bg-light': ''">
+                        <router-link class="text-dark d-inline-block w-100" :to="`/project/${item.id}`">{{item.name}}
+                        </router-link>
+                      </li>
+                  </ul>
               </div>
               <div class="clear_search" @click="clear_search_bar"></div>
 
@@ -79,7 +85,7 @@
                               <img src="../assets/cart_drag_icon.svg" alt="" class="cart_drag_icon">
                               <div class="title_underline"></div>
                               <div class="box_container">
-                                  <div class="box" v-for="(proj_name,index2) in carts[index1].project_box" :key="index2" @contextmenu.prevent="right_click_box">{{ proj_name }}</div>
+                                  <div class="box" v-for="(proj_name,index2) in carts[index1].project_box" :key="index2">{{ proj_name }}</div>
                               </div>
                           </div>
                       </div>
@@ -108,27 +114,20 @@
                   </div>
                   <!-- 已結束專案 -->
                   <div class="over_page" v-show="middle_show_over_page">
-                      <!-- <div class="uncategorized cart" ref="uncategorized">
+                      <div class="uncategorized cart" ref="uncategorized">
                           <p class="cart_title">未分類</p>
                           <div class="title_underline"></div>
                           <div class="box_container">
                               <div class="box" v-for="(proj_name,index) in uncategorized_projs" :key="index">{{ proj_name }}</div>
                           </div>
-                      </div> -->
-                      <div class="uncategorized cart" ref="uncategorized">
-                          <p class="cart_title">已結束專案</p>
-                          <div class="title_underline"></div>
-                          <div class="box_container">
-                              <div class="box" v-for="(proj_name,index) in uncategorized_projs" :key="index">{{ proj_name }}</div>
-                          </div>
                       </div>
-                      <div v-for="(cart,index1) in carts" :key="index1">
+                      <div v-for="(cart,index1) in ended_carts" :key="index1">
                           <div class="cart">
                               <p class="cart_title" style="height: 0px">{{ cart.title_word }}</p>
                               <img src="../assets/cart_drag_icon.svg" alt="" class="cart_drag_icon">
                               <div class="title_underline"></div>
                               <div class="box_container">
-                                  <div class="box" v-for="(proj_name,index2) in carts[index1].project_box" :key="index2">{{ proj_name }}</div>
+                                  <div class="box" v-for="(proj_name,index2) in ended_carts[index1].project_box" :key="index2">{{ proj_name }}</div>
                               </div>
                           </div>
                       </div>
@@ -201,11 +200,12 @@ export default {
           add_proj_type: '',
           isFocused: false,
           carts:[],
+          //已結束專案的cart
+          ended_carts:[],
           cart_titles: '',
           cart_title_input: '',
           selectOption: 'option1',
           show_add_proj_type_list: false,
-          show_his_search_list:false,
 
           add_proj_type_arrow: '',
           add_proj_type_options: [],
@@ -215,6 +215,8 @@ export default {
           add_proj_name: '',
           add_search:'',
           uncategorized_projs: [],
+          //已結束專案的
+          ended_projs:[],
           cart_box_name_list: [],
           trash_boxes: [],
           checked_trash_box: [],
@@ -229,13 +231,22 @@ export default {
           delete_confirm: false,
           showOverlay_delete: false,
           right_click_box_trash_show: false,
-          search_input:'',
           click_search_bar_time:0,
           his_search_list:[],
           show_his_search_list:false,
           search_input:'',
           //現在正在找的專案
           search_project:'',
+          //所有project
+          projectsAll:[],
+          // 所有已結束專案
+          project_ended:[],
+          // 遠端資料庫 分頁資料十筆
+          projects:[], 
+          // 用 autoComplete 來控制是否顯示選單
+          autoComplete: false,
+          // 用 selectedIndex 來控制選單項目的選取
+          selectedIndex: 0,
           user_id : 0,
           project_status:"normal",
           project_image:" ",
@@ -353,68 +364,6 @@ export default {
               this.middle_show_overview_page = true
               this.middle_show_over_page = false
               this.middle_show_trash_page = false
-
-              const path = "http://104.199.143.218:5000/project_index";
-              const get_proj = {
-                  "user_id":25,
-                  "project_status":"normal"
-              };
-              axios.post(path,get_proj)
-                  .then((res) =>{
-  
-                  // console.log("Response data:", JSON.stringify(res.data));
-                  console.log("Response data:", res.data);
-                  // console.log("Message:", res.data.message); 
-                  // console.log("Status:", res.data.status);
-                  // console.log("Items:", res.data.items); 
-                  // console.log(this.token);
-                  //   this.token = res.data;
-                  //   console.log(this.token.parse())
-                  //   this.decode_token_json = this.decodeToken(this.token);
-
-                      if(res.data.status == 'success'){
-                        console.log("jijij")
-                          const items = res.data.items
-                          let index = 0
-                          items.forEach(element => {
-                            console.log("ooooooo")
-                            console.log(element.id);
-
-                            this.proj_type = element.project_type;
-                            this.proj_name = element.project_name;
-                            
-                            //沒有這個類別我才顯示顯示專案
-                            if(this.add_proj_type_options.includes(this.proj_type) === false){
-                              const new_cart={
-                                title_word: this.proj_type,
-                                project_box: [this.proj_name],
-                              }
-                              this.carts.push(new_cart);
-                              this.add_proj_type_options.push(new_cart.title_word)
-                            }
-                                                
-
-                              // this.proj_type = Object.keys(element)[index];
-                              // index = index +1
-                              // const projects = element[this.proj_type];
-                              // cart_title_input = this.project_type
-                              // console.log(projects)
-                              
-                              // add_a_cart()
-
-
-                              // projects.forEach(project =>{
-                              //     this.project_id = project.project_id
-                              //     this.project_image = project.project_image
-                              //     this.add_proj_name = project.project_name
-                              //     this.project_creation_date = project.project_creation_date
-                              //     this.project_edit_data = project.project_edit_data
-                              //     this.user_id = project.user_id
-                              //     new_project_btn()
-                              // })
-                      });
-                      }
-                  }) 
           }
           if (index === 2) {
               this.middle_show_over_page = true
@@ -466,12 +415,11 @@ export default {
           this.add_proj_type_text = '';
       },
       //搜尋點擊已有的專案
-      his_search_choosen(history){
-          
+      his_search_choosen(){
+          console.log("koko")
           this.show_his_search_list = false;
-          this.search_project = history;
+          this.search_project = history.name;
           //還要做點到專案的功能
-          this.search_input = history; 
           // 將被點擊的歷史內容設定為輸入框的值
 
       },
@@ -507,45 +455,38 @@ export default {
           }
       },
       click_search_bar(){
-          if(this.click_search_bar_time===0){
-              const path = "http://34.81.186.58:5000/search_history";
-              const get_search_history = {
-                  "user_id": this.user_id
-              };
-              axios
-                  .post(path,get_search_history)
-                  .then((res) => {
-                      this.token = res.data;
-                      this.decode_token_json = this.decodeToken(this.token);
+        
+          // if(this.click_search_bar_time===0){
+          //     const path = "http://34.81.186.58:5000/search_history";
+          //     const get_search_history = {
+          //         "user_id": this.user_id
+          //     };
+          //     axios
+          //         .post(path,get_search_history)
+          //         .then((res) => {
+          //             this.token = res.data;
+          //             this.decode_token_json = this.decodeToken(this.token);
                      
-                      if(this.decode_token_json.status == 'success'){
-                          const items = this.decode_token_json.items
-                          const searches = items.search_content
-                          const searchArray = searches.split(',');
-                          searchArray.forEach(search => {
-                              this.his_search_list.push(search.trim());
-                          });
-                      }
-                  })
-              this.show_his_search_list = true;
-              this.click_search_bar_time++;
-          }
+          //             if(this.decode_token_json.status == 'success'){
+          //                 const items = this.decode_token_json.items
+          //                 const searches = items.search_content
+          //                 const searchArray = searches.split(',');
+          //                 searchArray.forEach(search => {
+          //                     this.his_search_list.push(search.trim());
+          //                 });
+          //             }
+          //         })
+          //     this.click_search_bar_time++;
+          // }
           this.show_his_search_list = true;
       },
-      //增加搜尋紀錄
       list_add_a_search(){
-          if(this.search_input !== ''){
-              this.show_his_search_list = false;
-              this.search_project = this.search_input;
-              this.his_search_list.push(this.search_input);
-              //this.add_search_proj = '';
-              
-              // 在按下 Enter 鍵後，游標不繼續留在 input 欄位上
-              event.target.blur();
-          }
+          console.log("iij")
+                
+          
       },
       clear_search_bar(){
-          this.search_input='';
+          this.search_project='';
       },
       search_bar(){
           const path="http://34.81.186.58:5000/search_history";
@@ -672,11 +613,127 @@ export default {
   },
   mounted() {
       window.addEventListener('click' , this.handleClickOutside);
+      const path = "http://104.199.143.218:5000/project_index";
+        const get_proj = {
+            "user_id":25,
+            "project_status":"normal"
+        };
+        axios.post(path,get_proj)
+            .then((res) =>{
+                if(res.data.status == 'success'){
+                    const items = res.data.items
+                    items.forEach(element => {
+
+                      this.proj_type = element.project_type;
+                      this.proj_name = element.project_name;
+                      if(this.projectsAll){
+
+                        this.projectsAll.push(this.proj_name)
+                      }
+                      //沒有這個類別才顯示顯示專案
+                      if(this.add_proj_type_options.includes(this.proj_type) === false){
+                        const new_cart={
+                          title_word: this.proj_type,
+                          project_box: [this.proj_name],
+                        }
+                        this.carts.push(new_cart);
+                        this.add_proj_type_options.push(new_cart.title_word)
+                      }
+                          
+                });
+                }
+          }) 
+        const path_end = "http://104.199.143.218:5000/project_index";
+        const get_proj_end = {
+            "user_id":25,
+            "project_status":"ended"
+        };
+        axios.post(path_end,get_proj_end)
+        .then((res) =>{
+          if(res.data.status == 'success'){
+            const items = res.data.items
+            items.forEach(element => {
+              
+              this.proj_type = element.project_type;
+              this.proj_name = element.project_name;
+                      
+                      //分類跟未分類要分開
+                      if(this.proj_type !== "已結束"){
+                        const new_cart={
+                          title_word: this.proj_type,
+                          project_box: [this.proj_name],
+                        }
+                        //搜尋已結束加正在進行
+                        this.projectsAll.push(this.proj_name)
+                        this.ended_carts.push(new_cart);
+                      }else{
+                        // 這裡寫未分類
+                      }
+                          
+                });
+                }
+          }) 
   },
   beforeUnmount() {
       window.removeEventListener('click', this.handleClickOutside);
   },
-}
+  searchProjects () {
+      this.projects = this.filterProjects
+      this.autoComplete = false
+    },
+    // 使用v-on的監聽按鍵事件，控制按鈕事件的選取背景
+  keyboardEvent (e) {
+    // 按鈕向上
+    if (e.keyCode === 38) {
+      if (this.selectedIndex > 0) {
+        this.selectedIndex--
+      }
+    // 按鈕向下
+    } else if (e.keyCode === 40) {
+      this.selectedIndex++
+      // enter
+    } else if (e.keyCode === 13) {
+      this.filterProducts.forEach((item, i) => {
+        if (this.selectedIndex === i) {
+          // 當 selectedIndex 與 filterProducts 的 index相同，就將 search 改成選取項目的書名
+          this.search = item.name
+        }
+      })
+    }
+  },
+  watch:{
+    search_project () {
+        // 如果有搜尋字詞的話，就顯示autoComplete選單
+      if (this.search_project) {
+        this.projects = this.filterProducts
+        this.show_his_search_list = true
+      } else {
+        this.show_his_search_list= false
+      }
+    },
+    // 當選定選項，將 search 改成選取項目的專案名稱後，關閉autoComplete選單
+    prodjects () {
+      if (this.projects.length <= 1) {
+        this.autoComplete = false
+      }
+    }
+  },
+  computed: {
+    filterProducts () {
+          const str = this.search_project.toLowerCase()
+          const matches = [];
+          // 比對字串
+          this.projectsAll.forEach((proj) => {
+              if (proj.toLowerCase().includes(str)) {
+                matches.push(proj)
+              }
+            })
+          // 如果輸入兩個關鍵字就會出現重複的資料，所以需要刪除重複資料。
+          // 過濾出重複的元素
+          return [...new Set(matches)];
+        },
+    },
+  }
 </script>
 
 <style scoped>
@@ -1072,6 +1129,18 @@ export default {
   background-color: white;
 }
 .his_search_list{
+  width: 235px;
+  height: auto;
+  padding-top: 0px;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3), 0px 2px 15px rgba(0, 0, 0, 0.15);
+  border-radius: 14px;
+  position: absolute;
+  top: 38px;
+  left: 15px;
+  z-index: 3;
+  background-color: white;
+}
+.match{
   width: 235px;
   height: auto;
   padding-top: 0px;
@@ -1496,7 +1565,7 @@ export default {
 
 /* 垃圾桶的部分 起點 */
 .trash_page_middle{
-  width: 99%;
+  width: calc(100% - 50px);
   height: 85vh;
   border: 1px solid #E1DCDC;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
