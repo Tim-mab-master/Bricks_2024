@@ -1,23 +1,24 @@
 <template>
-  <div class="sharon" @contextmenu.prevent>
+  <!-- <div class="sharon" @contextmenu.prevent> -->
       <side-bar class="sideBar"></side-bar>
-      <nav-bar-main class="navBar"></nav-bar-main> 
-
-    <!-- 新增、會議記錄主頁 -->
+       
+    <div class="all">
     <div class="navAndCont"  id="new" v-if="showedInfo">
-      <!-- <el-backtop visibility-height="0" class="backtop">
-      <div id="backtop">
-          <el-icon class="icon"><upload/></el-icon>
-        </div>
-      </el-backtop> -->
+      <nav-bar-main class="navBar"></nav-bar-main>
+      
       <div :class="meetingClass">
         <div class="info"><meeting ></meeting></div>
         <div class="textBlock">
           <text-block v-for="cart in quantity" :key="cart" @add_cart="add_block"/>
+        </div> 
       </div>
-        
-      </div>
+      <!-- 標籤 -->
+      <tag-place class="tags" />
+      
+      
     </div>
+    
+
     <div class="result" v-else>    
             <div class="toolBar">
             <ordering/>
@@ -25,22 +26,15 @@
         </div>
             <document-with-info v-for="item in 10" :key="item"/>
       </div>
-    <el-backtop visibility-height="0" class="backtop">
-      <div id="backtop">
-          <el-icon class="icon"><upload/></el-icon>
-        </div>
-      </el-backtop>
-      
 
-      <!-- 標籤 -->
-      <div trigger="click" class="tagsPlace" @click="showTags">
-        <span class="el-dropdown-link">
-          標籤<el-icon class="el-icon--right"><arrow-down /></el-icon>
-        </span>
-      </div>
-      <tag-search-area v-show="tagShowed" class="tagInside" @showBlock="showInfo"></tag-search-area>
+    </div>
+    <!-- 新增、會議記錄主頁 -->
+    
+    
       
-  </div>
+      
+      
+  <!-- </div> -->
 </template>
 
 
@@ -51,7 +45,7 @@ import SideBar from "../components/SideBar.vue";
 import NavBarMain from '../components/NavBarMain.vue';
 import meeting from '../components/meeting.vue';
 import TextBlock from "@/components/TextBlock.vue";
-import TagSearchArea from '../components/KerwinBricks/TagSearchArea.vue';
+import TagPlace from '../components/TagPlace.vue';
 import { useRouter } from "vue-router";
 import Ordering from '../components/SharonBricks/Ordering.vue';
 import sort from '../components/SharonBricks/Sort.vue';
@@ -66,7 +60,7 @@ export default {
     NavBarMain,
     meeting,
     TextBlock,
-    TagSearchArea,
+    TagPlace,
     sort,
     Ordering,
     DocumentWithInfo,
@@ -134,9 +128,9 @@ export default {
 </script>
 
 <style scoped>
- .sharon{
-    position: absolute;
- }
+.all{
+  background-color: #F2F3F5;
+}
   .navBar{
     position: relative;
     top: 0;
@@ -154,10 +148,15 @@ export default {
  }
  .navAndCont{
   background-color: #F2F3F5;
-  position: absolute;
-  left: 200px;
+  position: fixed;
+  overflow: scroll;
+  
+  left: 0;
   top: 0;
   right: 0;
+  bottom: 0;
+  /* width: 88vw;  */
+  /* height: 100%;  */
   
  }
  .info{
@@ -176,43 +175,12 @@ export default {
  .meeting{
   position: relative;
   top: 68px;
-  left:248px;
+  left:10%;
+  width: 50%;
+  /* background-color: #F2F3F5; */
   /* width:200px;  */
   /* right:0; */
   /* width: auto; */
- }
-
- .tagsPlace{
-  position: relative;
-  left: 97rem;
-  width:65px;
-  top: 68px;
-  border-radius: var(--radius-button-large-radius, 4px);
-  border: 1px solid var(--base-color-border-el-border-color, #DCDFE6);
-  background: #FFF;
-  padding: 4px 16px;
- }
-
- .el-dropdown-link{
-  display: flex;
-  gap: 8px;
-  cursor: pointer;
- }
-
- .el-dropdown-link{
-  color: #C91F2F;
- }
-
- .tagInside{
-  position: absolute;
-  left: 1280px;
-  top: 114px;
-  z-index: 10;
-  width: 372px;
- }
-
- .tagMenu{
-  width: 372px;
  }
 
  .showingClass{
@@ -245,8 +213,6 @@ export default {
     color: #C91F2F;
     padding: 9px 16px;
     justify-content: left;
-    /* position: relative; */
-    /* left: 255px; */
     top: fixed(70px);
  }
 
@@ -257,16 +223,31 @@ export default {
  .toolBar{
     display:flex;
     gap: 12px;
-    /* position: absolute; */
     top: 68px;
-    /* right:0; */
     margin-bottom: 12px;
     justify-content: right;
     text-align: right;
     width: 1fr;
-    /* background: #F2F3F5; */
-    /* left: 46px; */
-    /* right: 700px; */
+ }
+.tags{
+  position: relative;
+  right: 32px;
+  top: 68px;
+}
+
+ @media screen and (min-width: 1024px) and (max-width: 1440px){
+  .navAndCont, .navBar{
+    left: 180px;
+  }
+  /* display: block; */
+  /* .tags{
+    position: absolute;
+    right: 32px;
+    top: 68px;
+    z-index: 10;
+  } */
+  
+
  }
 
 </style>
