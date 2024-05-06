@@ -96,7 +96,7 @@ export default {
     const addClicked = (value) =>{
       value = true;
       // emit('showAdd',value);
-      router.push('cards/newRecord');
+      router.push({name: 'meetingRecord'});
     };
 
     const selected = () =>{
@@ -183,7 +183,7 @@ export default {
 
   #addBtn{
     display: flex;
-    width: 168px;
+    width: 99%;
     min-height: 24px;
     max-height: 40px;
     padding: 20px 16px;
@@ -245,5 +245,13 @@ export default {
     color: black;
   }
 
-  
+  @media screen and (max-width:1440px) and (min-width: 1240px) {
+    el-col{
+      width: 90%;
+    }
+
+    #sidebar{
+      width: 180px;
+    }
+  }
 </style>

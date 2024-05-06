@@ -225,4 +225,11 @@ export default {
         display: block;
     }
 
+    @media screen and (min-width:1024px) and (max-width:1440px){
+        /* #all{
+            transform: scale(0.75);
+            transform-origin: left top;
+        } */
+    }
+
 </style>

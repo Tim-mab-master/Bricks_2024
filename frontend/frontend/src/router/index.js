@@ -93,8 +93,8 @@ const routes = [
         component: () => import("../views/TrashBox.vue"),
       },
       {
-        path: "cards/meetingRecord/:cardId",
-        alias: "cards/newRecord",
+        path: "cards/newRecord",
+        alias: "cards/meetingRecord/:cardId",
         name: "meetingRecord",
         component: () => import("../views/MeetingRecord.vue"),
         

@@ -8,7 +8,8 @@
         </div>
         <div id="toolBar">
             <div id="icons">
-                <button><a src="#"><el-icon class="icon"><search/></el-icon></a></button>
+                <search-bar v-if="showBar" id="searchPlace"></search-bar>
+                <button @click="search()" v-else><a src="#"><el-icon class="icon"><search/></el-icon></a></button>
                 <button><el-icon class="icon"><lock/></el-icon></button>
                 <!-- <button><el-icon class="icon"><bell/></el-icon></button> --> 
                 <notification-menu class="icon"></notification-menu>
@@ -22,22 +23,28 @@
 
 
 <script>
+import { ref } from "vue";
 import NotificationMenu from './NotificationMenu.vue';
 import UserInfo from './UserInfo.vue';
+import SearchBar from './SearchBar.vue';
 export default {
     components: {
         UserInfo,
         NotificationMenu,
+        SearchBar,
     },
-    data() {
+    setup() {
+        const normal = ref("#303133");
+        const showBar = ref(false);
+        const search = () => {
+            showBar.value = true;
+        }
         return {
-            normal: "#303133",
+            normal,
+            showBar,
+            search,
         };
     },
-    methods:{
-        
-  
-    }
 }
 </script>
 
@@ -46,7 +53,7 @@ export default {
     #navBar{
         z-index: 5;
         position: fixed;
-        left: 200px; 
+        /* left: 200px;  */
         /* top: 0;  */
         display: flex;
         width: auto;
@@ -117,6 +124,23 @@ export default {
         align-items: center;
         align-self: stretch;
         /* margin-right: 16px; */
+    }
+
+    #searchPlace{
+        position: relative;
+        height: 24px;
+        min-height: 24px;
+        max-height: 40px;
+        padding: 10px 6px;
+        align-items: center;
+        gap: 8px;
+        align-self: stretch;
+    }
+
+    @media screen and (min-width: 1024px) and (max-width: 1440px){
+        /* #breadCrum, #toolBar{
+            transform: scale(0.75);
+        } */
     }
 
 </style>

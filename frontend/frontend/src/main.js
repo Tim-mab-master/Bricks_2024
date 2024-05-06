@@ -5,10 +5,17 @@ import ResizeTextarea from "resize-textarea-vue3";
 import ElementPlus from "element-plus";
 import "element-plus/dist/index.css";
 import vue3GoogleLogin from "vue3-google-login";
+<<<<<<< Updated upstream
 import Vuex from 'vuex';
 import store from './store.js';
 
 
+=======
+import Vuex from "vuex";
+import VueAxios from "vue-axios";
+import axios from "axios";
+import store from "./store.js";
+>>>>>>> Stashed changes
 
 // 导入 Element Plus 的图标组件
 import * as ElementPlusIconsVue from "@element-plus/icons-vue";
@@ -37,6 +44,10 @@ app.use(ElementPlus);
 app.use(router);
 app.use(ResizeTextarea);
 app.use(Vuex);
+<<<<<<< Updated upstream
+=======
+app.use(VueAxios, axios);
+>>>>>>> Stashed changes
 app.use(store);
 app.mount("#app");
 // createApp(App).use(router).mount("#app");
