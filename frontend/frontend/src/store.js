@@ -44,6 +44,11 @@ export default createStore({
   },
 
   //actions: {
+
+  //   getters: {
+  //     isLogin: (state) => state.isLogin,
+  //   },
+  //   actions: {
   //     setUser({ commit }, flag) {
   //       commit("userStatus", flag);
   //     },
