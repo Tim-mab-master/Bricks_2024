@@ -51,14 +51,14 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v3
       
-      - name: create pull request
+      - name: create pull request to sit
         run: gh pr create -B FE-SIT -H FE-DEV --title 'Merge FE-DEV  into FE-SIT' --body 'Created by Github action'
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Merge Pull Request
         run: |
-          gh pr merge ${{ steps.create-pull-request.outputs.pr-number }} --merge
+          gh pr merge ${{ steps.create-pull-request-to-sit.outputs.pr-number }} --merge
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -69,13 +69,13 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v3
         
-      - name: create pull request
+      - name: create pull request to uat
         run: gh pr create -B FE-UAT -H FE-SIT --title 'Merge FE-SIT into FE-UAT' --body 'Created by Github action'
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Merge Pull Request
         run: |
-          gh pr merge ${{ steps.create-pull-request.outputs.pr-number }} --merge
+          gh pr merge ${{ steps.create-pull-request-to-uat.outputs.pr-number }} --merge
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
