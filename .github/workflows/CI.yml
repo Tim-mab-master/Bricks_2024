@@ -16,17 +16,7 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: '18'
-
-    - name: Run Vue
-      run: |
-        npm install -g npm
-        cd frontend
-        npm install -g @vue/cli
-        npm install --save-dev eslint eslint-plugin-vue
-        cd frontend
-        npm i axios
-        npm run serve
-    
+  
   create-pull-request-to-dev:
     needs: build
     runs-on: ubuntu-latest
