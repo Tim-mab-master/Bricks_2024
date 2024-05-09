@@ -39,6 +39,7 @@ export default {
 
 <style scoped>
     #navBar{
+        /* zoom:75%; */
         z-index: 5;
         position: fixed;
         /* position: relative; */
@@ -131,6 +132,10 @@ export default {
     .noti{
         cursor: pointer;
     }
-
+    @media screen and (max-width: 1440px) and (min-width:1240px) {
+        /* #breadCrum, #toolBar{
+            transform: scale(0.75);
+        } */
+    }
 
 </style>

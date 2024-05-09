@@ -1,29 +1,54 @@
 <template>
   <div class="kerwin">
-    <TagSearchArea />
+    <p>4</p>
+    <!-- <TagSearchArea />
     <div style="margin: 20px"></div>
     <documentArea />
     <div style="margin: 20px"></div>
-    <documentAreaWithInfo />
+    <documentAreaWithInfo /> -->
+    <div>
+      <GoogleLogin :callback="callback" />
+      <p>
+        {{ data }}
+      </p>
+    </div>
   </div>
 </template>
 
 <script>
-import TagSearchArea from "@/components/KerwinBricks/TagSearchArea.vue";
-import documentArea from "@/components/KerwinBricks/DCM.vue";
-import documentAreaWithInfo from "@/components/KerwinBricks/DCMwithDate.vue";
+import { ref } from "vue";
+const callback = (response) => {
+  // This callback will be triggered when the user selects or login to
+  // his Google account from the popup
+  console.log("Handle the response", response);
+};
 export default {
   name: "Kerwin",
-  components: { TagSearchArea, documentArea, documentAreaWithInfo },
+  setup() {
+    const data = ref();
+    const callback = (response) => {
+      console.log(response);
+      // data.value = response;
+    };
+
+    return {
+      data,
+      callback,
+    };
+  },
 };
 </script>
 
 <style scoped>
 .kerwin {
-  background-color: #ccc;
+  /* background-color: #ccc;
   height: 200vh;
-  width: 100%;
+  width: 100%; */
   /* margin: 2rem; */
   /* padding: 2rem; */
+}
+p {
+  margin-top: 12px;
+  word-break: break-all;
 }
 </style>

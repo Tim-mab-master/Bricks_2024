@@ -3,6 +3,7 @@
         <span class="el-dropdown-link">
             <el-icon class="icon"><bell/></el-icon>
         </span>
+        
         <template #dropdown>
             <el-dropdown-menu class="dropDown" >
                 <div id="content">
@@ -59,6 +60,7 @@ export default {
 <style scoped>
 
     .dropDown{
+        /* zoom:75%; */
         width: fit-content;
         padding: 12px;
         overflow:auto;
@@ -72,6 +74,7 @@ export default {
 
     .tab{
         position: sticky;
+        top: 0;
         height: 100%;
         /* top: 0; */
 
@@ -81,6 +84,24 @@ export default {
         /* position: absolute; */
         top: 42px;
     }
+    
+    :root{
+        --el-color-primary:#C91F2F !important;
+    }
 
+    @media screen and (min-width: 1024px) and (max-width: 1440px) {
+        /* .dropDown{
+            transform: scale(0.75);
+        } */
+
+        /* :deep(.el-scrollbar) {
+            max-height: 360px;
+        }
+
+        :deep(.el-dropdown-menu.dropDown){
+            width: 100%;
+            height: 100%;
+        } */
+    }
 
 </style>

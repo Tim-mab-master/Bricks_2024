@@ -29,11 +29,8 @@
             <el-icon><list /></el-icon>
             <span>會議記錄</span>
           </template>
-          <!-- <router-link to="/recordCards" class="link"></router-link> -->
-            <el-menu-item index="1-1" >全部</el-menu-item>
-            <!-- <router-link to="/trashBox" class="link"></router-link> -->
-            <el-menu-item index="1-2" >垃圾桶</el-menu-item>
-            <!-- @click="goTrashBox" -->
+            <el-menu-item index="1-1" ><router-link to="/all/cards" class="menuText">全部</router-link></el-menu-item>
+            <el-menu-item index="1-2" ><router-link to="/all/trashBox" class="menuText">垃圾桶</router-link></el-menu-item>
         </el-sub-menu>
         <el-sub-menu index="2" class="menu">
         <template #title>
@@ -55,15 +52,13 @@
     </el-col>
   </el-row>
 
-  </div> <!-- menuBar -->
-  </div> <!-- container -->
+  </div> 
+  </div> 
 </div>
 </template> 
 
 <script>
 import { ref } from 'vue';
-// import {mapState, mapMutations} from 'vuex';
-// import store from '@/store';
 import { useRouter } from 'vue-router';
 
 export default {
@@ -101,7 +96,7 @@ export default {
     const addClicked = (value) =>{
       value = true;
       // emit('showAdd',value);
-      router.push('/meetingRecord');
+      router.push({name: 'meetingRecord'});
     };
 
     const selected = () =>{
@@ -188,7 +183,7 @@ export default {
 
   #addBtn{
     display: flex;
-    width: 168px;
+    width: 99%;
     min-height: 24px;
     max-height: 40px;
     padding: 20px 16px;
@@ -244,6 +239,19 @@ export default {
     background-color: #FAE4E7;
     color:#C91F2F;
   }
-
   
+  .menuText{
+    text-decoration: none;
+    color: black;
+  }
+
+  @media screen and (max-width:1440px) and (min-width: 1240px) {
+    el-col{
+      width: 90%;
+    }
+
+    #sidebar{
+      width: 180px;
+    }
+  }
 </style>
