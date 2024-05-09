@@ -1,0 +1,78 @@
+name: CI
+on:
+  push:
+    branches:
+      - FE_*
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Start Vue.js app
+      run: npm run build
+    
+  create-pull-request-to-dev:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      
+      - name: create pull request
+        run: gh pr create -B FE-DEV -H ${{ github.ref }} --title 'Merge ${{ github.ref }} into FE-DEV' --body 'Created by Github action'
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Merge Pull Request
+        run: |
+          gh pr merge ${{ steps.create-pull-request.outputs.pr-number }} --merge
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+  create-pull-request-to-sit:
+    needs: create-pull-request-to-dev
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      
+      - name: create pull request
+        run: gh pr create -B FE-SIT -H FE-DEV --title 'Merge dev into FE-SIT' --body 'Created by Github action'
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Merge Pull Request
+        run: |
+          gh pr merge ${{ steps.create-pull-request.outputs.pr-number }} --merge
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  create-pull-request-to-uat:
+    needs: create-pull-request-to-sit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+        
+      - name: create pull request
+        run: gh pr create -B FE-UAT -H FE-SIT --title 'Merge dev into FE-UAT' --body 'Created by Github action'
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Merge Pull Request
+        run: |
+          gh pr merge ${{ steps.create-pull-request.outputs.pr-number }} --merge
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
