@@ -19,7 +19,7 @@ jobs:
 
     - name: Run Vue
       run: |
-        cd frontend/forntend
+        cd frontend/frontend
         run serve
     
   create-pull-request-to-dev:
