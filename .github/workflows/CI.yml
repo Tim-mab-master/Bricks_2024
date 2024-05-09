@@ -17,10 +17,6 @@ jobs:
       with:
         node-version: '14'
 
-    - name: Install npm
-      run: |
-        npm install -g npm@latest
-
     - name: Run Vue
       run: |
         cd frontend
