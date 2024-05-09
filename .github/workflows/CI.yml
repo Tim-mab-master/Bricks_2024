@@ -19,7 +19,6 @@ jobs:
 
     - name: Run Vue
       run: |
-        npm cache clean --force
         npm install
         cd frontend
         npm install -g @vue/cli
