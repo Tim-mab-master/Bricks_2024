@@ -19,8 +19,14 @@ jobs:
 
     - name: Install dependencies
       run: npm install
+    
+    - name: Delete existing lockfile
+      run: rm package-lock.json
 
-    - name: Start Vue.js app
+    - name: Regenerate lockfile
+      run: npm install
+
+    - name: Build Vue.js app
       run: npm run build
     
   create-pull-request-to-dev:
