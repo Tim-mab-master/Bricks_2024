@@ -26,6 +26,7 @@ jobs:
         cd frontend
         npm install -g @vue/cli
         npm install --save-dev eslint eslint-plugin-vue
+        npm install element-plus
         cd frontend
         npm i axios
         npm run serve
