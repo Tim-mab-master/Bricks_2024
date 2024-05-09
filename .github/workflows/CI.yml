@@ -19,7 +19,12 @@ jobs:
 
     - name: Run Vue
       run: |
-        cd frontend/frontend
+        npm --version
+        cd frontend
+        npm install -g @vue/cli
+        npm install --save-dev eslint eslint-plugin-vue
+        cd frontend
+        npm i axios
         npm run serve
     
   create-pull-request-to-dev:
