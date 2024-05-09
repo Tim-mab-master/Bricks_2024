@@ -19,14 +19,8 @@ jobs:
 
     - name: Run Vue
       run: |
-        cd frontend
-        npm install -g @vue/cli
-        vue --version
-        npm install --save-dev eslint eslint-plugin-vue
-        npm install element-plus
-        cd frontend
-        npm i axios
-        npm run serve
+        cd frontend/forntend
+        run serve
     
   create-pull-request-to-dev:
     needs: build
