@@ -22,7 +22,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        cd frontend/forntend
+        cd "frontend/forntend"
         npm install
 
     - name: Build Vue.js app
