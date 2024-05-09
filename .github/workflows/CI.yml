@@ -18,15 +18,19 @@ jobs:
         node-version: '14'
 
     - name: Install npm
-      run: npm install -g npm@latest
+      run: |
+        npm install -g npm@latest
 
     - name: Install dependencies
       run: |
         cd frontend/frontend
+        npm cache clean --force
         npm install
 
     - name: Build Vue.js app
-      run: npm run build
+      run: |
+        cd frontend/frontend
+        npm run build
     
   create-pull-request-to-dev:
     needs: build
