@@ -21,6 +21,7 @@ jobs:
       run: |
         cd frontend
         npm install -g @vue/cli
+        vue --version
         npm install --save-dev eslint eslint-plugin-vue
         npm install element-plus
         cd frontend
