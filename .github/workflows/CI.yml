@@ -22,10 +22,8 @@ jobs:
 
     - name: Install dependencies
       run: |
+        cd frontend/forntend
         npm install
-        echo "Node.js version: $(node -v)"
-        echo "npm version: $(npm -v)"
-        npm list
 
     - name: Build Vue.js app
       run: npm run build
