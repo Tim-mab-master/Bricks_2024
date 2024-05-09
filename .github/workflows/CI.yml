@@ -19,6 +19,7 @@ jobs:
 
     - name: Run Vue
       run: |
+        npm install -g npm
         cd frontend
         npm install -g @vue/cli
         npm install --save-dev eslint eslint-plugin-vue
