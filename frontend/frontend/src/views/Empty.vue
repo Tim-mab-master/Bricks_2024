@@ -101,10 +101,8 @@ export default {
   bottom: 0;
 }
 .content {
-  /* grid-area: content; */
   position: fixed;
   left: 600px;
-  /* right: 0; */
   top: 30vh;
   bottom: 0;
 }

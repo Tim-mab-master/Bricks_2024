@@ -1,12 +1,13 @@
-<template>
-    <el-dropdown trigger="click">
+<template >
+    <el-dropdown trigger="click" class="all">
         <span class="el-dropdown-link">
             <div id="userInfo">
                 <el-avatar shape="square" :size="size" :src=squareUrl id="avatar" />
                 <p>{{ user_name }}</p>
             </div>
         </span>
-        <template #dropdown>
+        <template  #dropdown >
+        <div id="all">
           <el-dropdown-menu id="dropDown">
             <el-dropdown-item :icon="Plus" class="firstDrop">
                 <div id="userInfoInside">
@@ -35,6 +36,7 @@
                 </div>
             </el-dropdown-item>
           </el-dropdown-menu>
+          </div>
         </template>
       </el-dropdown>    
     
@@ -56,6 +58,9 @@ export default {
 </script>
 
 <style scoped>
+    #all{
+        /* zoom:75%; */
+    }
     #userInfo{
         display: flex;
         /* padding: 0px 0px; */
@@ -93,6 +98,7 @@ export default {
     }
 
     .dropDown .text{
+        /* zoom:75%; */
         display: block;
         color: var(--base-color-text-el-text-color-primary, #303133);
         /* CN regular/body1-Regular */
@@ -130,5 +136,13 @@ export default {
 
     .material-icons { 
         font-size: 18px; 
+    }
+
+    @media screen and (max-width: 1440px) and (min-width:1240px) {
+        /* #userInfoInside, .firstDrop, .dropDown, .userInfo, .firstDrop, #dropDown{
+            transform: scale(0.8);
+            transform-origin: left top;
+        } */
+
     }
 </style>

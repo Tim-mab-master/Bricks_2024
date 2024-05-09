@@ -329,4 +329,19 @@ export default {
 .taglist{
  
 }
+
+@media screen and (min-width: 1024px) and (max-width: 1440px) {
+  .tagUnchecked, .tagChecked{
+    font-size: 12px;
+    margin: 4px;
+  }
+  .demo-collapse .el-collapse-item{
+    line-height: 20px;
+    padding: 12px;
+    font-size: 12px;
+  }
+  .tagSearchArea .tagTypingArea .el-select {
+     font-size: 10px;
+  }
+}
 </style>

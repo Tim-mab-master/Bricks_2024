@@ -1,14 +1,13 @@
 <template>
-    <div class="karen">
   
       <div class="button-container">
         <el-backtop visibility-height="0" class="backtop">
                 <div id="backtop">
                     <el-icon class="icon"><upload/></el-icon>
                 </div>
-                </el-backtop>
+              </el-backtop>
             
-            <el-button type="button" @click="showBasicInfo"><el-icon><Edit /></el-icon>會議基本資訊</el-button>
+            <el-button type="button" @click="showBasicInfo" class="button"><el-icon><Edit /></el-icon>會議基本資訊</el-button>
             <el-button :plain="true" @click="copyLinkBtn"><el-icon><Link /></el-icon></el-button>
       </div>
       <div class="form-container">
@@ -176,7 +175,6 @@
       <!-- <BasicInfo /> -->
       <!-- <Delete /> -->
 
-    </div>
   </template>
   
   <script >
@@ -245,22 +243,6 @@
         showOverlay: false,
         value: '',
         placeholder: "輸入會議名稱",
-
-        // height: '30px',
-        // basicComponent: null,
-        // date: '',
-        // value2: [
-        //   new Date(2016, 9, 10, 8, 40),
-        //   new Date(2016, 9, 10, 9, 40),
-        // ],
-
-        // height: '30px',
-        // basicComponent: null,
-        // value1: '',
-        // value2: [
-        //   new Date(), 
-        //   new Date(),
-        // ],
 
         valueA: [],
         optionsA: [],
@@ -387,10 +369,6 @@
     width: 100%;
     
   }
-
-  /* .karen{
-    position: relative;
-  } */
   
   .form-container {
     border-radius: 4px;
@@ -408,7 +386,7 @@
     width: 73px;
     text-align: left;
     font-size: 15px;
-    
+    font-weight: 700;
     border: 1px solid #ccc;
     background-color: #EBEEF5; /* 添加背景顏色 */
   }
@@ -417,6 +395,8 @@
     padding: 8px;
     border: 1px solid #ccc;
     width: 837px;
+    background-color: white;
+
   }
   
   .text-input {
@@ -429,33 +409,13 @@
   
   
   .button-container {
-      /* position: absolute; */
       display: flex;
       height:40px;
       width:910px;
       margin-bottom: 14px;
-      margin-left: 696px;
-      /* top: 20px;
-      left: 248px; */
-      /* margin-bottom: 0px; */
+      justify-content: flex-end;
+      
   }
-   /* .button-container button:first-child {
-     margin-left: 400px;
-      width: 50px;
-      background-color: white;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-  } */
-  /* .button-container button:nth-child(2) {
-    margin-right: 20px;
-    width: 140px;
-    background-color: white;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    
-  }  */
   .button-container button:nth-child(2) .el-icon {
     margin: 10px; /* 设置图标与文本之间的右边距 */
   }
@@ -548,8 +508,8 @@
     padding: 9px 16px;
     justify-content: left;
     position: fixed;
-    left: 255px;
-    top: 70px;
+    /* left: 255px; */
+    /* top: 70px; */
  }
  .input-cell {
   text-align: left;
@@ -557,5 +517,31 @@
 .el-tag {
   margin-left: 5px;
 }
+
+@media screen and (min-width: 1024px) and (max-width: 1440px) {
+    .form-container, .button-container{
+      /* width: 60vw; */
+      width: 685px;
+      transform-origin: left top;
+      font-size: 12px;
+    }
+    /* .button-container{
+      margin-bottom: 0px;
+    } */
+    .form{
+      transform: scale(0.75);
+      top: -140px;
+    }
+    .button-container{
+      margin-bottom: 5px;
+    }
+    .left-bar, .text-input{
+      font-size: 12px;
+      padding: auto 9px;
+    }
+    .button{
+      font-size: 12px;
+    }
+  }
 
   </style>
