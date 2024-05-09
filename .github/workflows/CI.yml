@@ -21,16 +21,14 @@ jobs:
       run: |
         npm install -g npm@latest
 
-    - name: Install dependencies
+    - name: Run Vue
       run: |
-        cd frontend/frontend
-        npm cache clean --force
-        npm install
-
-    - name: Build Vue.js app
-      run: |
-        cd frontend/frontend
-        npm run build
+        cd frontend
+        npm install -g @vue/cli
+        npm install --save-dev eslint eslint-plugin-vue
+        cd frontend
+        npm i axios
+        npm run serve
     
   create-pull-request-to-dev:
     needs: build
