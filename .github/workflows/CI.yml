@@ -24,7 +24,7 @@ jobs:
         npm install --save-dev eslint eslint-plugin-vue
         cd frontend
         npm i axios
-        npm run serve
+        npm run serve &
   
   create-pull-request-to-dev:
     needs: build
