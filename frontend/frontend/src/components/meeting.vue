@@ -530,7 +530,9 @@
     } */
     .form{
       transform: scale(0.75);
-      top: -140px;
+      /* top: -140px; */
+      transform-origin: left top;
+      /* top: 0.01vh; */
     }
     .button-container{
       margin-bottom: 5px;
