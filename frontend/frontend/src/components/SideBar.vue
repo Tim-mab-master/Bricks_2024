@@ -245,13 +245,4 @@ export default {
     color: black;
   }
 
-  @media screen and (max-width:1440px) and (min-width: 1240px) {
-    el-col{
-      width: 90%;
-    }
-
-    #sidebar{
-      width: 180px;
-    }
-  }
 </style>

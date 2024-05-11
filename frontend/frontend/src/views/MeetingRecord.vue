@@ -1,33 +1,31 @@
 <template>
-  <!-- <div class="sharon" @contextmenu.prevent> -->
+    <!-- <div class="all"> -->
       <side-bar class="sideBar"></side-bar>
-       
-    <div class="all">
-    <div class="navAndCont"  id="new" v-if="showedInfo">
       <nav-bar-main class="navBar"></nav-bar-main>
-      
-      <div :class="meetingClass">
-        <div class="info"><meeting ></meeting></div>
-        <div class="textBlock">
-          <text-block v-for="cart in quantity" :key="cart" @add_cart="add_block"/>
-        </div> 
-      </div>
-      <!-- 標籤 -->
-      <tag-place class="tags" />
-      
-      
-    </div>
     
-
-    <div class="result" v-else>    
-            <div class="toolBar">
+      <div class="navAndCont"  id="new" >
+              
+        <div :class="meetingClass" v-if="showedInfo">
+          <meeting ></meeting>
+          <div class="textBlock">
+            <text-block v-for="cart in quantity" :key="cart" @add_cart="add_block"/>
+          </div> 
+          
+        </div>
+        <div class="result" v-else>    
+          <div class="toolBar">
             <ordering/>
             <sort/>
-        </div>
+          </div>
             <document-with-info v-for="item in 10" :key="item"/>
       </div>
+       <!-- 標籤 -->
+       <tag-place class="tags" /> 
+      </div>
+    
+      
 
-    </div>
+    <!-- </div> -->
     <!-- 新增、會議記錄主頁 -->
     
     
@@ -72,8 +70,7 @@ export default {
   setup(props,{emit}) {
     const meetingClass = ref("meeting");
     const activeOption = ref(null);  
-    const isShowed = ref(false);  
-    const tagShowed = ref(false);
+    const isShowed = ref(false); 
     const router = useRouter();
     const currentActive = ref("1-1");
     const showedInfo = ref(true);
@@ -84,17 +81,6 @@ export default {
     //   recordID.value = this.router.query.cardId;
     //   console.log(recordID.value);
     // });
-
-    const showTags = () =>{
-      // console.log(recordID);
-      tagShowed.value = !tagShowed.value;
-      if(tagShowed.value === true){
-        meetingClass.value = "showingClass";
-      }
-      else{
-        meetingClass.value = "meeting";
-      }
-    }
 
     const showInfo = (value) =>{
       showedInfo.value = value;
@@ -109,8 +95,6 @@ export default {
       isShowed,
       // StopShowing,
       // show,
-      showTags,
-      tagShowed,
       meetingClass,
       // nextPage,
       currentActive,
@@ -128,9 +112,9 @@ export default {
 </script>
 
 <style scoped>
-.all{
-  background-color: #F2F3F5;
-}
+/* #{
+  overflow-x: hidden;
+} */
   .navBar{
     position: relative;
     top: 0;
@@ -148,39 +132,39 @@ export default {
  }
  .navAndCont{
   background-color: #F2F3F5;
-  position: fixed;
-  overflow: scroll;
+  display: flex;
+  position: relative;
   
-  left: 0;
-  top: 0;
+  left: 200px;
+  top: 48px;
   right: 0;
   bottom: 0;
-  /* width: 88vw;  */
-  /* height: 100%;  */
-  
+  height: 100vh;
+  width: calc(100vw - 200px);
  }
  .info{
   position: relative;
  }
-
  .textBlock{
   position: relative;
   top:8px;
   left: -65px;
   display: grid;
   grid-row-gap: 8px;
+  padding-bottom: 10px;
   /* gap: 8px; */
  }
 
  .meeting{
   position: relative;
-  top: 68px;
+  top: 20px;
   left:10%;
   width: 50%;
   /* background-color: #F2F3F5; */
   /* width:200px;  */
   /* right:0; */
   /* width: auto; */
+  padding-bottom: 10px;
  }
 
  .showingClass{
@@ -230,21 +214,17 @@ export default {
     width: 1fr;
  }
 .tags{
-  position: relative;
-  right: 32px;
+  position: absolute;
+  margin-left: 100px;
+  left: 32px;
   top: 68px;
 }
 
+
  @media screen and (min-width: 1024px) and (max-width: 1440px){
-  .navAndCont, .navBar{
-    left: 180px;
-  }
-  /* display: block; */
   /* .tags{
-    position: absolute;
-    right: 32px;
-    top: 68px;
-    z-index: 10;
+    margin-left: 400px;
+    margin-top: 68px;
   } */
   
 
