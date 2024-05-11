@@ -1,6 +1,6 @@
 import { createStore } from "vuex";
 
-const store = createStore({
+export default createStore({
   state: {
     activeIndex: "/",
     //        isLogin: false,
