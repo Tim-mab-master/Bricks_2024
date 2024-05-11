@@ -96,7 +96,7 @@
       </div>
     </div>
 
-    <div class="bottom">
+    <div class="bottom" v-if="!scroll">
       <a href="" class="privacy"
         ># <span style="text-decoration: underline">隱私權政策</span></a
       >
@@ -643,15 +643,15 @@ export default {
   }
 
   .privacy {
-    left: 405px;
+    left: 8%;
   }
 
   .contact {
-    left: 516px;
+    left: 20%;
   }
 
   .photo {
-    right: 405px;
+    right: 10%;
   }
 }
 
@@ -661,15 +661,15 @@ export default {
   }
 
   .privacy {
-    left: 285px;
+    left: 8%;
   }
 
   .contact {
-    left: 396px;
+    left: 20%;
   }
 
   .photo {
-    right: 285px;
+    right: 10%;
   }
 }
 
@@ -690,7 +690,7 @@ export default {
   }
 
   .photo {
-    left: 60%;
+    right: 10%;
   }
 }
 

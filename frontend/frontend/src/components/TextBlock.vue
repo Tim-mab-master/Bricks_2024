@@ -42,10 +42,11 @@
         :disabled="isCartDisabled" @locked="isLocked">+ 組別</el-button>
     </div>
     </div>
+    <div v-if="isShowed" id="rightClick" ref = "rightClick" @click="unShow()"><EditTextara @locked="isLocked"/></div>        
+    <div v-if="isUnlockShowed" id="rightClick" ref = "rightClick" @click="unShow()"><Unlock @unlocked="unLocked"/></div>
   </div>
 
-  <div v-if="isShowed" id="rightClick" ref = "rightClick" @click="unShow()"><EditTextara @locked="isLocked"/></div>        
-  <div v-if="isUnlockShowed" id="rightClick" ref = "rightClick" @click="unShow()"><Unlock @unlocked="unLocked"/></div>        
+          
 
 </template>
 
@@ -97,7 +98,7 @@ setup(props, { emit }) {
   const show = () => {
     if (isCartDisabled) {
       console.log(isCartDisabled.value);
-      isShowed.value = true;
+      isShowed.value = !isShowed.value;
     } else {
       isUnlockShowed.value = true;
     }
@@ -176,6 +177,7 @@ setup(props, { emit }) {
   width: 890px;
   padding: 10px;
   border: 1px solid #ccc; /* 大框框的边框样式，你可以根据需要调整颜色和样式 */
+  background-color: white;
 }
 .textarea-container {
   height: auto;
@@ -184,7 +186,6 @@ setup(props, { emit }) {
 }
 
 .textArea {
-  
   min-height: 50px;
   font-size: 15px;
   width: 100%;
@@ -238,10 +239,20 @@ width: 60px;
   left: 970px;
 }
 #rightClick{
-  position: absolute;
-  top: 50px;
-  left: 920px;
+  position: relative;
+  top: 0px;
+  left: 10px;
   z-index: 10;
+}
+
+@media screen and (min-width: 1024px) and (max-width: 1440px){
+  .additional-textarea{
+    width: 665px;
+    
+  }
+  .textArea, #tag {
+    font-size: 12px;
+  }
 }
 
 </style>
