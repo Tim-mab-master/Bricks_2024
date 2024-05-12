@@ -183,6 +183,7 @@
               <input
                 class="cart_title_input"
                 placeholder="新增類型"
+                disabled="disabled"
                 @focus="new_type_focus"
                 @blur="new_type_blur"
                 @keyup.enter="add_a_cart"
