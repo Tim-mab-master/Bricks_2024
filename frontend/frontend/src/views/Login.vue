@@ -164,6 +164,7 @@ export default {
       checked: false,
       account: "",
       password: "",
+      authorization: "",
       errorMessage: "",
       errorTime: 0,
       token: "",
@@ -196,7 +197,7 @@ export default {
         console.log("前端block");
         this.error = true;
       } else {
-        const path = "http://35.194.196.179:5000/bricks_login";
+        const path = "http://104.199.143.218:5000/bricks_login";
         const user = {
           user_email: this.account,
           user_password: this.password,
@@ -218,9 +219,10 @@ export default {
             if (this.decode_token_json.status == "success") {
               this.errorTime = 0;
               console.log("登入成功");
+
               this.$router.push({
                 name: "PersonalHomepage",
-                params: { user_email: this.decode_token_json.user_email },
+                // params: { user_email: this.decode_token_json.user_email },
               });
             } else {
               // this.$refs.account.style = "border-color : #e03939";
@@ -256,34 +258,27 @@ export default {
           // 確認用戶是否存在資料庫
           if (res.data.status === "success") {
             console.log("yes");
+            alert("登入成功");
+            this.authorization = res.headers.Authorization;
+            console.log(this.authorization);
             this.$router.push({
-              path: "personalHomepage",
+              name: "personalHomepage",
               params: { user_id: "25" },
             });
             if (this.checked) {
               console.log("keeplogin");
-              // localStorage.setItem("account", this.account);
-              // localStorage.setItem("Flag", "isLogin");
-              // that.$store.dispatch("checked", true);
-              // that$.$router.push("/");
             }
           } else {
             console.log("no");
+            alert("登入失敗");
           }
           console.log(res);
-          alert("登入成功");
         })
         .catch((error) => {
           // 請求失敗則觸發/執行這個 function 函式
           console.log(error);
           alert("登入失敗");
         });
-      console.log("goToPersonalPage");
-
-      // this.$router.push({
-      //   name: "personalHomepage",
-      //   params: {},
-      // });
     },
     decodeToken(token) {
       // 获取Token的第二部分（Payload）

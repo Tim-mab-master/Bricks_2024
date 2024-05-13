@@ -1,46 +1,43 @@
 <template>
-  <div class="sharon" @contextmenu.prevent>
-      <!-- <side-bar class="sideBar"></side-bar>-->
-      <nav-bar-main class="navBar"></nav-bar-main> 
-
-    <!-- 新增、會議記錄主頁 -->
-    <div class="navAndCont"  id="new" v-if="showedInfo">
-      <!-- <el-backtop visibility-height="0" class="backtop">
-      <div id="backtop">
-          <el-icon class="icon"><upload/></el-icon>
+    <!-- <div class="all"> -->
+      <side-bar class="sideBar"></side-bar>
+      <nav-bar-main class="navBar"></nav-bar-main>
+    
+      <div class="navAndCont"  id="new" >
+        <div class="tag">
+          <!-- 標籤 -->
+          <tag-place @show="showInfo"/>
         </div>
-      </el-backtop> -->
-      <div :class="meetingClass">
-        <div class="info"><meeting ></meeting></div>
-        <div class="textBlock">
-          <text-block v-for="cart in quantity" :key="cart" @add_cart="add_block"/>
-      </div>
+           
         
-      </div>
-    </div>
-    <div class="result" v-else>    
-            <div class="toolBar">
+          <div :class="meetingClass" v-if="showedInfo">
+          
+          <meeting ></meeting>
+          <div class="textBlock">
+            <text-block v-for="cart in quantity" :key="cart" @add_cart="add_block"/>
+          </div> 
+          
+        </div>
+        <div class="result" v-else>    
+          <div class="toolBar">
             <ordering/>
             <sort/>
-        </div>
+          </div>
             <document-with-info v-for="item in 10" :key="item"/>
       </div>
-    <el-backtop visibility-height="0" class="backtop">
-      <div id="backtop">
-          <el-icon class="icon"><upload/></el-icon>
-        </div>
-      </el-backtop>
+      
+      </div>
+    
       
 
-      <!-- 標籤 -->
-      <div trigger="click" class="tagsPlace" @click="showTags">
-        <span class="el-dropdown-link">
-          標籤<el-icon class="el-icon--right"><arrow-down /></el-icon>
-        </span>
-      </div>
-      <tag-search-area v-show="tagShowed" class="tagInside" @showBlock="showInfo"></tag-search-area>
+    <!-- </div> -->
+    <!-- 新增、會議記錄主頁 -->
+    
+    
       
-  </div>
+      
+      
+  <!-- </div> -->
 </template>
 
 
@@ -51,7 +48,7 @@ import SideBar from "../components/SideBar.vue";
 import NavBarMain from '../components/NavBarMain.vue';
 import meeting from '../components/meeting.vue';
 import TextBlock from "@/components/TextBlock.vue";
-import TagSearchArea from '../components/KerwinBricks/TagSearchArea.vue';
+import TagPlace from '../components/TagPlace.vue';
 import { useRouter } from "vue-router";
 import Ordering from '../components/SharonBricks/Ordering.vue';
 import sort from '../components/SharonBricks/Sort.vue';
@@ -66,7 +63,7 @@ export default {
     NavBarMain,
     meeting,
     TextBlock,
-    TagSearchArea,
+    TagPlace,
     sort,
     Ordering,
     DocumentWithInfo,
@@ -78,8 +75,7 @@ export default {
   setup(props,{emit}) {
     const meetingClass = ref("meeting");
     const activeOption = ref(null);  
-    const isShowed = ref(false);  
-    const tagShowed = ref(false);
+    const isShowed = ref(false); 
     const router = useRouter();
     const currentActive = ref("1-1");
     const showedInfo = ref(true);
@@ -90,17 +86,6 @@ export default {
     //   recordID.value = this.router.query.cardId;
     //   console.log(recordID.value);
     // });
-
-    const showTags = () =>{
-      // console.log(recordID);
-      tagShowed.value = !tagShowed.value;
-      if(tagShowed.value === true){
-        meetingClass.value = "showingClass";
-      }
-      else{
-        meetingClass.value = "meeting";
-      }
-    }
 
     const showInfo = (value) =>{
       showedInfo.value = value;
@@ -115,8 +100,6 @@ export default {
       isShowed,
       // StopShowing,
       // show,
-      showTags,
-      tagShowed,
       meetingClass,
       // nextPage,
       currentActive,
@@ -134,9 +117,9 @@ export default {
 </script>
 
 <style scoped>
- .sharon{
-    position: absolute;
- }
+/* #{
+  overflow-x: hidden;
+} */
   .navBar{
     position: relative;
     top: 0;
@@ -154,70 +137,47 @@ export default {
  }
  .navAndCont{
   background-color: #F2F3F5;
-  position: absolute;
-  left: 200px;
-  top: 0;
-  right: 0;
+  /* display: flex; */
+  position: fixed;
+  overflow-y: scroll;
   
+  left: 200px;
+  top: 48px;
+  height: 100vh;
+  width: calc(100vw - 200px);
  }
  .info{
   position: relative;
  }
-
  .textBlock{
   position: relative;
   top:8px;
   left: -65px;
   display: grid;
   grid-row-gap: 8px;
+  padding-bottom: 10px;
   /* gap: 8px; */
+  background-color: #F2F3F5;
  }
 
  .meeting{
-  position: relative;
-  top: 68px;
-  left:248px;
+  position: absolute;
+  display: inline-block;
+  top: 20px;
+  margin-bottom: 20px;
+  left:10%;
+  width: calc(100vw - 200px);
+  /* background-color: #F2F3F5; */
   /* width:200px;  */
   /* right:0; */
   /* width: auto; */
- }
-
- .tagsPlace{
-  position: absolute;
-  left: 97rem;
-  width:65px;
-  top: 68px;
-  border-radius: var(--radius-button-large-radius, 4px);
-  border: 1px solid var(--base-color-border-el-border-color, #DCDFE6);
-  background: #FFF;
-  padding: 4px 16px;
- }
-
- .el-dropdown-link{
-  display: flex;
-  gap: 8px;
-  cursor: pointer;
- }
-
- .el-dropdown-link{
-  color: #C91F2F;
- }
-
- .tagInside{
-  position: absolute;
-  left: 1280px;
-  top: 114px;
-  z-index: 10;
-  width: 372px;
- }
-
- .tagMenu{
-  width: 372px;
+  padding-bottom: 10px;
+  background-color: none;
  }
 
  .showingClass{
   position: absolute;
-  top: 68px;
+  top: 20px;
   /* right: 430px; */
   left: 66px;
  }
@@ -228,15 +188,15 @@ export default {
     /* flex-direction: row; */
     /* flex-wrap: wrap; */
     row-gap: 8px;
-    top: 68px;
+    top: 20px;
     /* margin-top: 128px; */
     /* width: 572px; */
-    left:246px;
+    left:46px;
  }
 
- .backtop{
+ /* .backtop{
     position: fixed;
- }
+ } */
 
  #backtop{
     background-color: var(--el-bg-color-overlay);
@@ -245,8 +205,6 @@ export default {
     color: #C91F2F;
     padding: 9px 16px;
     justify-content: left;
-    /* position: relative; */
-    /* left: 255px; */
     top: fixed(70px);
  }
 
@@ -257,16 +215,32 @@ export default {
  .toolBar{
     display:flex;
     gap: 12px;
-    /* position: absolute; */
     top: 68px;
-    /* right:0; */
     margin-bottom: 12px;
     justify-content: right;
     text-align: right;
-    width: 1fr;
-    /* background: #F2F3F5; */
-    /* left: 46px; */
-    /* right: 700px; */
+    /* width: 1fr; */
+ }
+.tag{
+  position: absolute;
+  /* margin-left: 100px; */
+  right: 32px;
+  /* top: 68px; */
+  z-index: 10;
+
+}
+
+
+ @media screen and (min-width: 1024px) and (max-width: 1440px){
+  .tag{
+    right: 32px;
+    top: 20px;
+  }
+  .textBlock{
+    width: 665px;
+  }
+  
+
  }
 
 </style>

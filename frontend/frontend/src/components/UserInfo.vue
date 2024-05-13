@@ -1,5 +1,5 @@
 <template >
-    <el-dropdown trigger="click">
+    <el-dropdown trigger="click" class="all">
         <span class="el-dropdown-link">
             <div id="userInfo">
                 <el-avatar shape="square" :size="size" :src=squareUrl id="avatar" />
@@ -98,6 +98,7 @@ export default {
     }
 
     .dropDown .text{
+        /* zoom:75%; */
         display: block;
         color: var(--base-color-text-el-text-color-primary, #303133);
         /* CN regular/body1-Regular */
@@ -135,5 +136,13 @@ export default {
 
     .material-icons { 
         font-size: 18px; 
+    }
+
+    @media screen and (max-width: 1440px) and (min-width:1240px) {
+        /* #userInfoInside, .firstDrop, .dropDown, .userInfo, .firstDrop, #dropDown{
+            transform: scale(0.8);
+            transform-origin: left top;
+        } */
+
     }
 </style>

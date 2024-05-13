@@ -1,115 +1,152 @@
 <template>
-
-    <div class="navAndCont" id="cards">
+  <div>
+    <side-bar class="side" @update="activeChange"></side-bar>
+    <div v-if="cards.length === 0" class="navAndCont" id="empty">
+      <nav-bar class="navBar"></nav-bar>
+      <empty-back class="content" @showAdd="show"></empty-back>
+    </div>
+    <div v-else class="navAndCont" id="cards">
       <nav-bar-all class="navBar"></nav-bar-all>
       <div class="cards">
-        <!--  -->
-        <meeting-cards v-for="(item,index) in name" :key="index" :recordName = "item.name" :tags="tags[index]" @click="handleCardClick(item.id)" :record_id = "item.id"></meeting-cards>
+        <meeting-cards
+          v-for="card in cards"
+          :key="card.cardID"
+          :recordName="card.name"
+          :tags="card.tags"
+        ></meeting-cards>
       </div>
       <router-view></router-view>
     </div>
-    
+  </div>
 </template>
 
 <script>
-import NavBarAll from '../components/NavBarAll.vue';
-import SideBar from '../components/SideBar.vue';
-import MeetingCards from '../components/MeetingCards.vue';
-import { ref } from 'vue';
-import axios from 'axios';
-import { useRouter } from 'vue-router';
+import NavBar from "../components/NavBar.vue";
+import EmptyBack from "../components/EmptyBack.vue";
+import NavBarAll from "../components/NavBarAll.vue";
+import SideBar from "../components/SideBar.vue";
+import MeetingCards from "../components/MeetingCards.vue";
+import { ref, onBeforeMount, computed } from "vue";
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
+import axios from "axios";
 
 export default {
-    name: 'recordCard',
-    components: {
-        SideBar,
-        NavBarAll,
-        MeetingCards,
-        
-    },
-    setup(props,{emit}){
-        const router = useRouter();
-        const name = ref([{name:"Sprint5_計畫會議", id:1},{name:"Sprint5_demo",id:2}]);
-        const recordName = ref("會議記錄");
-        const projectID = ref("94");//之後要放動態ID
-        const tags = ref([["會議紀錄","API"],[]]);
-        const currentActive = ref("1-1");
-        const handleCardClick = (cardId) => {
+  name: "RecordCard",
+  components: {
+    SideBar,
+    NavBarAll,
+    MeetingCards,
+    EmptyBack,
+    NavBar,
+  },
+  setup(props, { emit }) {
+    const router = useRouter();
+    const store = useStore();
+    const projectID = ref("94"); // 之後要放動態ID
+    const currentID = ref(0);
+
+    const cards = ref([]);
+
+    // const tags = ref([]);
+    // const currentID = ref(0);
+
+    // side bar 作用中的 index
+    const currentActive = ref("1-1");
+    const activeOption = ref(0);
+
+    const project = {
+      project_id: 94,
+    };
+
+    onBeforeMount(() => {
+      console.log("onBeforeMount");
+      axios
+        .post("http://104.199.143.218:5000/get_record_index", project)
+        .then((res) => {
+          console.log(res.data.record);
+          res.data.record.forEach((record) => {
+            const card = {
+              cardID: currentID.value++,
+              name: record.record_name,
+              tags: record.tags,
+            };
+            cards.value.push(card);
+            console.log("cardContent: " + cards);
+          });
+        });
+    });
+
+    const handleCardClick = (cardId) => {
       // 根据卡片点击情况进行路由导航
-            router.push(`/all/cards/meetingRecord/${cardId}`);
-        };
+      router.push(`/all/cards/meetingRecord/${cardId}`);
+    };
 
-        const click = () =>{
-            axios.get("http://35.194.196.179:5000/get_record_index",{params:{"project_id" : 94}}).then(res => {
-            this.name.value.push(res.data.record.record_name);
-            console.log(this.name.value);
-        })
-        .catch((error) => {
-            // Handle error
-            console.error("Error:", "failed");
-        });
-        };
+    const activeChange = () => {
+      activeOption.value = computed(() => store.state.activeIndex);
+    };
 
-        return{
-            currentActive,
-            name,
-            projectID,
-            recordName,
-            tags,
-            handleCardClick,
-            click,
-
-        };
-    },
-    mounted(){
-        axios.get("http://35.194.196.179:5000/get_record_index",{params:{"project_id" : 94}}).then(res => {
-            this.name.value.push(res.data.record.record_name);
-            console.log(this.name.value);
-        })
-        .catch((error) => {
-            // Handle error
-            console.error("Error:", "找不到阿");
-        });
-    }
-
-}
+    return {
+      cards,
+      currentActive,
+      // name,
+      projectID,
+      // recordName,
+      // tags,
+      handleCardClick,
+      activeOption,
+      activeChange,
+    };
+  },
+};
 </script>
 
 <style scoped>
+.navBar {
+  position: absolute;
+  top: 0;
+  left: 200px;
+  right: 0;
+  /* grid-area: navBar; */
+}
+.side {
+  /* grid-area: sideBar; */
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+}
 
-    .navBar{
-    position: absolute;
-    top: 0;
-    left: 200px;
-    right: 0;
-    /* grid-area: navBar; */
- }
- .sideBar{
-    /* grid-area: sideBar; */
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
- }
-
- .cards{
+.cards {
   display: grid;
-  grid-column-gap:16px;
-  grid-row-gap:20px;
+  grid-column-gap: 16px;
+  grid-row-gap: 20px;
   grid-template-columns: 1fr 1fr 1fr 1fr;
   margin: 28px 10vw 28px 28px;
 
   position: absolute;
   top: 48px;
   /* border: 1px; */
- }
- .navAndCont{
-  background-color: #DCDFE6;
+}
+.navAndCont {
+  background-color: #dcdfe6;
   position: absolute;
   left: 200px;
-  width:auto;
+  width: auto;
   top: 0;
   right: 0;
- }
+}
+.content {
+  position: relative;
+  margin: 0 auto;
+  left: 45%;
+  top: 30vh;
+  bottom: 0;
+}
 
+@media screen and (max-width: 1440px) and (min-width: 1024px) {
+  .navAndCont {
+    left: 180px;
+  }
+}
 </style>

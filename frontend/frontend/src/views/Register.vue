@@ -322,14 +322,8 @@ export default {
           this.errorMessage4
         )
       ) {
-        // this.page1 = false;
-        // this.page2 = true;
-
-        // 先測試跳轉頁面並傳輸資料
-        // this.$router.push({ name: 'Register_second', params: { user_id: 111 } });
-
         console.log("success");
-        const path = "http://35.194.196.179:5000/register";
+        const path = "http://104.199.143.218:5000/register";
         const user = {
           user_email: this.email,
           user_password: this.password1,
@@ -348,9 +342,10 @@ export default {
               this.userId = res.data.user_id;
               console.log(this.userId);
               console.log("註冊成功");
+              alert("註冊成功");
               this.$router.push({
-                name: "Register_second",
-                params: { user_id: this.userId },
+                path: "/questionnaire",
+                // params: { user_id: this.userId },
               });
             } else {
               // this.$refs.account.style = "border-color : #e03939";
@@ -742,7 +737,7 @@ export default {
   height: 33.75px;
   border: 1.5px solid #c7c2c2;
   border-radius: 12px;
-  font-size: 18px;
+  font-size: 16px;
   font-family: "Noto Sans TC";
   font-weight: 500;
   letter-spacing: 1.25px;

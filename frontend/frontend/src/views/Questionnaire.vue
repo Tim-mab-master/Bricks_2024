@@ -1,13 +1,13 @@
 <template>
   <div style="width: 100%; position: absolute; left: 0; top: 0">
     <div class="nav">
-      <a href="./homepage_2">
+      <a href="./homepage">
         <img src="../assets/brickslogo.svg" alt="" />
       </a>
       <div class="tribtn">
         <a href="" class="btn">試用</a>
         <a
-          href="./login_2"
+          href="./login"
           class="btn nav_login_btn"
           style="
             background-color: #b82c30;
@@ -16,10 +16,25 @@
           "
           >登入</a
         >
-        <a href="./register_2" class="btn" style="margin-right: 0px">註冊</a>
+        <a href="./register" class="btn" style="margin-right: 0px">註冊</a>
       </div>
     </div>
     <div class="bg">
+      <div class="warning">
+        <Transition name="errorIn">
+          <el-alert
+            title="未選取使用用途"
+            v-if="warningPurpose"
+            type="error"
+            show-icon /></Transition
+        ><Transition name="errorIn">
+          <el-alert
+            title="未選取您的身分"
+            v-if="warningIdentity"
+            type="error"
+            show-icon
+        /></Transition>
+      </div>
       <div class="middle">
         <p class="title">註冊</p>
         <div class="select">
@@ -164,7 +179,7 @@
           </div>
         </div>
         <div class="next">
-          <div class="skip">
+          <div class="skip" @click="skip">
             <div>略過問卷</div>
           </div>
           <div class="complete">
@@ -221,6 +236,8 @@ export default {
       otherTool: [],
       userId: this.$route.params.user_id,
       user_email: "",
+      warningPurpose: false,
+      warningIdentity: false,
     };
   },
   methods: {
@@ -264,6 +281,11 @@ export default {
         this.otherTool.push("其他");
       }
     },
+    skip() {
+      this.$router.push({
+        name: "login",
+      });
+    },
     complete() {
       this.question_1_checked();
       this.question_3_checked();
@@ -277,43 +299,57 @@ export default {
       console.log(user_survey);
     },
     complete_btn() {
-      const path = "http://34.81.186.58:5000/register/survey";
+      const path = "http://104.199.143.218:5000/bricks_login";
       this.question_1_checked();
       this.question_3_checked();
-      const user_survey = {
-        user_id: this.userId,
-        user_purpose: this.purpose,
-        user_identity: this.identity,
-        user_otherTool: this.otherTool,
-      };
-      // console.log(user);
-      console.log(user_survey);
+      if (this.purpose.length == 0) {
+        console.log("wPurpose");
+        this.warningPurpose = true;
+      }
+      if (this.identity === "") {
+        console.log("wIdentity");
+        this.warningIdentity = true;
+      }
+      if (
+        this.purpose.length !== 0 &&
+        this.otherTool.length !== 0 &&
+        this.identity !== ""
+      ) {
+        const user_survey = {
+          user_id: this.userId,
+          user_purpose: this.purpose,
+          user_identity: this.identity,
+          user_otherTool: this.otherTool,
+        };
+        // console.log(user);
+        console.log(user_survey);
 
-      // 不確定要不要清空
-      // this.userId = "";
-      // this.purpose = [];
-      // this.identity = "";
-      // this.otherTool = [];
-      axios
-        .post(path, user_survey)
-        .then((res) => {
-          console.log("有成功post", res);
-          if (res.data.status == "success") {
-            this.user_email = res.data.user_email;
-            console.log("email ", res.data.user_email);
-            // console.log(user_survey);
-            this.$router.push({
-              name: "Personal_homepage",
-              params: { user_email: this.user_email },
-            });
-          } else {
-            console.log(res.data.user_email);
-            console.log("survey: ", this.user_survey);
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+        // 不確定要不要清空
+        // this.userId = "";
+        // this.purpose = [];
+        // this.identity = "";
+        // this.otherTool = [];
+        axios
+          .post(path, user_survey)
+          .then((res) => {
+            console.log("有成功post", res);
+            if (res.data.status == "success") {
+              this.user_email = res.data.user_email;
+              console.log("email ", res.data.user_email);
+              // console.log(user_survey);
+              this.$router.push({
+                name: "Personal_homepage",
+                params: { user_email: this.user_email },
+              });
+            } else {
+              console.log(res.data.user_email);
+              console.log("survey: ", this.user_survey);
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
     },
   },
   // watch: {
@@ -438,6 +474,32 @@ export default {
   left: 50%;
   transform: translate(-50%);
   /* border: #120405 2px solid; */
+}
+.warning {
+  /* border: 2px solid black; */
+  width: 250px;
+  height: auto;
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  bottom: 20px;
+  right: 10px;
+  font-family: "Noto Sans TC";
+  z-index: 100;
+}
+.warning .el-alert {
+  border-radius: 10px;
+  margin: 14px 0 0;
+  height: 38px;
+  padding-left: 10px;
+  font-size: 8px;
+}
+
+.errorIn-enter-active {
+  transition: opacity 0.5s ease;
+}
+.errorIn-enter-from {
+  opacity: 0;
 }
 
 @media screen and (min-width: 1920px) {
@@ -616,7 +678,7 @@ export default {
 
 .next {
   width: 100%;
-  height: 10vh;
+  height: 50px;
   position: relative;
   top: 24px;
 }
@@ -645,6 +707,7 @@ export default {
 
 .skip div:hover {
   background-color: #f2eeee;
+  cursor: pointer;
 }
 
 .skip div:active {
@@ -663,6 +726,7 @@ export default {
 
 .complete div:hover {
   background-color: #d48083 !important;
+  cursor: pointer;
 }
 
 .complete div:active {

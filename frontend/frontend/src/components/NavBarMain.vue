@@ -44,7 +44,7 @@ export default {
     #navBar{
         z-index: 5;
         position: fixed;
-        left: 200px;
+        /* left: 200px; */
         display: flex;
         width: auto;
         height: 48px;
@@ -65,6 +65,7 @@ export default {
         top: 0;
         padding: 12px 0 12px 16px;
         font-size: 14px;
+        width: auto;
     }
     #breadCrumb #first{
         color: #909399;
@@ -85,7 +86,7 @@ export default {
         justify-content: center;
         align-items: center;
         /* position: absolute; */
-        margin-left: 420px;
+        margin-left: 30%;
     }
 
     #meetingName #edit{
@@ -158,6 +159,9 @@ export default {
     #userInfo{
         position: inherit;
         /* right: 16px; */
+    }
+    @media screen and (max-width: 1440px) and (min-width:1240px) {
+        
     }
 
 </style>
