@@ -1212,7 +1212,7 @@ export default {
 /* 新增專案的框框 起點 */
 .add_proj_box {
   width: 344px;
-  height: 524px;
+  height: 500px;
   /* width: calc(344px * 0.9);
   height: calc(524px * 0.9); */
   position: fixed;
@@ -1311,7 +1311,7 @@ export default {
 
 .add_proj_name {
   width: 278px;
-  height: 38px;
+  height: 34px;
   border: 1px solid #c7c2c2;
   border-radius: 12px;
   font-size: 16px;
@@ -1355,7 +1355,7 @@ export default {
 
 .add_proj_type {
   width: 278px;
-  height: 38px;
+  height: 34px;
   border: 1px solid #b8b8b8;
   border-radius: 12px;
   position: relative;
@@ -1388,8 +1388,8 @@ export default {
   box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3), 0px 2px 15px rgba(0, 0, 0, 0.15);
   border-radius: 14px;
   position: absolute;
-  top: 396px;
-  left: 86px;
+  top: 320px;
+  left: 320px;
   z-index: 3;
   background-color: white;
 }
@@ -1522,17 +1522,17 @@ export default {
 }
 .add_proj_build {
   width: 280px;
-  height: 48px;
+  height: 42px;
   border-radius: 14px;
   background-color: #b82c30;
   color: white;
   font-size: 18px;
   font-weight: 500;
-  line-height: 48px;
+  line-height: 40px;
   letter-spacing: 1.25px;
   text-align: center;
   position: relative;
-  top: 170px;
+  top: 166px;
   left: 50%;
   transform: translate(-50%);
   cursor: pointer;
