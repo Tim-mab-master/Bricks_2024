@@ -1,7 +1,7 @@
 <template>
     <div trigger="click" class="tagsPlace" @click="showTags">
         <span class="el-dropdown-link">
-          <span>標籤</span><el-icon class="el-icon--right"><arrow-down /></el-icon>
+          <span class="hidden">標籤</span><el-icon class="el-icon--right"><arrow-down /></el-icon>
         </span>
       </div>
       <tag-search-area v-show="tagShowed" class="tagInside" @showBlock="showInfo"></tag-search-area>
@@ -15,7 +15,7 @@ export default {
     components:{
         TagSearchArea,
     },
-    setup(){
+    setup(props,{emit}){
         const tagShowed = ref(false);
         const showTags = () =>{
             // console.log(recordID);
@@ -27,9 +27,13 @@ export default {
             //     meetingClass.value = "meeting";
             // }
         }
+        const showInfo = (value) =>{
+          emit('show', value);
+        }
         return{
             showTags,
             tagShowed,
+            showInfo,
 
         };
     }
@@ -39,9 +43,10 @@ export default {
 
 <style scoped>
 .tagsPlace{
-  display: block;
+  display: inline-block;
   /* left: 97rem; */
   width:65px;
+  height: 20px;
   /* top: 68px; */
   border-radius: var(--radius-button-large-radius, 4px);
   border: 1px solid var(--base-color-border-el-border-color, #DCDFE6);
@@ -55,6 +60,7 @@ export default {
   top: 20px;
   z-index: 10;
   width: 372px;
+  
 }
 
 .tagMenu{
@@ -71,20 +77,20 @@ export default {
 
 @media screen and (min-width: 1024px) and (max-width: 1440px){
   .el-dropdown-link{
+    font-size: 12px;
     display: flex;
-    flex-direction: column;
+    /* flex-direction: column; */
   }
   .tagsPlace{
-    font-size: 12px;
-    width: 10px;
-    height: 50px;
+    width: fit-content;
+    height: fit-content;
     padding: auto 4px;
   }
   .tagInside{
-    font-size: 10px;
+    font-size: 8px;
   }
   .tagMenu, .tagInside{
-    width: 300px;
+    width: 200px;
   }
 }
 </style>

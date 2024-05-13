@@ -253,6 +253,9 @@ width: 60px;
   .textArea, #tag {
     font-size: 12px;
   }
+  .cart_container{
+    width: fit-content;
+  }
 }
 
 </style>
