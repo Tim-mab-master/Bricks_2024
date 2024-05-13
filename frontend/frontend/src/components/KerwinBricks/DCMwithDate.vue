@@ -252,4 +252,12 @@ line-height: 24px;
     margin-bottom: 10px;
   }
 
+  @media screen and (min-width: 1024px) and (max-width: 1440px) {
+    .cart_container{
+      width: 665px;
+    }
+    .tags{
+      width:98%;
+    }
+  }
 </style>
