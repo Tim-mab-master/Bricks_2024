@@ -128,7 +128,7 @@ export default {
 
 <style scoped>
   #sidebar{
-    z-index: 10;
+    z-index: 100;
     display: flex;
     width: 200px;
     height: 100vh;

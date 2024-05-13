@@ -4,8 +4,14 @@
       <nav-bar-main class="navBar"></nav-bar-main>
     
       <div class="navAndCont"  id="new" >
-              
-        <div :class="meetingClass" v-if="showedInfo">
+        <div class="tag">
+          <!-- 標籤 -->
+          <tag-place @show="showInfo"/>
+        </div>
+           
+        
+          <div :class="meetingClass" v-if="showedInfo">
+          
           <meeting ></meeting>
           <div class="textBlock">
             <text-block v-for="cart in quantity" :key="cart" @add_cart="add_block"/>
@@ -19,8 +25,7 @@
           </div>
             <document-with-info v-for="item in 10" :key="item"/>
       </div>
-       <!-- 標籤 -->
-       <tag-place class="tags" /> 
+      
       </div>
     
       
@@ -132,13 +137,12 @@ export default {
  }
  .navAndCont{
   background-color: #F2F3F5;
-  display: flex;
-  position: relative;
+  /* display: flex; */
+  position: fixed;
+  overflow-y: scroll;
   
   left: 200px;
   top: 48px;
-  right: 0;
-  bottom: 0;
   height: 100vh;
   width: calc(100vw - 200px);
  }
@@ -153,23 +157,27 @@ export default {
   grid-row-gap: 8px;
   padding-bottom: 10px;
   /* gap: 8px; */
+  background-color: #F2F3F5;
  }
 
  .meeting{
-  position: relative;
+  position: absolute;
+  display: inline-block;
   top: 20px;
+  margin-bottom: 20px;
   left:10%;
-  width: 50%;
+  width: calc(100vw - 200px);
   /* background-color: #F2F3F5; */
   /* width:200px;  */
   /* right:0; */
   /* width: auto; */
   padding-bottom: 10px;
+  background-color: none;
  }
 
  .showingClass{
   position: absolute;
-  top: 68px;
+  top: 20px;
   /* right: 430px; */
   left: 66px;
  }
@@ -180,15 +188,15 @@ export default {
     /* flex-direction: row; */
     /* flex-wrap: wrap; */
     row-gap: 8px;
-    top: 68px;
+    top: 20px;
     /* margin-top: 128px; */
     /* width: 572px; */
-    left:246px;
+    left:46px;
  }
 
- .backtop{
+ /* .backtop{
     position: fixed;
- }
+ } */
 
  #backtop{
     background-color: var(--el-bg-color-overlay);
@@ -211,21 +219,26 @@ export default {
     margin-bottom: 12px;
     justify-content: right;
     text-align: right;
-    width: 1fr;
+    /* width: 1fr; */
  }
-.tags{
+.tag{
   position: absolute;
-  margin-left: 100px;
-  left: 32px;
-  top: 68px;
+  /* margin-left: 100px; */
+  right: 32px;
+  /* top: 68px; */
+  z-index: 10;
+
 }
 
 
  @media screen and (min-width: 1024px) and (max-width: 1440px){
-  /* .tags{
-    margin-left: 400px;
-    margin-top: 68px;
-  } */
+  .tag{
+    right: 32px;
+    top: 20px;
+  }
+  .textBlock{
+    width: 665px;
+  }
   
 
  }
