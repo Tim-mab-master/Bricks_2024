@@ -125,15 +125,18 @@
         v-show="show_add_proj_type_list"
         ref="add_proj_type_list"
       >
-        <div class="add_proj_type_option" @click="type_not_choose">未分類</div>
-        <div
-          v-for="(option, index) in add_proj_type_options"
-          :key="index"
-          class="add_proj_type_option"
-          @click="type_choosen(option)"
-        >
-          {{ option }}
+        <!-- <div class="add_proj_type_option" @click="type_not_choose">未分類</div> -->
+        <div class="add_proj_type_option_section">
+          <div
+            v-for="(option, index) in add_proj_type_options"
+            :key="index"
+            class="add_proj_type_option"
+            @click="type_choosen(option)"
+          >
+            {{ option }}
+          </div>
         </div>
+
         <div class="add_proj_type_list_line"></div>
         <input
           type="text"
@@ -153,6 +156,7 @@
         <div class="middle">
           <!-- 專案總覽 -->
           <div class="overview_page" v-show="middle_show_overview_page">
+            <!-- 未分類的專案 -->
             <div class="uncategorized cart" ref="uncategorized">
               <p class="cart_title">未分類</p>
               <div class="title_underline"></div>
@@ -170,29 +174,35 @@
                 >
               </div>
             </div>
+            <!-- 各式類型的專案們，index1代表這個屬於這個類型 -->
             <div v-for="(cart, index1) in carts" :key="index1">
               <div class="cart">
                 <p class="cart_title" style="height: 0px">
                   {{ cart.title_word }}
                 </p>
+                <!-- 那三條橫線(做為可以拖曳的標示) -->
                 <img
                   src="../assets/cart_drag_icon.svg"
                   alt=""
                   class="cart_drag_icon"
                 />
+                <!-- 專案類型的下面的底線 -->
                 <div class="title_underline"></div>
+                <!-- 專案的那個區塊 -->
                 <div class="box_container">
+                  <!-- index2代表index1這個類型之下的專案id -->
                   <div
                     class="box"
                     v-for="(proj_name, index2) in carts[index1].project_box"
                     :key="index2"
                     @contextmenu.prevent="right_click_box"
                   >
-                    {{ proj_name }}
+                    {{ proj_name + "123" }}
                   </div>
                 </div>
               </div>
             </div>
+            <!-- 新增類型 -->
             <div
               class="new_type cart"
               :class="{ new_type_highlight: isFocused }"
@@ -209,6 +219,7 @@
               <div class="title_underline"></div>
               <div class="box_container"></div>
             </div>
+            <!-- 重新命名 + 刪除專案 -->
             <div
               class="right_click_box_overview"
               :style="{ top: mouseTop + 'px', left: mouseLeft + 'px' }"
@@ -237,6 +248,7 @@
                 刪除專案
               </div>
             </div>
+            <!-- 確認刪除視窗 -->
             <div class="delete_confirm" v-show="delete_confirm">
               <div
                 class="close_delete_confirm"
@@ -280,7 +292,7 @@
                 </div>
               </div>
             </div>
-            <div v-for="(cart, index1) in ended_carts" :key="index1">
+            <div v-for="(cart, index1) in carts" :key="index1">
               <div class="cart">
                 <p class="cart_title" style="height: 0px">
                   {{ cart.title_word }}
@@ -294,8 +306,7 @@
                 <div class="box_container">
                   <div
                     class="box"
-                    v-for="(proj_name, index2) in ended_carts[index1]
-                      .project_box"
+                    v-for="(proj_name, index2) in ended_carts[index1]"
                     :key="index2"
                   >
                     {{ proj_name }}
@@ -430,6 +441,9 @@
       </div>
     </div>
   </div>
+  <!-- 
+    carts為所有的專案類型內的專案
+  -->
 </template>
 
 <script>
@@ -439,108 +453,6 @@ import { computed, ref } from "vue";
 import { useStore } from "vuex";
 export default {
   name: "Personal_homepage",
-  // setup(){
-  //   const middle_show_overview_page = true;
-  //   const middle_show_over_page = false;
-  //   const middle_show_trash_page = false;
-  //   const add_proj_show = false;
-  //   const showOverlay = false;
-  //   const add_proj_type = ref('');
-  //   const isFocused = false;
-  //   const carts = [];
-  //   const cart_titles = '';
-  //   const cart_title_input = '';
-  //   const selectOption = 'option1';
-  //   const show_add_proj_type_list = false;
-
-  //   const add_proj_type_arrow = '';
-  //   const add_proj_type_options = [];
-  //   const proj_type = '選擇專案類型';
-  //   const proj_type_color = '#b6aeae';
-  //   const add_proj_type_text = '';
-  //   const add_proj_name = '';
-  //   const add_search = '';
-  //   const uncategorized_projs = [];
-  //   const cart_box_name_list = [];
-  //   const trash_boxes = [];
-  //   const checked_trash_box = [];
-  //   const recover = true;
-  //   const trashcan = true;
-  //   const recovered = false;
-  //   const forever_delete_confirm = false;
-  //   const showOverlay_trash = false;
-  //   const mouseTop = 0;
-  //   const mouseLeft = 0;
-  //   const right_click_box_overview_show = false;
-  //   const delete_confirm = false;
-  //   const showOverlay_delete = false;
-  //   const right_click_box_trash_show = false;
-  //   const search_input = '';
-  //   const click_search_bar_time = 0;
-  //   const his_search_list = [];
-  //   const show_his_search_list = false;
-  //         //現在正在找的專案
-  //   const search_project = '';
-  //   const user_id = 0;
-  //   const project_status = "normal";
-  //   const project_image = " ";
-  //   const project_id = 0;
-  //   const project_creation_date = " ";
-  //   const project_edit_data = " ";
-  //   return{
-  //     middle_show_overview_page,
-  //         middle_show_over_page,
-  //         middle_show_trash_page,
-  //         add_proj_show,
-  //         showOverlay,
-  //         add_proj_type,
-  //         isFocused,
-  //         carts,
-  //         cart_titles,
-  //         cart_title_input,
-  //         selectOption,
-  //         show_add_proj_type_list,
-  //         show_his_search_list,
-
-  //         add_proj_type_arrow,
-  //         add_proj_type_options,
-  //         proj_type,
-  //         proj_type_color,
-  //         add_proj_type_text,
-  //         add_proj_name,
-  //         add_search,
-  //         uncategorized_projs,
-  //         cart_box_name_list,
-  //         trash_boxes,
-  //         checked_trash_box,
-  //         recover,
-  //         trashcan,
-  //         recovered,
-  //         forever_delete_confirm,
-  //         showOverlay_trash,
-  //         mouseTop,
-  //         mouseLeft,
-  //         right_click_box_overview_show,
-  //         delete_confirm,
-  //         showOverlay_delete,
-  //         right_click_box_trash_show,
-  //         search_input,
-  //         click_search_bar_time,
-  //         his_search_list,
-  //         show_his_search_list,
-  //         search_input,
-  //         //現在正在找的專案
-  //         search_project,
-  //         user_id,
-  //         project_status,
-  //         project_image,
-  //         project_id,
-  //         project_creation_date,
-  //         project_edit_data,
-
-  //   };
-
-  // },
 
   data() {
     return {
@@ -552,6 +464,7 @@ export default {
       add_proj_type: "",
       isFocused: false,
       carts: [],
+      project_box: [],
       //已結束專案的cart
       ended_carts: [],
       cart_titles: "",
@@ -638,7 +551,7 @@ export default {
       this.proj_type_color = "#b6aeae";
       this.add_proj_type_text = "";
     },
-    // 新增專案彈窗裡點擊建立專案
+    // 新增專案彈跳視窗裡點擊建立專案
     new_project_btn() {
       this.add_proj_show = this.add_proj_show === false ? true : false;
       this.showOverlay = false;
@@ -1454,6 +1367,14 @@ export default {
     no-repeat center right;
 }
 
+.add_proj_type_option_section {
+  position: relative;
+  width: 100%;
+  border: 2px solid black;
+  max-height: 60px;
+  overflow-y: scroll;
+}
+
 .add_proj_type_list {
   width: 214px;
   height: auto;
@@ -1465,6 +1386,7 @@ export default {
   left: 320px;
   z-index: 3;
   background-color: white;
+  /* border: 2px solid black; */
 }
 .his_search_list {
   width: 235px;
