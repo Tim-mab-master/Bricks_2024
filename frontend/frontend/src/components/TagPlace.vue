@@ -58,7 +58,7 @@ export default {
   position: relative;
   /* left: 1280px; */
   top: 20px;
-  z-index: 10;
+  z-index: 5;
   width: 372px;
   
 }
@@ -76,16 +76,7 @@ export default {
 
 
 @media screen and (min-width: 1024px) and (max-width: 1440px){
-  .el-dropdown-link{
-    font-size: 12px;
-    display: flex;
-    /* flex-direction: column; */
-  }
-  .tagsPlace{
-    width: fit-content;
-    height: fit-content;
-    padding: auto 4px;
-  }
+  
   .tagInside{
     font-size: 8px;
   }

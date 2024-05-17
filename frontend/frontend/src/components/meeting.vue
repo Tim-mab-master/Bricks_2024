@@ -18,7 +18,7 @@
               <label for="meetingName">會議名稱</label>
             </td>
             <td class="input-cell">
-              <input type="text" id="meetingName" v-model="meetingName" class="text-input" :placeholder="placeholder" @focus="clearPlaceholder" @blur="restorePlaceholder">
+              <input type="text" id="meetingName" v-model="meetingName" class="text-input" :placeholder="placeholder" @focus="clearPlaceholder" @blur="restorePlaceholder" readonly>
             </td>
           </tr>
           <tr>
@@ -26,7 +26,7 @@
               <label for="time">時間</label>
             </td>
             <td class="input-cell">
-              <input type="place" id="time" v-model="time" class="text-input" placeholder="-">
+              <input type="place" id="time" v-model="time" class="text-input" placeholder="-" readonly>
             </td>
           </tr>
           <tr>
@@ -43,7 +43,7 @@
               <label for="place">地點</label>
             </td>
             <td class="input-cell">
-              <input type="place" id="place" v-model="place" class="text-input" placeholder="-">
+              <input type="place" id="place" v-model="place" class="text-input" placeholder="-" readonly>
             </td>
           </tr>
           <tr>
@@ -325,25 +325,15 @@
         });
       },
       onSubmit() {
-        const selectedDate = this.form.data.date;
-        const selectedTimeRange = this.form.data.time; // 獲取選擇的時間範圍
-
-        // 格式化開始時間的小時和分鐘
-        const startHours = ('0' + selectedTimeRange[0].getHours()).slice(-2);
-        const startMinutes = ('0' + selectedTimeRange[0].getMinutes()).slice(-2);
-
-        // 格式化結束時間的小時和分鐘
-        const endHours = ('0' + selectedTimeRange[1].getHours()).slice(-2);
-        const endMinutes = ('0' + selectedTimeRange[1].getMinutes()).slice(-2);
-        //開始加結束
-        const meetingTime = `${startHours}:${startMinutes} - ${endHours}:${endMinutes}`;
-
-
         this.meetingName = this.form.data.formName;
-        this.time =new Date(selectedDate).toISOString().split('T')[0]+" "+ meetingTime;
-
+        // this.time = this.form.data.date;// 時間先略過
+        console.log(this.form.data.date);
+        const date = new Date(this.form.data.date);
+        const options = {  year: 'numeric', month: 'short', day: '2-digit', };
+        const formattedDate = date.toLocaleDateString(options).replace(/,/g, '/');    
+        
+        this.time = formattedDate;
         this.place = this.form.data.place;
-        // this.attends = this.optionsA.map(option => option.label);
         
 
 
