@@ -93,6 +93,7 @@
         <img src="../assets/icon/icon_trashcan.svg" style="top: 178px" />
       </div>
     </div>
+
     <!-- 新增專案彈出視窗 -->
     <div class="add_proj_box" v-show="add_proj_show">
       <div
@@ -114,7 +115,7 @@
       />
       <div
         class="add_proj_type"
-        @click="add_proj_type_btn"
+        @click="add_proj_type_btn()"
         :style="{ background: add_proj_type_arrow, color: proj_type_color }"
         ref="add_proj_type"
       >
@@ -197,6 +198,7 @@
                     v-for="(proj_name, index2) in carts[index1].project_box"
                     :key="index2"
                     @contextmenu.prevent="right_click_box"
+                    @click="click_proj()"
                   >
                     {{ proj_name }}
                   </div>
@@ -277,6 +279,62 @@
                 </button>
               </div>
             </div>
+
+            <!-- 點擊專案 -->
+            <div class="click_proj_box" v-show="click_proj_show">
+              <div class="close_click_proj_box" @click="unclick_proj()"></div>
+              <p class="click_proj_title">寫專案名稱</p>
+              <!-- 專案的照片 add_proj_pic-->
+              <div class="click_proj_pic"></div>
+              <!-- 專案名稱 add_proj_name-->
+              <input class="click_proj_narrative" />
+              <!-- 專案類型 add_proj_type-->
+              <div
+                class="click_proj_type"
+                @click="add_proj_type_btn()"
+                :style="{
+                  background: add_proj_type_arrow,
+                  color: proj_type_color,
+                }"
+              >
+                {{ proj_type }}
+              </div>
+              <div
+                class="add_proj_type_list"
+                v-show="show_add_proj_type_list"
+                ref="add_proj_type_list"
+              >
+                <!-- <div class="add_proj_type_option" @click="type_not_choose">未分類</div> -->
+                <div class="add_proj_type_option_section">
+                  <div
+                    v-for="(option, index) in add_proj_type_options"
+                    :key="index"
+                    class="add_proj_type_option"
+                    @click="type_choosen(option)"
+                  >
+                    {{ option }}
+                  </div>
+                </div>
+
+                <div class="add_proj_type_list_line"></div>
+                <input
+                  type="text"
+                  class="add_proj_type_text"
+                  placeholder="新增類別"
+                  v-model="add_proj_type_text"
+                  @keyup.enter="list_add_a_cart()"
+                  @blur="list_add_a_cart()"
+                />
+                <div
+                  class="add_proj_type_text_plus"
+                  @click="list_add_a_cart"
+                ></div>
+              </div>
+              <!-- 建立專案 add_proj_build-->
+              <div class="click_proj_enter">進入專案</div>
+            </div>
+            <!-- 點擊專案 結束 -->
+
             <div class="overlay" v-if="showOverlay_delete"></div>
           </div>
           <!-- 已結束專案 -->
@@ -713,6 +771,16 @@ export default {
           console.log(res.data.status);
         });
       }
+    },
+
+    // 點擊專案
+    click_proj() {
+      this.click_proj_show = true;
+    },
+
+    // 點旁邊，專案視窗消失
+    unclick_proj() {
+      this.click_proj_show = false;
     },
 
     click_search_bar() {
@@ -1199,88 +1267,56 @@ export default {
 
 /* 左側欄的部分 終點 */
 
-/* 點擊專案 */
+/* 點擊專案框框 起點 */
 .click_proj_box {
-  width: 344px;
-  height: 500px;
-  /* width: calc(344px * 0.9);
-  height: calc(524px * 0.9); */
+  width: 424px;
+  height: 620px;
   position: fixed;
   border-radius: 14px;
   background-color: white;
   box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.4);
-  /* top: 244px;
-  left: 924px; */
   z-index: 6;
-  left: calc((100vw - 344px + 234px) / 2);
-  top: calc((100vh - 524px + 50px) / 2);
+  left: calc((100vw - 80px + 234px) / 2);
+  top: calc((100vh - 508px + 50px) / 2);
 }
 
-.close_add_proj_box {
+.close_click_proj_box {
+  /* border: 2px solid black; */
   position: relative;
   width: 24px;
   height: 24px;
   cursor: pointer;
   top: 25px;
-  left: 307px;
+  right: -380px;
 }
-
-.close_add_proj_box::before,
-.close_add_proj_box::after {
+.close_click_proj_box::before,
+.close_click_proj_box::after {
   content: "";
   position: absolute;
   top: 50%;
   left: 50%;
   width: 2px;
-  height: 17px;
+  height: 20px;
   background-color: black;
 }
-.close_add_proj_box::before {
+.close_click_proj_box::before {
   transform: translate(-50%, -50%) rotate(45deg);
 }
-
-.close_add_proj_box::after {
-  transform: translate(-50%, -50%) rotate(-45deg);
-}
-.clear_search {
-  cursor: pointer;
-  position: absolute;
-  top: 14px;
-  left: 225px;
-  -webkit-user-drag: none;
-  user-select: none;
-}
-
-.clear_search::before,
-.clear_search::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 10px;
-  width: 3px;
-  height: 17px;
-  background-color: black;
-}
-.clear_search::before {
-  transform: translate(-50%, -50%) rotate(45deg);
-}
-
-.clear_search::after {
+.close_click_proj_box::after {
   transform: translate(-50%, -50%) rotate(-45deg);
 }
 
-.add_proj_title {
-  font-size: 20px;
+.click_proj_title {
+  font-size: 24px;
   font-weight: 600;
   position: relative;
   top: 20px;
   text-align: center;
   user-select: none;
 }
-
-.add_proj_pic {
-  width: 280px;
-  height: 140px;
+.click_proj_pic {
+  width: 340px;
+  height: 180px;
   border-radius: 14px;
   background-color: #f2eeee;
   position: relative;
@@ -1290,18 +1326,11 @@ export default {
   cursor: pointer;
   -webkit-user-drag: none;
 }
-
-.add_proj_pic_plus {
-  position: relative;
-  top: 40px;
-  left: 110px;
-  user-select: none;
-  -webkit-user-drag: none;
-}
-
-.add_proj_name {
-  width: 278px;
-  height: 34px;
+.click_proj_narrative {
+  width: 340px;
+  height: 40px;
+  max-height: 180px;
+  overflow-y: auto;
   border: 1px solid #c7c2c2;
   border-radius: 12px;
   font-size: 16px;
@@ -1309,47 +1338,17 @@ export default {
   line-height: 38px;
   text-indent: 20px;
   position: relative;
-  top: 108px;
+  top: 150px;
   left: 50%;
   transform: translate(-50%);
 }
-
-.add_search {
-  width: 250px;
-  height: 38px;
-  border: 1px solid #c7c2c2;
-  border-radius: 12px;
-  font-size: 16px;
-  letter-spacing: 1.25px;
-  line-height: 38px;
-  text-indent: 20px;
-  position: relative;
-  top: 54px;
-  left: 60%;
-  transform: translate(-50%);
-}
-
-.add_proj_name:hover {
-  border-color: #b6aeae;
-}
-
-.add_proj_name:focus {
-  border-color: #3b3838;
-  outline: #7b7b7b;
-}
-
-.add_proj_name::placeholder {
-  user-select: none;
-  color: #b6aeae;
-}
-
-.add_proj_type {
-  width: 278px;
-  height: 34px;
+.click_proj_type {
+  width: 340px;
+  height: 40px;
   border: 1px solid #b8b8b8;
   border-radius: 12px;
   position: relative;
-  top: 124px;
+  top: 50px;
   left: 50%;
   transform: translate(-50%);
   font-size: 16px;
@@ -1365,193 +1364,26 @@ export default {
   background: url(../assets/dropdown_arrow/dropdown_arrow_right.svg) no-repeat
     center right;
 }
-.add_proj_type:hover {
-  border-color: #7b7b7b;
-  background: url(../assets/dropdown_arrow/dropdown_arrow_right_hover.svg)
-    no-repeat center right;
-}
 
-.add_proj_type_option_section {
-  position: relative;
-  width: 100%;
-  /* border: 2px solid black; */
-  max-height: 80px;
-  overflow-y: scroll;
-}
-
-.add_proj_type_list {
-  width: 214px;
-  height: auto;
-  padding-top: 8px;
-  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3), 0px 2px 15px rgba(0, 0, 0, 0.15);
-  border-radius: 14px;
-  position: absolute;
-  top: 320px;
-  left: 320px;
-  z-index: 3;
-  background-color: white;
-  /* border: 2px solid black; */
-}
-.his_search_list {
-  width: 235px;
-  height: auto;
-  padding-top: 0px;
-  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3), 0px 2px 15px rgba(0, 0, 0, 0.15);
-  border-radius: 14px;
-  position: absolute;
-  top: 38px;
-  left: 15px;
-  z-index: 3;
-  background-color: white;
-}
-.match {
-  width: 235px;
-  height: auto;
-  padding-top: 0px;
-  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3), 0px 2px 15px rgba(0, 0, 0, 0.15);
-  border-radius: 14px;
-  position: absolute;
-  top: 38px;
-  left: 15px;
-  z-index: 3;
-  background-color: white;
-}
-.add_proj_type_option {
-  width: 100%;
-  height: 45px;
-  line-height: 45px;
-  font-size: 16px;
-  font-weight: 500;
-  letter-spacing: 1.25;
-  text-indent: 16px;
-  cursor: pointer;
-  color: #3b3838;
-  user-select: none;
-  border-radius: 4px;
-}
-.add_history_search {
-  width: 100%;
-  height: 45px;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  line-height: 45px;
-  font-size: 16px;
-  font-weight: 500;
-  letter-spacing: 1.25;
-  text-indent: 16px;
-  cursor: pointer;
-  color: #3b3838;
-  user-select: none;
-}
-.add_history_search:hover {
-  background-color: #f2eeee;
-}
-.his_search_list_container {
-  max-height: 200px;
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-.add_proj_type_option:hover {
-  background-color: #f2eeee;
-}
-.add_proj_type_list_line {
-  height: 7px;
-  border-bottom: 2px solid #e1dcdc;
-  margin-bottom: 7px;
-  user-select: none;
-}
-.add_history_search_list_line {
-  height: 7px;
-  border-bottom: 2px solid #e1dcdc;
-  margin-bottom: 7px;
-  user-select: none;
-}
-.add_proj_type_text {
-  height: 45px;
-  width: 100%;
-  font-size: 16px;
-  font-weight: 500;
-  letter-spacing: 1.25;
-  text-indent: 16px;
-  border: none;
-  outline: none;
-  color: #3b3838;
-  user-select: none;
-}
-.add_proj_type_text::placeholder {
-  color: #3b3838;
-}
-.add_proj_type_text:hover {
-  background-color: #f2eeee;
-}
-
-.add_proj_type_text_plus {
-  position: relative;
-  width: 9.33px;
-  height: 9.33px;
-  background-color: transparent;
-  border: 1px solid transparent;
-  top: -23px;
-}
-
-.add_proj_type_text_plus::before,
-.add_proj_type_text_plus::after {
-  content: "";
-  position: absolute;
-  width: 100%;
-  height: 1px;
-  background-color: #120405;
-  top: 0px;
-  left: 176.83px;
-  -webkit-user-drag: none;
-  cursor: pointer;
-}
-
-.add_proj_type_text_plus::before {
-  transform: rotate(90deg);
-}
-
-.add_proj_type_text_plus::after {
-  transform: rotate(0deg);
-}
-.add_search_project {
-  height: 45px;
-  width: 100%;
-  font-size: 16px;
-  font-weight: 500;
-  letter-spacing: 1.25;
-  text-indent: 16px;
-  border: none;
-  outline: none;
-  color: #3b3838;
-  user-select: none;
-}
-.add_search_project::placeholder {
-  color: #3b3838;
-}
-.add_search_project:hover {
-  background-color: #f2eeee;
-}
-.add_proj_build {
-  width: 280px;
-  height: 42px;
+.click_proj_enter {
+  width: 340px;
+  height: 48px;
   border-radius: 14px;
   background-color: #b82c30;
   color: white;
-  font-size: 18px;
+  font-size: 22px;
   font-weight: 500;
-  line-height: 40px;
+  line-height: 44px;
   letter-spacing: 1.25px;
   text-align: center;
   position: relative;
-  top: 166px;
+  top: 200px;
   left: 50%;
   transform: translate(-50%);
   cursor: pointer;
   user-select: none;
 }
-
-/* 點擊專案的框框 終點 */
+/* 點擊專案框框 終點 */
 
 /* 新增專案的框框 起點 */
 .add_proj_box {
@@ -2178,6 +2010,7 @@ export default {
   color: #120405;
   float: left !important;
 }
+
 /* 中間的部分 終點 */
 
 /* 垃圾桶的部分 起點 */
