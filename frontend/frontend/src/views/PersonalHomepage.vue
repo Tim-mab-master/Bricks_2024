@@ -144,6 +144,7 @@
           placeholder="新增類別"
           v-model="add_proj_type_text"
           @keyup.enter="list_add_a_cart()"
+          @blur="list_add_a_cart()"
         />
         <div class="add_proj_type_text_plus" @click="list_add_a_cart"></div>
       </div>
@@ -197,7 +198,7 @@
                     :key="index2"
                     @contextmenu.prevent="right_click_box"
                   >
-                    {{ proj_name + "123" }}
+                    {{ proj_name }}
                   </div>
                 </div>
               </div>
@@ -219,6 +220,7 @@
               <div class="title_underline"></div>
               <div class="box_container"></div>
             </div>
+
             <!-- 重新命名 + 刪除專案 -->
             <div
               class="right_click_box_overview"
@@ -269,7 +271,7 @@
                 </button>
                 <button
                   class="forever_delete_confirm_btn forever_delete_confirm_btn_delete"
-                  @click="delete_project(cart)"
+                  @click="delete_project_confirm(cart)"
                 >
                   刪除
                 </button>
@@ -520,6 +522,7 @@ export default {
       project_id: 0,
       project_creation_date: " ",
       project_edit_data: " ",
+      click_proj_show: false,
     };
   },
   methods: {
@@ -711,6 +714,7 @@ export default {
         });
       }
     },
+
     click_search_bar() {
       // if(this.click_search_bar_time===0){
       //     const path = "http://34.81.186.58:5000/search_history";
@@ -764,14 +768,14 @@ export default {
     //     this.trash_boxes.push(trash_box);
     // },
     rename() {},
-    //刪除後的專案跑到垃圾桶
-    delete_project(cart) {
+    //刪除後的專案跑到垃圾桶，推到垃圾筒的部分還沒做
+    delete_project_confirm(cart) {
       console.log("刪除按鈕被點擊");
       this.close_delete_confirm();
-      const trash_box = {
-        text: deletedProject.text,
-      };
-      this.trash_boxes.push(trash_box);
+      // const trash_box = {
+      //   text: deletedProject.text,
+      // };
+      // this.trash_boxes.push(trash_box);
     },
     // 點擊垃圾桶裡的專案後又上兩個按鈕變色
     selected_trash_box(index) {
@@ -1195,6 +1199,360 @@ export default {
 
 /* 左側欄的部分 終點 */
 
+/* 點擊專案 */
+.click_proj_box {
+  width: 344px;
+  height: 500px;
+  /* width: calc(344px * 0.9);
+  height: calc(524px * 0.9); */
+  position: fixed;
+  border-radius: 14px;
+  background-color: white;
+  box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.4);
+  /* top: 244px;
+  left: 924px; */
+  z-index: 6;
+  left: calc((100vw - 344px + 234px) / 2);
+  top: calc((100vh - 524px + 50px) / 2);
+}
+
+.close_add_proj_box {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  top: 25px;
+  left: 307px;
+}
+
+.close_add_proj_box::before,
+.close_add_proj_box::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 2px;
+  height: 17px;
+  background-color: black;
+}
+.close_add_proj_box::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.close_add_proj_box::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+.clear_search {
+  cursor: pointer;
+  position: absolute;
+  top: 14px;
+  left: 225px;
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+.clear_search::before,
+.clear_search::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  width: 3px;
+  height: 17px;
+  background-color: black;
+}
+.clear_search::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.clear_search::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.add_proj_title {
+  font-size: 20px;
+  font-weight: 600;
+  position: relative;
+  top: 20px;
+  text-align: center;
+  user-select: none;
+}
+
+.add_proj_pic {
+  width: 280px;
+  height: 140px;
+  border-radius: 14px;
+  background-color: #f2eeee;
+  position: relative;
+  top: 60px;
+  left: 50%;
+  transform: translate(-50%);
+  cursor: pointer;
+  -webkit-user-drag: none;
+}
+
+.add_proj_pic_plus {
+  position: relative;
+  top: 40px;
+  left: 110px;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.add_proj_name {
+  width: 278px;
+  height: 34px;
+  border: 1px solid #c7c2c2;
+  border-radius: 12px;
+  font-size: 16px;
+  letter-spacing: 1.25px;
+  line-height: 38px;
+  text-indent: 20px;
+  position: relative;
+  top: 108px;
+  left: 50%;
+  transform: translate(-50%);
+}
+
+.add_search {
+  width: 250px;
+  height: 38px;
+  border: 1px solid #c7c2c2;
+  border-radius: 12px;
+  font-size: 16px;
+  letter-spacing: 1.25px;
+  line-height: 38px;
+  text-indent: 20px;
+  position: relative;
+  top: 54px;
+  left: 60%;
+  transform: translate(-50%);
+}
+
+.add_proj_name:hover {
+  border-color: #b6aeae;
+}
+
+.add_proj_name:focus {
+  border-color: #3b3838;
+  outline: #7b7b7b;
+}
+
+.add_proj_name::placeholder {
+  user-select: none;
+  color: #b6aeae;
+}
+
+.add_proj_type {
+  width: 278px;
+  height: 34px;
+  border: 1px solid #b8b8b8;
+  border-radius: 12px;
+  position: relative;
+  top: 124px;
+  left: 50%;
+  transform: translate(-50%);
+  font-size: 16px;
+  letter-spacing: 1.25px;
+  line-height: 36px;
+  text-indent: 20px;
+  color: #b6aeae;
+  cursor: pointer;
+  user-select: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: url(../assets/dropdown_arrow/dropdown_arrow_right.svg) no-repeat
+    center right;
+}
+.add_proj_type:hover {
+  border-color: #7b7b7b;
+  background: url(../assets/dropdown_arrow/dropdown_arrow_right_hover.svg)
+    no-repeat center right;
+}
+
+.add_proj_type_option_section {
+  position: relative;
+  width: 100%;
+  /* border: 2px solid black; */
+  max-height: 80px;
+  overflow-y: scroll;
+}
+
+.add_proj_type_list {
+  width: 214px;
+  height: auto;
+  padding-top: 8px;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3), 0px 2px 15px rgba(0, 0, 0, 0.15);
+  border-radius: 14px;
+  position: absolute;
+  top: 320px;
+  left: 320px;
+  z-index: 3;
+  background-color: white;
+  /* border: 2px solid black; */
+}
+.his_search_list {
+  width: 235px;
+  height: auto;
+  padding-top: 0px;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3), 0px 2px 15px rgba(0, 0, 0, 0.15);
+  border-radius: 14px;
+  position: absolute;
+  top: 38px;
+  left: 15px;
+  z-index: 3;
+  background-color: white;
+}
+.match {
+  width: 235px;
+  height: auto;
+  padding-top: 0px;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3), 0px 2px 15px rgba(0, 0, 0, 0.15);
+  border-radius: 14px;
+  position: absolute;
+  top: 38px;
+  left: 15px;
+  z-index: 3;
+  background-color: white;
+}
+.add_proj_type_option {
+  width: 100%;
+  height: 45px;
+  line-height: 45px;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 1.25;
+  text-indent: 16px;
+  cursor: pointer;
+  color: #3b3838;
+  user-select: none;
+  border-radius: 4px;
+}
+.add_history_search {
+  width: 100%;
+  height: 45px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  line-height: 45px;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 1.25;
+  text-indent: 16px;
+  cursor: pointer;
+  color: #3b3838;
+  user-select: none;
+}
+.add_history_search:hover {
+  background-color: #f2eeee;
+}
+.his_search_list_container {
+  max-height: 200px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.add_proj_type_option:hover {
+  background-color: #f2eeee;
+}
+.add_proj_type_list_line {
+  height: 7px;
+  border-bottom: 2px solid #e1dcdc;
+  margin-bottom: 7px;
+  user-select: none;
+}
+.add_history_search_list_line {
+  height: 7px;
+  border-bottom: 2px solid #e1dcdc;
+  margin-bottom: 7px;
+  user-select: none;
+}
+.add_proj_type_text {
+  height: 45px;
+  width: 100%;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 1.25;
+  text-indent: 16px;
+  border: none;
+  outline: none;
+  color: #3b3838;
+  user-select: none;
+}
+.add_proj_type_text::placeholder {
+  color: #3b3838;
+}
+.add_proj_type_text:hover {
+  background-color: #f2eeee;
+}
+
+.add_proj_type_text_plus {
+  position: relative;
+  width: 9.33px;
+  height: 9.33px;
+  background-color: transparent;
+  border: 1px solid transparent;
+  top: -23px;
+}
+
+.add_proj_type_text_plus::before,
+.add_proj_type_text_plus::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  background-color: #120405;
+  top: 0px;
+  left: 176.83px;
+  -webkit-user-drag: none;
+  cursor: pointer;
+}
+
+.add_proj_type_text_plus::before {
+  transform: rotate(90deg);
+}
+
+.add_proj_type_text_plus::after {
+  transform: rotate(0deg);
+}
+.add_search_project {
+  height: 45px;
+  width: 100%;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 1.25;
+  text-indent: 16px;
+  border: none;
+  outline: none;
+  color: #3b3838;
+  user-select: none;
+}
+.add_search_project::placeholder {
+  color: #3b3838;
+}
+.add_search_project:hover {
+  background-color: #f2eeee;
+}
+.add_proj_build {
+  width: 280px;
+  height: 42px;
+  border-radius: 14px;
+  background-color: #b82c30;
+  color: white;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 40px;
+  letter-spacing: 1.25px;
+  text-align: center;
+  position: relative;
+  top: 166px;
+  left: 50%;
+  transform: translate(-50%);
+  cursor: pointer;
+  user-select: none;
+}
+
+/* 點擊專案的框框 終點 */
+
 /* 新增專案的框框 起點 */
 .add_proj_box {
   width: 344px;
@@ -1370,8 +1728,8 @@ export default {
 .add_proj_type_option_section {
   position: relative;
   width: 100%;
-  border: 2px solid black;
-  max-height: 60px;
+  /* border: 2px solid black; */
+  max-height: 80px;
   overflow-y: scroll;
 }
 
@@ -1423,6 +1781,7 @@ export default {
   cursor: pointer;
   color: #3b3838;
   user-select: none;
+  border-radius: 4px;
 }
 .add_history_search {
   width: 100%;
@@ -1709,7 +2068,7 @@ export default {
   height: 372px;
   position: absolute;
   top: 20%;
-  left: 520px;
+  left: 25%;
   background-color: white;
   border: 1.5px solid #c7c2c2;
   box-shadow: 0px 0px 5px 1px rgba(65, 65, 65, 0.25);
@@ -1744,7 +2103,7 @@ export default {
   top: 50%;
   left: 50%;
   width: 1.5px;
-  height: 17px;
+  height: 20px;
   background-color: black;
 }
 
