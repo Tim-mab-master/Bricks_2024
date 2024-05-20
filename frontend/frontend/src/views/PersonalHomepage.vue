@@ -287,7 +287,7 @@
               <!-- 專案的照片 add_proj_pic-->
               <div class="click_proj_pic"></div>
               <!-- 專案名稱 add_proj_name-->
-              <input class="click_proj_narrative" />
+              <textarea class="click_proj_narrative" />
               <!-- 專案類型 add_proj_type-->
               <div
                 class="click_proj_type"
@@ -1328,17 +1328,17 @@ export default {
 }
 .click_proj_narrative {
   width: 340px;
-  height: 40px;
+  height: 120px;
   max-height: 180px;
   overflow-y: auto;
-  border: 1px solid #c7c2c2;
+  border: 1px solid #c7c2c290;
   border-radius: 12px;
   font-size: 16px;
   letter-spacing: 1.25px;
   line-height: 38px;
   text-indent: 20px;
   position: relative;
-  top: 150px;
+  top: 166px;
   left: 50%;
   transform: translate(-50%);
 }
@@ -1348,7 +1348,7 @@ export default {
   border: 1px solid #b8b8b8;
   border-radius: 12px;
   position: relative;
-  top: 50px;
+  top: -18px;
   left: 50%;
   transform: translate(-50%);
   font-size: 16px;
@@ -1377,7 +1377,7 @@ export default {
   letter-spacing: 1.25px;
   text-align: center;
   position: relative;
-  top: 200px;
+  top: 140px;
   left: 50%;
   transform: translate(-50%);
   cursor: pointer;
