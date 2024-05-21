@@ -289,10 +289,7 @@
           <!-- 垃圾桶 -->
           <div class="trash_page" v-show="middle_show_trash_page">
             <div class="trash_page_middle">
-              <div class="last_30_days">
-                <p class="last_time">近 30 天</p>
-                <div class="time_subline"></div>
-                <img
+              <img
                   v-if="recover"
                   src="../assets/trash_page/recover_default.svg"
                   alt=""
@@ -309,17 +306,24 @@
                 <img
                   v-if="trashcan"
                   src="../assets/trash_page/trashcan_default.svg"
-                  alt=""
-                  class="forever_delete trash_pic"
+                  style="cursor: pointer"
+                  class="forever_delete_trash_pic"
                 />
                 <img
                   v-else
                   src="../assets/trash_page/trashcan_active.svg"
                   alt=""
-                  class="forever_delete trash_pic"
+                  class="forever_delete_trash_pic"
                   style="cursor: pointer"
                   @click="forever_delete_project"
                 />
+              <div class="last_30_days">
+                
+                <div class="time_subline_up"></div>
+                
+                <p class="last_time">近 30 天</p>
+                <div class="time_subline"></div>
+                
                 <div class="trash_box_container">
                   <div
                     class="trash_box"
@@ -718,24 +722,6 @@ export default {
                 this.carts.push(new_cart);
                 this.add_proj_type_options.push(new_cart.title_word);
               }
-
-              // this.proj_type = Object.keys(element)[index];
-              // index = index +1
-              // const projects = element[this.proj_type];
-              // cart_title_input = this.project_type
-              // console.log(projects)
-
-              // add_a_cart()
-
-              // projects.forEach(project =>{
-              //     this.project_id = project.project_id
-              //     this.project_image = project.project_image
-              //     this.add_proj_name = project.project_name
-              //     this.project_creation_date = project.project_creation_date
-              //     this.project_edit_data = project.project_edit_data
-              //     this.user_id = project.user_id
-              //     new_project_btn()
-              // })
             });
           }
         });
@@ -1825,24 +1811,33 @@ export default {
   margin-top: 40px;
 }
 .last_30_days {
-  width: 1264px;
-  min-height: 222px;
-  margin-top: 40px;
+  width: 100%;
+  
+  /* min-height: 222px; */
+  margin-top: 70px;
   position: relative;
-  left: 80px;
+  /* left: 80px; */
   padding-bottom: 25px;
 }
 .last_time {
   position: relative;
   height: 44px;
-  left: 16px;
+  left: 100px;
   color: #3b3838;
   font-size: 16px;
   letter-spacing: 0.5px;
   line-height: 44px;
   user-select: none;
 }
+.time_subline_up {
+  width: 100%;
+  height: 1px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #c7c2c2;
+  position: relative;
+}
 .time_subline {
+  left: 90px;
   width: 304px;
   height: 1px;
   border-bottom: 1px solid #c7c2c2;
@@ -1853,12 +1848,12 @@ export default {
   user-select: none;
 }
 .recover {
-  position: absolute;
+  position: relative;
   top: 0px;
   right: 68px;
 }
 .forever_delete {
-  position: absolute;
+  position: relative;
   top: 0px;
   right: 0px;
 }
@@ -1903,7 +1898,6 @@ export default {
   min-height: 242px;
   position: relative;
   top: 50px;
-  left: 80px;
 }
 .recovered {
   width: 399px;
@@ -2036,9 +2030,16 @@ export default {
   float: left !important;
 }
 .recover_trash_pic {
-  background-color: black;
-  width: 20px;
-  height: 30px;
+  position: absolute;
+  margin-left: auto;
+  margin-top: 7px;
+  left: 87%;
+}
+.forever_delete_trash_pic{
+  position: absolute;
+  margin-left: auto;
+  margin-top: 7px;
+  left: 92%;
 }
 
 router-link {
