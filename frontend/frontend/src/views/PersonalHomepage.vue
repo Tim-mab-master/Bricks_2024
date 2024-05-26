@@ -110,12 +110,12 @@
       >
         <div class="add_proj_type_option" @click="type_not_choose">未分類</div>
         <div
-          v-for="(option, index) in add_proj_type_options"
+          v-for="(proj, index) in add_proj_type_options"
           :key="index"
           class="add_proj_type_option"
-          @click="type_choosen(option)"
+          @click="type_choosen(proj)"
         >
-          {{ option }}
+          {{ proj }}
         </div>
         <div class="add_proj_type_list_line"></div>
         <input
@@ -683,7 +683,6 @@ export default {
         this.middle_show_overview_page = true;
         this.middle_show_over_page = false;
         this.middle_show_trash_page = false;
-
         const path = "http://104.199.143.218:5000/project_index";
         const get_proj = {
           user_id: 25,
@@ -692,14 +691,14 @@ export default {
         axios.post(path, get_proj).then((res) => {
           if (res.data.status == "success") {
             const items = res.data.items;
+            console.log(res.data.items)
             items.forEach((element) => {
               console.log(element.id);
               this.proj_type = element.project_type;
               this.proj_name = element.project_name;
-
-              if (
-                this.add_proj_type_options.includes(this.proj_type) === false
-              ) {
+              console.log( this.proj_type)
+              if (this.add_proj_type_options.includes(this.proj_type) === false)
+               {
                 const new_cart = {
                   title_word: this.proj_type,
                   project_box: [this.proj_name],
@@ -710,20 +709,23 @@ export default {
             });
           }
         });
+        
       }
       if (index === 2) {
         this.middle_show_over_page = true;
         this.middle_show_overview_page = false;
         this.middle_show_trash_page = false;
-        const path = "http://104.199.143.218:5000/project_index";
-        const get_proj = {
-          "user_id": "25",
-          "project_status":"ended"
+        const path_end = "http://104.199.143.218:5000/project_index";
+        const get_proj_end = {
+          user_id: 25,
+          project_status: "normal",
         };
-        axios.post(path, get_proj).then((res) => {
+        axios.post(path_end, get_proj_end).then((res) => {
           if (res.data.status == "success") {
             const items = res.data.items;
+            console.log(items)
             items.forEach((element) => {
+              console.log(element.id);
               this.proj_type = element.project_type;
               this.proj_name = element.project_name;
 
@@ -988,10 +990,67 @@ export default {
       return payloadObject;
     },
   },
-  mounted() {
+  onMounted() {
     window.addEventListener("click", this.handleClickOutside);
+    console.log("sdsd")
+    // 顯示專案
+    const path = "http://104.199.143.218:5000/project_index";
+        const get_proj = {
+          user_id: 25,
+          project_status: "normal",
+        };
+        axios.post(path, get_proj).then((res) => {
+          if (res.data.status == "success") {
+            const items = res.data.items;
+            items.forEach((element) => {
+              console.log(element.id);
+              this.proj_type = element.project_type;
+              this.proj_name = element.project_name;
+
+              if (
+                this.add_proj_type_options.includes(this.proj_type) === false
+              ) {
+                const new_cart = {
+                  title_word: this.proj_type,
+                  project_box: [this.proj_name],
+                };
+                this.carts.push(new_cart);
+                this.add_proj_type_options.push(new_cart.title_word);
+              }
+            });
+          }
+        });
+    // 已結束專案
+    const path_end = "http://104.199.143.218:5000/project_index";
+        const get_proj_end = {
+          user_id: 25,
+          project_status: "end",
+        };
+        axios.post(path_end, get_proj_end).then((res) => {
+          if (res.data.status == "success") {
+            console.log("er")
+            const items = res.data.items;
+            items.forEach((element) => {
+              console.log(element.id);
+              this.proj_type = element.project_type;
+              this.proj_name = element.project_name;
+
+              if (
+                this.add_proj_type_options.includes(this.proj_type) === false
+              ) {
+                const new_cart = {
+                  title_word: this.proj_type,
+                  project_box: [this.proj_name],
+                };
+                this.carts.push(new_cart);
+                this.add_proj_type_options.push(new_cart.title_word);
+              }
+            });
+          }
+        });
   },
   beforeUnmount() {
+    console.log("ijediwje")
     window.removeEventListener("click", this.handleClickOutside);
   },
 };
