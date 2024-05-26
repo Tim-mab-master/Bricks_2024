@@ -690,28 +690,13 @@ export default {
           project_status: "normal",
         };
         axios.post(path, get_proj).then((res) => {
-          // console.log("Response data:", JSON.stringify(res.data));
-          console.log("Response data:", res.data);
-          // console.log("Message:", res.data.message);
-          // console.log("Status:", res.data.status);
-          // console.log("Items:", res.data.items);
-          // console.log(this.token);
-          //   this.token = res.data;
-          //   console.log(this.token.parse())
-          //   this.decode_token_json = this.decodeToken(this.token);
-
           if (res.data.status == "success") {
-            console.log("jijij");
             const items = res.data.items;
-            let index = 0;
             items.forEach((element) => {
-              console.log("ooooooo");
               console.log(element.id);
-
               this.proj_type = element.project_type;
               this.proj_name = element.project_name;
 
-              //沒有這個類別我才顯示顯示專案
               if (
                 this.add_proj_type_options.includes(this.proj_type) === false
               ) {
@@ -730,6 +715,31 @@ export default {
         this.middle_show_over_page = true;
         this.middle_show_overview_page = false;
         this.middle_show_trash_page = false;
+        const path = "http://104.199.143.218:5000/project_index";
+        const get_proj = {
+          "user_id": "25",
+          "project_status":"ended"
+        };
+        axios.post(path, get_proj).then((res) => {
+          if (res.data.status == "success") {
+            const items = res.data.items;
+            items.forEach((element) => {
+              this.proj_type = element.project_type;
+              this.proj_name = element.project_name;
+
+              if (
+                this.add_proj_type_options.includes(this.proj_type) === false
+              ) {
+                const new_cart = {
+                  title_word: this.proj_type,
+                  project_box: [this.proj_name],
+                };
+                this.carts.push(new_cart);
+                this.add_proj_type_options.push(new_cart.title_word);
+              }
+            });
+          }
+        });
       }
       if (index === 3) {
         this.middle_show_trash_page = true;
