@@ -690,19 +690,10 @@ export default {
           project_status: "normal",
         };
         axios.post(path, get_proj).then((res) => {
-          // console.log("Response data:", JSON.stringify(res.data));
-          console.log("Response data:", res.data);
-          // console.log("Message:", res.data.message);
-          // console.log("Status:", res.data.status);
-          // console.log("Items:", res.data.items);
-          // console.log(this.token);
-          //   this.token = res.data;
-          //   console.log(this.token.parse())
-          //   this.decode_token_json = this.decodeToken(this.token);
-
+           console.log("Response data:", res.data);
           if (res.data.status == "success") {
-            console.log("jijij");
             const items = res.data.items;
+            console.log(items);
             let index = 0;
             items.forEach((element) => {
               console.log("ooooooo");
