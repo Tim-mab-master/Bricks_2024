@@ -225,8 +225,11 @@
           show: false,
           data: {
             formName: '',
-            date:'',
-            time:'',
+            date:ref(new Date()),
+            time:ref([
+              new Date(),
+              new Date(Date.now() + 60 * 60 * 1000)
+            ]),
             place:'',
             // 其他表單項目
           },
@@ -306,35 +309,75 @@
         this.handleSelectChange(selectedValues, this.optionsC, this.valueC);
       },
       handleSelectChange(selectedValues, options, value,who) {
-        selectedValues.forEach((selectedValue) => {
-          const existsInOptions = options.some((option) => option.value === selectedValue);
-  
+        for(let i = 0; i < selectedValues.length; i++){
+          const existsInOptions = options.some((option) => option.value === selectedValues[i]);
           if (!existsInOptions) {
             options.push({
-              value: selectedValue,
-              label: selectedValue,
+              value: selectedValues[i],
+              label: selectedValues[i],
             });
           }
-  
-          const existsInValue = value.includes(selectedValue);
-  
-          if (!existsInValue) {
-            value.push(selectedValue);
-          }
           
-        });
+          const existsInValue = value.includes(selectedValues[i]);
+          if (!existsInValue) {
+            value.push(selectedValues[i]);
+          }
+        }
+        for (let i = options.length - 1; i >= 0; i--) {
+            if (!selectedValues.includes(options[i].value)) {
+              options.splice(i, 1);
+            }
+        }
       },
       onSubmit() {
+        this.$store.commit('setName', this.form.data.formName);
         this.meetingName = this.form.data.formName;
+        this.place = this.form.data.place;
         // this.time = this.form.data.date;// 時間先略過
         console.log(this.form.data.date);
-        const date = new Date(this.form.data.date);
+        const date = this.form.data.date;
         const options = {  year: 'numeric', month: 'short', day: '2-digit', };
         const formattedDate = date.toLocaleDateString(options).replace(/,/g, '/');    
         
-        this.time = formattedDate;
-        this.place = this.form.data.place;
+        console.log(this.form.data.time);
+        const format = { hour: '2-digit', minute: '2-digit', hour12: false };
+        const formattedTime = this.form.data.time.map(date => date.toLocaleTimeString('en-US', format));
+        const addTime = formattedTime[0].substring(0,5)+ '-'+formattedTime[1].substring(0,5);
+        this.time = formattedDate + " " + addTime;
+        // console.log(time);
         
+        if (this.$route.path === '/all/cards/newRecord') {
+          const info = {
+            "project_id": 94,
+            "record_name": this.form.data.formName,
+            "record_date": formattedDate,
+            "record_department": "",
+            "record_attendances": 4,
+            "record_host_name": "劉宸宇",
+            "record_place": this.place,
+          }
+          axios.post("http://104.199.143.218:5000/add_record", info)
+            .then((res) => {
+              console.log(res.data.message);
+            })
+            .catch((error) => {
+              console.error("There was an error!", error);
+            });
+          }
+        else {
+          
+          const info ={
+            "record_id": "26",
+            "record_name": this.meetingName,
+            "record_department": "",
+            "record_attendances": 1,
+            "record_place": this.place,
+          }
+          axios.post("http://104.199.143.218:5000/edit_record",info)
+          .then((res) => {
+            console.log(res.data.message);
+          })
+        }
 
 
         ElMessage({
