@@ -126,16 +126,14 @@
         v-show="show_add_proj_type_list"
         ref="add_proj_type_list"
       >
-        <!-- <div class="add_proj_type_option" @click="type_not_choose">未分類</div> -->
-        <div class="add_proj_type_option_section">
-          <div
-            v-for="(option, index) in add_proj_type_options"
-            :key="index"
-            class="add_proj_type_option"
-            @click="type_choosen(option)"
-          >
-            {{ option }}
-          </div>
+        <div class="add_proj_type_option" @click="type_not_choose">未分類</div>
+        <div
+          v-for="(proj, index) in add_proj_type_options"
+          :key="index"
+          class="add_proj_type_option"
+          @click="type_choosen(proj)"
+        >
+          {{ proj }}
         </div>
 
         <div class="add_proj_type_list_line"></div>
@@ -378,37 +376,40 @@
           <!-- 垃圾桶 -->
           <div class="trash_page" v-show="middle_show_trash_page">
             <div class="trash_page_middle">
+              <img
+                v-if="recover"
+                src="../assets/trash_page/recover_default.svg"
+                alt=""
+                class="recover_trash_pic"
+                style="cursor: pointer"
+                @click="recover_project"
+              />
+              <img
+                v-else
+                src="../assets/trash_page/recover_active.svg"
+                alt=""
+                class="recover_trash_pic"
+              />
+              <img
+                v-if="trashcan"
+                src="../assets/trash_page/trashcan_default.svg"
+                style="cursor: pointer"
+                class="forever_delete_trash_pic"
+              />
+              <img
+                v-else
+                src="../assets/trash_page/trashcan_active.svg"
+                alt=""
+                class="forever_delete_trash_pic"
+                style="cursor: pointer"
+                @click="forever_delete_project"
+              />
               <div class="last_30_days">
+                <div class="time_subline_up"></div>
+
                 <p class="last_time">近 30 天</p>
                 <div class="time_subline"></div>
-                <img
-                  v-if="recover"
-                  src="../assets/trash_page/recover_default.svg"
-                  alt=""
-                  class="recover_trash_pic"
-                  style="cursor: pointer"
-                  @click="recover_project"
-                />
-                <img
-                  v-else
-                  src="../assets/trash_page/recover_active.svg"
-                  alt=""
-                  class="recover_trash_pic"
-                />
-                <img
-                  v-if="trashcan"
-                  src="../assets/trash_page/trashcan_default.svg"
-                  alt=""
-                  class="forever_delete trash_pic"
-                />
-                <img
-                  v-else
-                  src="../assets/trash_page/trashcan_active.svg"
-                  alt=""
-                  class="forever_delete trash_pic"
-                  style="cursor: pointer"
-                  @click="forever_delete_project"
-                />
+
                 <div class="trash_box_container">
                   <div
                     class="trash_box"
@@ -509,7 +510,7 @@
 <script>
 import axios from "axios";
 import { Base64 } from "js-base64";
-import { computed, ref } from "vue";
+import { computed, ref, onMounted } from "vue";
 import { useStore } from "vuex";
 export default {
   name: "Personal_homepage",
@@ -524,9 +525,7 @@ export default {
       add_proj_type: "",
       isFocused: false,
       carts: [],
-      project_box: [],
-      //已結束專案的cart
-      ended_carts: [],
+      trash_carts: [],
       cart_titles: "",
       cart_title_input: "",
       selectOption: "option1",
@@ -584,14 +583,6 @@ export default {
     };
   },
   methods: {
-    // 跳轉至專案內部，從 vuex 中取得專案名稱
-    // getInPage(){
-    //   const store = useStore();
-    //   store.commit('showName',this.proj_name);
-    //   console.log("現在點的專案："+store.state.projectName);
-    // },
-    // 點擊上角新增專案
-
     add_btn() {
       this.add_proj_show = this.add_proj_show === false ? true : false;
       this.showOverlay = !this.showOverlay;
@@ -685,16 +676,92 @@ export default {
         this.middle_show_overview_page = true;
         this.middle_show_over_page = false;
         this.middle_show_trash_page = false;
+        const path = "http://104.199.143.218:5000/project_index";
+        const get_proj = {
+          user_id: 25,
+          project_status: "normal",
+        };
+        axios.post(path, get_proj).then((res) => {
+          if (res.data.status == "success") {
+            console.log("response_1:", res.data);
+            const items = res.data.items;
+            console.log("response_1", res.data.items);
+            items.forEach((element) => {
+              console.log(element.id);
+              this.proj_type = element.project_type;
+              this.proj_name = element.project_name;
+              console.log(this.proj_type);
+              if (
+                this.add_proj_type_options.includes(this.proj_type) === false
+              ) {
+                const new_cart = {
+                  title_word: this.proj_type,
+                  project_box: [this.proj_name],
+                };
+                this.carts.push(new_cart);
+                this.add_proj_type_options.push(new_cart.title_word);
+              }
+            });
+          }
+        });
       }
       if (index === 2) {
         this.middle_show_over_page = true;
         this.middle_show_overview_page = false;
         this.middle_show_trash_page = false;
+        const path_end = "http://104.199.143.218:5000/project_index";
+        const get_proj_end = {
+          user_id: 25,
+          project_status: "normal",
+        };
+        axios.post(path_end, get_proj_end).then((res) => {
+          if (res.data.status == "success") {
+            const items = res.data.items;
+            console.log("response_2", items);
+            items.forEach((element) => {
+              console.log(element.id);
+              this.proj_type = element.project_type;
+              this.proj_name = element.project_name;
+
+              if (
+                this.add_proj_type_options.includes(this.proj_type) === false
+              ) {
+                const new_cart = {
+                  title_word: this.proj_type,
+                  project_box: [this.proj_name],
+                };
+                this.carts.push(new_cart);
+                this.add_proj_type_options.push(new_cart.title_word);
+              }
+            });
+          }
+        });
       }
       if (index === 3) {
         this.middle_show_trash_page = true;
         this.middle_show_overview_page = false;
         this.middle_show_over_page = false;
+        console.log("jiji");
+        const path_trash = "http://104.199.143.218:5000/trashcan_search";
+        const get_proj_trash = {
+          project_id: 94,
+        };
+        axios.post(path_trash, get_proj_trash).then((res) => {
+          if (res.data.status == "success") {
+            const items = res.data.items;
+            items.forEach((element) => {
+              this.record_id = element.Record.id;
+              this.record_proj_id = element.Record.project_id;
+
+              const new_cart = {
+                record_id: this.record_id,
+              };
+              this.trash_carts.push(new_cart);
+            });
+          } else {
+            console.error("Response returned success status false:", res.data);
+          }
+        });
       }
     },
     // 我忘了
@@ -941,7 +1008,7 @@ export default {
       return payloadObject;
     },
   },
-  mounted() {
+  onMounted() {
     window.addEventListener("click", this.handleClickOutside);
     const path = "http://104.199.143.218:5000/project_index";
     const get_proj = {
@@ -998,6 +1065,7 @@ export default {
     });
   },
   beforeUnmount() {
+    console.log("beforeUnmount");
     window.removeEventListener("click", this.handleClickOutside);
   },
   searchProjects() {
@@ -2024,24 +2092,33 @@ export default {
   margin-top: 40px;
 }
 .last_30_days {
-  width: 1264px;
-  min-height: 222px;
-  margin-top: 40px;
+  width: 100%;
+
+  /* min-height: 222px; */
+  margin-top: 70px;
   position: relative;
-  left: 80px;
+  /* left: 80px; */
   padding-bottom: 25px;
 }
 .last_time {
   position: relative;
   height: 44px;
-  left: 16px;
+  left: 100px;
   color: #3b3838;
   font-size: 16px;
   letter-spacing: 0.5px;
   line-height: 44px;
   user-select: none;
 }
+.time_subline_up {
+  width: 100%;
+  height: 1px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #c7c2c2;
+  position: relative;
+}
 .time_subline {
+  left: 90px;
   width: 304px;
   height: 1px;
   border-bottom: 1px solid #c7c2c2;
@@ -2052,12 +2129,12 @@ export default {
   user-select: none;
 }
 .recover {
-  position: absolute;
+  position: relative;
   top: 0px;
   right: 68px;
 }
 .forever_delete {
-  position: absolute;
+  position: relative;
   top: 0px;
   right: 0px;
 }
@@ -2102,7 +2179,6 @@ export default {
   min-height: 242px;
   position: relative;
   top: 50px;
-  left: 80px;
 }
 .recovered {
   width: 399px;
@@ -2235,9 +2311,17 @@ export default {
   float: left !important;
 }
 .recover_trash_pic {
-  background-color: black;
-  width: 20px;
-  height: 30px;
+  position: absolute;
+  /* margin-left: auto; */
+  margin-top: 7px;
+  left: 87%;
+}
+.forever_delete_trash_pic {
+  position: absolute;
+  /* margin-left: auto; */
+  margin-top: 7px;
+  left: 92%;
+  /* margin-left: 1100px; */
 }
 
 router-link {
