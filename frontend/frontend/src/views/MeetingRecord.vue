@@ -1,33 +1,36 @@
 <template>
-  <!-- <div class="sharon" @contextmenu.prevent> -->
+    <!-- <div class="all"> -->
       <side-bar class="sideBar"></side-bar>
-       
-    <div class="all">
-    <div class="navAndCont"  id="new" v-if="showedInfo">
       <nav-bar-main class="navBar"></nav-bar-main>
-      
-      <div :class="meetingClass">
-        <div class="info"><meeting ></meeting></div>
-        <div class="textBlock">
-          <text-block v-for="cart in quantity" :key="cart" @add_cart="add_block"/>
-        </div> 
-      </div>
-      <!-- 標籤 -->
-      <tag-place class="tags" />
-      
-      
-    </div>
     
-
-    <div class="result" v-else>    
-            <div class="toolBar">
+      <div class="navAndCont"  id="new" >
+        <div class="tag">
+          <!-- 標籤 -->
+          <tag-place @show="showInfo"/>
+        </div>
+           
+        
+          <div :class="meetingClass" v-if="showedInfo">
+          
+          <meeting ></meeting>
+          <div class="textBlock">
+            <text-block v-for="cart in quantity" :key="cart" @add_cart="add_block"/>
+          </div> 
+          
+        </div>
+        <div class="result" v-else>    
+          <div class="toolBar">
             <ordering/>
             <sort/>
-        </div>
+          </div>
             <document-with-info v-for="item in 10" :key="item"/>
       </div>
+      
+      </div>
+    
+      
 
-    </div>
+    <!-- </div> -->
     <!-- 新增、會議記錄主頁 -->
     
     
@@ -51,7 +54,7 @@ import Ordering from '../components/SharonBricks/Ordering.vue';
 import sort from '../components/SharonBricks/Sort.vue';
 import DocumentWithInfo from "@/components/KerwinBricks/DCMwithDate.vue";
 import axios from 'axios';
-import { onMounted } from "vue";
+import { onBeforeMount } from "vue";
 
 
 export default {
@@ -72,29 +75,27 @@ export default {
   setup(props,{emit}) {
     const meetingClass = ref("meeting");
     const activeOption = ref(null);  
-    const isShowed = ref(false);  
-    const tagShowed = ref(false);
+    const isShowed = ref(false); 
     const router = useRouter();
     const currentActive = ref("1-1");
     const showedInfo = ref(true);
     const quantity = ref(1);
     const recordID = ref("");
 
-    // onMounted(() => {
-    //   recordID.value = this.router.query.cardId;
-    //   console.log(recordID.value);
-    // });
+    // onBeforeMount(() => {
+    //   // recordID.value = router.query.cardId;
+    //   // console.log(recordID.value);
+      
+    //   const record = {
+    //     "project_id":94,
+    //     "record_id":1
+    //   }
 
-    const showTags = () =>{
-      // console.log(recordID);
-      tagShowed.value = !tagShowed.value;
-      if(tagShowed.value === true){
-        meetingClass.value = "showingClass";
-      }
-      else{
-        meetingClass.value = "meeting";
-      }
-    }
+    //   axios.post("http://104.199.143.218:5000/get_record", record)
+    //   .then((res) => {
+
+    //   })
+    // });
 
     const showInfo = (value) =>{
       showedInfo.value = value;
@@ -109,8 +110,6 @@ export default {
       isShowed,
       // StopShowing,
       // show,
-      showTags,
-      tagShowed,
       meetingClass,
       // nextPage,
       currentActive,
@@ -128,9 +127,9 @@ export default {
 </script>
 
 <style scoped>
-.all{
-  background-color: #F2F3F5;
-}
+/* #{
+  overflow-x: hidden;
+} */
   .navBar{
     position: relative;
     top: 0;
@@ -148,44 +147,47 @@ export default {
  }
  .navAndCont{
   background-color: #F2F3F5;
+  /* display: flex; */
   position: fixed;
-  overflow: scroll;
+  overflow-y: scroll;
   
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  /* width: 88vw;  */
-  /* height: 100%;  */
-  
+  left: 200px;
+  top: 48px;
+  height: 100vh;
+  width: calc(100vw - 200px);
  }
  .info{
   position: relative;
  }
-
  .textBlock{
   position: relative;
   top:8px;
   left: -65px;
   display: grid;
   grid-row-gap: 8px;
+  padding-bottom: 10px;
   /* gap: 8px; */
+  background-color: #F2F3F5;
  }
 
  .meeting{
-  position: relative;
-  top: 68px;
+  position: absolute;
+  display: inline-block;
+  top: 20px;
+  margin-bottom: 20px;
   left:10%;
-  width: 50%;
+  width: calc(100vw - 200px);
   /* background-color: #F2F3F5; */
   /* width:200px;  */
   /* right:0; */
   /* width: auto; */
+  padding-bottom: 10px;
+  background-color: none;
  }
 
  .showingClass{
   position: absolute;
-  top: 68px;
+  top: 20px;
   /* right: 430px; */
   left: 66px;
  }
@@ -196,15 +198,15 @@ export default {
     /* flex-direction: row; */
     /* flex-wrap: wrap; */
     row-gap: 8px;
-    top: 68px;
+    top: 20px;
     /* margin-top: 128px; */
     /* width: 572px; */
-    left:246px;
+    left:46px;
  }
 
- .backtop{
+ /* .backtop{
     position: fixed;
- }
+ } */
 
  #backtop{
     background-color: var(--el-bg-color-overlay);
@@ -227,25 +229,26 @@ export default {
     margin-bottom: 12px;
     justify-content: right;
     text-align: right;
-    width: 1fr;
+    /* width: 1fr; */
  }
-.tags{
-  position: relative;
+.tag{
+  position: absolute;
+  /* margin-left: 100px; */
   right: 32px;
-  top: 68px;
+  /* top: 68px; */
+  z-index: 5;
+
 }
 
+
  @media screen and (min-width: 1024px) and (max-width: 1440px){
-  .navAndCont, .navBar{
-    left: 180px;
-  }
-  /* display: block; */
-  /* .tags{
-    position: absolute;
+  .tag{
     right: 32px;
-    top: 68px;
-    z-index: 10;
-  } */
+    top: 20px;
+  }
+  .textBlock{
+    width: 665px;
+  }
   
 
  }

@@ -342,6 +342,7 @@ export default {
               this.userId = res.data.user_id;
               console.log(this.userId);
               console.log("註冊成功");
+              alert("註冊成功");
               this.$router.push({
                 path: "/questionnaire",
                 // params: { user_id: this.userId },

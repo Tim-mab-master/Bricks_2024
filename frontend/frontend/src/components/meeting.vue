@@ -18,7 +18,7 @@
               <label for="meetingName">會議名稱</label>
             </td>
             <td class="input-cell">
-              <input type="text" id="meetingName" v-model="meetingName" class="text-input" :placeholder="placeholder" @focus="clearPlaceholder" @blur="restorePlaceholder">
+              <input type="text" id="meetingName" v-model="meetingName" class="text-input" :placeholder="placeholder" @focus="clearPlaceholder" @blur="restorePlaceholder" readonly>
             </td>
           </tr>
           <tr>
@@ -26,7 +26,7 @@
               <label for="time">時間</label>
             </td>
             <td class="input-cell">
-              <input type="place" id="time" v-model="time" class="text-input" placeholder="-">
+              <input type="place" id="time" v-model="time" class="text-input" placeholder="-" readonly>
             </td>
           </tr>
           <tr>
@@ -43,7 +43,7 @@
               <label for="place">地點</label>
             </td>
             <td class="input-cell">
-              <input type="place" id="place" v-model="place" class="text-input" placeholder="-">
+              <input type="place" id="place" v-model="place" class="text-input" placeholder="-" readonly>
             </td>
           </tr>
           <tr>
@@ -225,8 +225,11 @@
           show: false,
           data: {
             formName: '',
-            date:'',
-            time:'',
+            date:ref(new Date()),
+            time:ref([
+              new Date(),
+              new Date(Date.now() + 60 * 60 * 1000)
+            ]),
             place:'',
             // 其他表單項目
           },
@@ -306,45 +309,75 @@
         this.handleSelectChange(selectedValues, this.optionsC, this.valueC);
       },
       handleSelectChange(selectedValues, options, value,who) {
-        selectedValues.forEach((selectedValue) => {
-          const existsInOptions = options.some((option) => option.value === selectedValue);
-  
+        for(let i = 0; i < selectedValues.length; i++){
+          const existsInOptions = options.some((option) => option.value === selectedValues[i]);
           if (!existsInOptions) {
             options.push({
-              value: selectedValue,
-              label: selectedValue,
+              value: selectedValues[i],
+              label: selectedValues[i],
             });
           }
-  
-          const existsInValue = value.includes(selectedValue);
-  
-          if (!existsInValue) {
-            value.push(selectedValue);
-          }
           
-        });
+          const existsInValue = value.includes(selectedValues[i]);
+          if (!existsInValue) {
+            value.push(selectedValues[i]);
+          }
+        }
+        for (let i = options.length - 1; i >= 0; i--) {
+            if (!selectedValues.includes(options[i].value)) {
+              options.splice(i, 1);
+            }
+        }
       },
       onSubmit() {
-        const selectedDate = this.form.data.date;
-        const selectedTimeRange = this.form.data.time; // 獲取選擇的時間範圍
-
-        // 格式化開始時間的小時和分鐘
-        const startHours = ('0' + selectedTimeRange[0].getHours()).slice(-2);
-        const startMinutes = ('0' + selectedTimeRange[0].getMinutes()).slice(-2);
-
-        // 格式化結束時間的小時和分鐘
-        const endHours = ('0' + selectedTimeRange[1].getHours()).slice(-2);
-        const endMinutes = ('0' + selectedTimeRange[1].getMinutes()).slice(-2);
-        //開始加結束
-        const meetingTime = `${startHours}:${startMinutes} - ${endHours}:${endMinutes}`;
-
-
+        this.$store.commit('setName', this.form.data.formName);
         this.meetingName = this.form.data.formName;
-        this.time =new Date(selectedDate).toISOString().split('T')[0]+" "+ meetingTime;
-
         this.place = this.form.data.place;
-        // this.attends = this.optionsA.map(option => option.label);
+        // this.time = this.form.data.date;// 時間先略過
+        console.log(this.form.data.date);
+        const date = this.form.data.date;
+        const options = {  year: 'numeric', month: 'short', day: '2-digit', };
+        const formattedDate = date.toLocaleDateString(options).replace(/,/g, '/');    
         
+        console.log(this.form.data.time);
+        const format = { hour: '2-digit', minute: '2-digit', hour12: false };
+        const formattedTime = this.form.data.time.map(date => date.toLocaleTimeString('en-US', format));
+        const addTime = formattedTime[0].substring(0,5)+ '-'+formattedTime[1].substring(0,5);
+        this.time = formattedDate + " " + addTime;
+        // console.log(time);
+        
+        if (this.$route.path === '/all/cards/newRecord') {
+          const info = {
+            "project_id": 94,
+            "record_name": this.form.data.formName,
+            "record_date": formattedDate,
+            "record_department": "",
+            "record_attendances": 4,
+            "record_host_name": "劉宸宇",
+            "record_place": this.place,
+          }
+          axios.post("http://104.199.143.218:5000/add_record", info)
+            .then((res) => {
+              console.log(res.data.message);
+            })
+            .catch((error) => {
+              console.error("There was an error!", error);
+            });
+          }
+        else {
+          
+          const info ={
+            "record_id": "26",
+            "record_name": this.meetingName,
+            "record_department": "",
+            "record_attendances": 1,
+            "record_place": this.place,
+          }
+          axios.post("http://104.199.143.218:5000/edit_record",info)
+          .then((res) => {
+            console.log(res.data.message);
+          })
+        }
 
 
         ElMessage({
@@ -530,7 +563,9 @@
     } */
     .form{
       transform: scale(0.75);
-      top: -140px;
+      /* top: -140px; */
+      transform-origin: left top;
+      /* top: 0.01vh; */
     }
     .button-container{
       margin-bottom: 5px;

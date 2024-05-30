@@ -179,7 +179,7 @@
           </div>
         </div>
         <div class="next">
-          <div class="skip">
+          <div class="skip" @click="skip">
             <div>略過問卷</div>
           </div>
           <div class="complete">
@@ -280,6 +280,11 @@ export default {
       if (this.is_3_6_Checked) {
         this.otherTool.push("其他");
       }
+    },
+    skip() {
+      this.$router.push({
+        name: "login",
+      });
     },
     complete() {
       this.question_1_checked();
