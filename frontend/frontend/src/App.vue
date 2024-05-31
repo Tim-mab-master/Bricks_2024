@@ -25,6 +25,7 @@ export default {
 
 body {
   margin: 0;
+  font-family: 'CN regular/body3-Regular';
 }
 
 @import url('http://fonts.googleapis.com/css?family=Noto+Sans+TC:100,300,400,500,700,900');

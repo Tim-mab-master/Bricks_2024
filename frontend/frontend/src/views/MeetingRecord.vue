@@ -54,7 +54,7 @@ import Ordering from '../components/SharonBricks/Ordering.vue';
 import sort from '../components/SharonBricks/Sort.vue';
 import DocumentWithInfo from "@/components/KerwinBricks/DCMwithDate.vue";
 import axios from 'axios';
-import { onMounted } from "vue";
+import { onBeforeMount } from "vue";
 
 
 export default {
@@ -82,9 +82,19 @@ export default {
     const quantity = ref(1);
     const recordID = ref("");
 
-    // onMounted(() => {
-    //   recordID.value = this.router.query.cardId;
-    //   console.log(recordID.value);
+    // onBeforeMount(() => {
+    //   // recordID.value = router.query.cardId;
+    //   // console.log(recordID.value);
+      
+    //   const record = {
+    //     "project_id":94,
+    //     "record_id":1
+    //   }
+
+    //   axios.post("http://104.199.143.218:5000/get_record", record)
+    //   .then((res) => {
+
+    //   })
     // });
 
     const showInfo = (value) =>{
@@ -226,7 +236,7 @@ export default {
   /* margin-left: 100px; */
   right: 32px;
   /* top: 68px; */
-  z-index: 10;
+  z-index: 5;
 
 }
 
