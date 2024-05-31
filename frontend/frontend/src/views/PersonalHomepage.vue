@@ -136,12 +136,14 @@
                   <div class="trash_page" v-show="middle_show_trash_page">
                       <div class="trash_page_middle">
                           <div class="last_30_days">
+                            <div class="time_subline_up"></div>
                               <p class="last_time">近 30 天</p>
+                              
                               <div class="time_subline"></div>
                               <img v-if="recover" src="../assets/trash_page/recover_default.svg" alt="" class="recover_trash_pic" style="cursor: pointer;" @click="recover_project">
                               <img v-else src="../assets/trash_page/recover_active.svg" alt="" class="recover_trash_pic" >
-                              <img v-if="trashcan" src="../assets/trash_page/trashcan_default.svg" alt="" class="forever_delete trash_pic">
-                              <img v-else src="../assets/trash_page/trashcan_active.svg" alt="" class="forever_delete trash_pic" style="cursor: pointer;" @click="forever_delete_project">
+                              <img v-if="trashcan" src="../assets/trash_page/trashcan_default.svg" alt="" class="forever_delete_trash_pic">
+                              <img v-else src="../assets/trash_page/trashcan_active.svg" alt="" class="forever_delete_trash_pic" style="cursor: pointer;" @click="forever_delete_project">
                               <div class="trash_box_container">
                                   <div class="trash_box" v-for="(trash_box,index) in trash_boxes" :key="index">
                                     
@@ -740,21 +742,21 @@ export default {
 * {
   margin: 0;
   padding: 0;
-  font-family: 'Noto Sans TC';
+  font-family: "Noto Sans TC";
 }
 
 /* navigation bar的部分 起點*/
 .nav {
   width: 100vw;
 
-  height:calc(49px * 0.9);
+  height: calc(49px * 0.9);
   background-color: white;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   position: fixed;
   z-index: 9;
 }
 
-.nav>img {
+.nav > img {
   height: 32.06px;
   width: auto;
   position: absolute;
@@ -767,7 +769,7 @@ export default {
 .tri_btn {
   width: 340px;
   height: 30px;
-  
+
   position: absolute;
   right: 50px;
   top: 9.03px;
@@ -785,7 +787,6 @@ export default {
   font-weight: 400;
   position: absolute;
 }
-
 
 .tri_btn input:hover {
   background-color: #e1dcdc;
@@ -840,7 +841,7 @@ export default {
 
 /* 左側欄的部分 起點 */
 .left_bar {
-  zoom:80%;
+  zoom: 80%;
   width: 270px;
   /* width: calc(125vh - 675px); */
   height: calc(125vh - 48px);
@@ -863,7 +864,7 @@ export default {
   left: 48px;
   border-radius: 32px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.4);
-  background-color: #B82C30;
+  background-color: #b82c30;
   cursor: pointer;
   font-size: 18px;
   font-weight: 500;
@@ -908,11 +909,11 @@ export default {
   top: 61px;
 }
 
-.three_pointer input[type='radio'] {
+.three_pointer input[type="radio"] {
   display: none;
 }
 
-.three_pointer input[type='radio']+label {
+.three_pointer input[type="radio"] + label {
   display: inline-block;
   width: 100%;
   height: 76px;
@@ -926,12 +927,12 @@ export default {
   user-select: none;
 }
 
-.three_pointer input[type='radio']:hover+label {
+.three_pointer input[type="radio"]:hover + label {
   background-color: #e1dcdc;
   cursor: pointer;
 }
 
-.three_pointer input[type='radio']:checked+label {
+.three_pointer input[type="radio"]:checked + label {
   background-color: #e1dcdc;
 }
 
@@ -948,7 +949,7 @@ export default {
 /* 新增專案的框框 起點 */
 .add_proj_box {
   width: 344px;
-  height: 524px;
+  height: 500px;
   /* width: calc(344px * 0.9);
   height: calc(524px * 0.9); */
   position: fixed;
@@ -989,7 +990,7 @@ export default {
   transform: translate(-50%, -50%) rotate(-45deg);
 }
 .clear_search {
-  cursor: pointer;  
+  cursor: pointer;
   position: absolute;
   top: 14px;
   left: 225px;
@@ -1014,7 +1015,6 @@ export default {
 .clear_search::after {
   transform: translate(-50%, -50%) rotate(-45deg);
 }
-
 
 .add_proj_title {
   font-size: 20px;
@@ -1048,7 +1048,7 @@ export default {
 
 .add_proj_name {
   width: 278px;
-  height: 38px;
+  height: 34px;
   border: 1px solid #c7c2c2;
   border-radius: 12px;
   font-size: 16px;
@@ -1061,9 +1061,9 @@ export default {
   transform: translate(-50%);
 }
 
-.add_search{
-  width:250px;
-  height:38px;
+.add_search {
+  width: 250px;
+  height: 38px;
   border: 1px solid #c7c2c2;
   border-radius: 12px;
   font-size: 16px;
@@ -1092,7 +1092,7 @@ export default {
 
 .add_proj_type {
   width: 278px;
-  height: 38px;
+  height: 34px;
   border: 1px solid #b8b8b8;
   border-radius: 12px;
   position: relative;
@@ -1109,26 +1109,28 @@ export default {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  background: url(../assets/dropdown_arrow/dropdown_arrow_right.svg) no-repeat center right;
+  background: url(../assets/dropdown_arrow/dropdown_arrow_right.svg) no-repeat
+    center right;
 }
-.add_proj_type:hover{
+.add_proj_type:hover {
   border-color: #7b7b7b;
-  background: url(../assets/dropdown_arrow/dropdown_arrow_right_hover.svg) no-repeat center right;
+  background: url(../assets/dropdown_arrow/dropdown_arrow_right_hover.svg)
+    no-repeat center right;
 }
 
-.add_proj_type_list{
+.add_proj_type_list {
   width: 214px;
   height: auto;
   padding-top: 8px;
   box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3), 0px 2px 15px rgba(0, 0, 0, 0.15);
   border-radius: 14px;
   position: absolute;
-  top: 396px;
-  left: 86px;
+  top: 320px;
+  left: 320px;
   z-index: 3;
   background-color: white;
 }
-.his_search_list{
+.his_search_list {
   width: 235px;
   height: auto;
   padding-top: 0px;
@@ -1140,19 +1142,7 @@ export default {
   z-index: 3;
   background-color: white;
 }
-.match{
-  width: 235px;
-  height: auto;
-  padding-top: 0px;
-  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3), 0px 2px 15px rgba(0, 0, 0, 0.15);
-  border-radius: 14px;
-  position: absolute;
-  top: 38px;
-  left: 15px;
-  z-index: 3;
-  background-color: white;
-}
-.add_proj_type_option{
+.add_proj_type_option {
   width: 100%;
   height: 45px;
   line-height: 45px;
@@ -1161,10 +1151,10 @@ export default {
   letter-spacing: 1.25;
   text-indent: 16px;
   cursor: pointer;
-  color: #3B3838;
+  color: #3b3838;
   user-select: none;
 }
-.add_history_search{
+.add_history_search {
   width: 100%;
   height: 45px;
   margin-top: 10px;
@@ -1175,33 +1165,33 @@ export default {
   letter-spacing: 1.25;
   text-indent: 16px;
   cursor: pointer;
-  color: #3B3838;
+  color: #3b3838;
   user-select: none;
 }
-.add_history_search:hover{
-  background-color: #F2EEEE;
+.add_history_search:hover {
+  background-color: #f2eeee;
 }
 .his_search_list_container {
-  max-height: 200px; 
+  max-height: 200px;
   overflow-y: auto;
   overflow-x: hidden;
 }
-.add_proj_type_option:hover{
-  background-color: #F2EEEE;
+.add_proj_type_option:hover {
+  background-color: #f2eeee;
 }
-.add_proj_type_list_line{
+.add_proj_type_list_line {
   height: 7px;
-  border-bottom: 2px solid #E1DCDC;
+  border-bottom: 2px solid #e1dcdc;
   margin-bottom: 7px;
   user-select: none;
 }
-.add_history_search_list_line{
+.add_history_search_list_line {
   height: 7px;
-  border-bottom: 2px solid #E1DCDC;
+  border-bottom: 2px solid #e1dcdc;
   margin-bottom: 7px;
   user-select: none;
 }
-.add_proj_type_text{
+.add_proj_type_text {
   height: 45px;
   width: 100%;
   font-size: 16px;
@@ -1210,14 +1200,14 @@ export default {
   text-indent: 16px;
   border: none;
   outline: none;
-  color: #3B3838;
+  color: #3b3838;
   user-select: none;
-}   
-.add_proj_type_text::placeholder{
-  color: #3B3838;
 }
-.add_proj_type_text:hover{
-  background-color: #F2EEEE;
+.add_proj_type_text::placeholder {
+  color: #3b3838;
+}
+.add_proj_type_text:hover {
+  background-color: #f2eeee;
 }
 
 .add_proj_type_text_plus {
@@ -1249,7 +1239,7 @@ export default {
 .add_proj_type_text_plus::after {
   transform: rotate(0deg);
 }
-.add_search_project{
+.add_search_project {
   height: 45px;
   width: 100%;
   font-size: 16px;
@@ -1258,28 +1248,28 @@ export default {
   text-indent: 16px;
   border: none;
   outline: none;
-  color: #3B3838;
+  color: #3b3838;
   user-select: none;
-}   
-.add_search_project::placeholder{
-  color: #3B3838;
 }
-.add_search_project:hover{
-  background-color: #F2EEEE;
+.add_search_project::placeholder {
+  color: #3b3838;
+}
+.add_search_project:hover {
+  background-color: #f2eeee;
 }
 .add_proj_build {
   width: 280px;
-  height: 48px;
+  height: 42px;
   border-radius: 14px;
   background-color: #b82c30;
   color: white;
   font-size: 18px;
   font-weight: 500;
-  line-height: 48px;
+  line-height: 40px;
   letter-spacing: 1.25px;
   text-align: center;
   position: relative;
-  top: 170px;
+  top: 166px;
   left: 50%;
   transform: translate(-50%);
   cursor: pointer;
@@ -1287,8 +1277,6 @@ export default {
 }
 
 /* 新增專案的框框 終點 */
-
-
 
 /* 背景灰色 */
 .overlay {
@@ -1324,7 +1312,7 @@ export default {
   overflow-y: auto;
   overflow-x: hidden;
   top: 0px;
-  left:75px;
+  left: 75px;
   align-items: center;
   padding-bottom: 20px;
 }
@@ -1332,7 +1320,7 @@ export default {
 ::-webkit-scrollbar {
   display: none;
 }
-.cart{
+.cart {
   width: calc(100% - 50px);
   min-height: 218px;
   background-color: white;
@@ -1359,14 +1347,14 @@ export default {
   left: 96px;
   /* display: inline-block; */
 }
-.cart_drag_icon{
+.cart_drag_icon {
   position: relative;
   -webkit-user-drag: none;
   user-select: none;
   top: 22px;
   left: 32px;
   display: inline-block;
-}   
+}
 .title_underline {
   width: 304px;
   border-bottom: 1px solid #c7c2c2;
@@ -1381,14 +1369,14 @@ export default {
   position: relative;
   top: 56px;
   left: 80px;
-  overflow: hidden;   
+  overflow: hidden;
   margin-bottom: 80px;
 }
 
 .box_container .box {
   width: 295px;
   /* 希望box可以隨著container等比例縮放 */
- 
+
   height: 44px;
   border: 1.5px solid #e1dcdc;
   border-radius: 13px;
@@ -1403,11 +1391,11 @@ export default {
   text-indent: 69.67px;
   user-select: none;
 }
-.box:hover{
-  background-color: #E1DCDC;
-  border-color: #C7C2C2;
+.box:hover {
+  background-color: #e1dcdc;
+  border-color: #c7c2c2;
 }
-.cart_title_input{
+.cart_title_input {
   font-size: 16px;
   font-weight: 400;
   line-height: 24px;
@@ -1418,10 +1406,10 @@ export default {
   border: none;
   outline: none;
 }
-.new_type_highlight{
-  border: 2px solid #C7C2C2;
+.new_type_highlight {
+  border: 2px solid #c7c2c2;
 }
-.right_click_box_overview{
+.right_click_box_overview {
   width: 214px;
   height: 106px;
   box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3), 0px 2px 15px rgba(0, 0, 0, 0.15);
@@ -1431,7 +1419,7 @@ export default {
   padding-bottom: 8px;
   position: absolute;
 }
-.right_click_box_overview_option{
+.right_click_box_overview_option {
   width: 100%;
   height: 45px;
   font-size: 16px;
@@ -1443,22 +1431,22 @@ export default {
   user-select: none;
   cursor: pointer;
 }
-.right_click_box_overview_option:hover{
-  background-color: #F2EEEE;
+.right_click_box_overview_option:hover {
+  background-color: #f2eeee;
 }
-.delete_confirm{
+.delete_confirm {
   width: 412px;
   height: 372px;
   position: absolute;
   top: 20%;
   left: 520px;
   background-color: white;
-  border: 1.5px solid #C7C2C2;
+  border: 1.5px solid #c7c2c2;
   box-shadow: 0px 0px 5px 1px rgba(65, 65, 65, 0.25);
   border-radius: 14px;
   z-index: 8;
 }
-.delete_confirm_first_text{
+.delete_confirm_first_text {
   width: 104px;
   height: 28px;
   position: relative;
@@ -1497,7 +1485,7 @@ export default {
 .close_delete_confirm::after {
   transform: translate(-50%, -50%) rotate(-45deg);
 }
-.delete_confirm img{
+.delete_confirm img {
   -webkit-user-drag: none;
   user-select: none;
   position: relative;
@@ -1505,9 +1493,9 @@ export default {
   left: 50%;
   transform: translate(-50%);
 }
-.delete_confirm_second_text{
+.delete_confirm_second_text {
   position: relative;
-  color: #3B3838;
+  color: #3b3838;
   font-weight: 400;
   font-size: 14px;
   height: 21px;
@@ -1519,9 +1507,9 @@ export default {
   transform: translate(-50%);
   width: 100px;
 }
-.delete_confirm_third_text{
+.delete_confirm_third_text {
   position: relative;
-  color: #3B3838;
+  color: #3b3838;
   font-weight: 400;
   font-size: 14px;
   height: 21px;
@@ -1533,7 +1521,7 @@ export default {
   transform: translate(-50%);
   width: 243px;
 }
-.delete_confirm_btn_container{
+.delete_confirm_btn_container {
   width: 332px;
   height: 48px;
   position: relative;
@@ -1541,12 +1529,12 @@ export default {
   left: 50%;
   transform: translate(-50%);
 }
-.forever_delete_confirm_btn{
+.forever_delete_confirm_btn {
   width: 150px;
   height: 48px;
   border-radius: 14px;
   cursor: pointer;
-  background-color: #B82C30;
+  background-color: #b82c30;
   color: white;
   font-size: 18px;
   letter-spacing: 1.25px;
@@ -1556,7 +1544,7 @@ export default {
   float: right;
   user-select: none;
 }
-.forever_delete_confirm_btn_cancel{
+.forever_delete_confirm_btn_cancel {
   background-color: white;
   color: #120405;
   float: left !important;
@@ -1564,54 +1552,63 @@ export default {
 /* 中間的部分 終點 */
 
 /* 垃圾桶的部分 起點 */
-.trash_page_middle{
-  width: calc(100% - 50px);
+.trash_page_middle {
+  width: 98%;
   height: 85vh;
-  border: 1px solid #E1DCDC;
+  border: 1px solid #e1dcdc;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
   border-radius: 14px;
   background-color: white;
   margin-top: 40px;
 }
-.last_30_days{
-  width: 1264px;
-  min-height:222px;
-  margin-top: 40px;
+.last_30_days {
+  width: 100%;
+  
+  /* min-height: 222px; */
+  margin-top: 70px;
   position: relative;
-  left: 80px;
+  /* left: 80px; */
   padding-bottom: 25px;
 }
-.last_time{
+.last_time {
   position: relative;
   height: 44px;
-  left: 16px;
-  color: #3B3838;
+  left: 100px;
+  color: #3b3838;
   font-size: 16px;
   letter-spacing: 0.5px;
   line-height: 44px;
   user-select: none;
 }
-.time_subline{
-  width: 304px;
+.time_subline_up {
+  width: 100%;
   height: 1px;
-  border-bottom: 1px solid #C7C2C2;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #c7c2c2;
   position: relative;
 }
-.trash_pic{
+.time_subline {
+  left: 90px;
+  width: 304px;
+  height: 1px;
+  border-bottom: 1px solid #c7c2c2;
+  position: relative;
+}
+.trash_pic {
   -webkit-user-drag: none;
   user-select: none;
 }
-.recover{
-  position: absolute;
+.recover {
+  position: relative;
   top: 0px;
   right: 68px;
 }
-.forever_delete{
-  position: absolute;
+.forever_delete {
+  position: relative;
   top: 0px;
   right: 0px;
 }
-.trash_box_container{
+.trash_box_container {
   width: 1280px;
   height: auto;
   position: relative;
@@ -1619,10 +1616,10 @@ export default {
   overflow: hidden;
   margin-bottom: 0px;
 }
-.trash_box input[type="checkbox"]{
+.trash_box input[type="checkbox"] {
   display: none;
 }
-.trash_box input[type="checkbox"] + label{
+.trash_box input[type="checkbox"] + label {
   width: 301px;
   height: 44px;
   border: 1.5px solid #e1dcdc;
@@ -1638,23 +1635,22 @@ export default {
   text-indent: 69.67px;
   user-select: none;
 }
-.trash_box input[type="checkbox"]:hover + label{
+.trash_box input[type="checkbox"]:hover + label {
   background-color: #f2eeee;
 }
-.trash_box input[type="checkbox"]:active + label{
+.trash_box input[type="checkbox"]:active + label {
   background-color: #f2eeee;
 }
-.trash_box input[type="checkbox"]:checked + label{
+.trash_box input[type="checkbox"]:checked + label {
   background-color: #f2eeee;
 }
-.last_one_year{
+.last_one_year {
   width: 1264px;
-  min-height:242px;
+  min-height: 242px;
   position: relative;
   top: 50px;
-  left: 80px;
 }
-.recovered{
+.recovered {
   width: 399px;
   height: 141px;
   background-color: white;
@@ -1665,37 +1661,37 @@ export default {
   left: 529px;
   z-index: 9;
 }
-.recovered img{
+.recovered img {
   position: relative;
   top: 32px;
   left: 183.5px;
   -webkit-user-drag: none;
   user-select: none;
 }
-.recovered p{
+.recovered p {
   position: relative;
   top: 40px;
   left: 164px;
   font-size: 14px;
   font-weight: 400;
   letter-spacing: 0.25px;
-  color: #3B3838;
+  color: #3b3838;
   user-select: none;
   -webkit-user-drag: none;
 }
-.forever_delete_confirm{
+.forever_delete_confirm {
   width: 412px;
   height: 372px;
   position: absolute;
   top: 20%;
   left: 520px;
   background-color: white;
-  border: 1.5px solid #C7C2C2;
+  border: 1.5px solid #c7c2c2;
   box-shadow: 0px 0px 5px 1px rgba(65, 65, 65, 0.25);
   border-radius: 14px;
   z-index: 8;
 }
-.forever_delete_confirm_first_text{
+.forever_delete_confirm_first_text {
   width: 156px;
   height: 28px;
   position: relative;
@@ -1734,7 +1730,7 @@ export default {
 .close_forever_delete_confirm::after {
   transform: translate(-50%, -50%) rotate(-45deg);
 }
-.forever_delete_confirm img{
+.forever_delete_confirm img {
   -webkit-user-drag: none;
   user-select: none;
   position: relative;
@@ -1742,9 +1738,9 @@ export default {
   left: 50%;
   transform: translate(-50%);
 }
-.forever_delete_confirm_second_text{
+.forever_delete_confirm_second_text {
   position: relative;
-  color: #3B3838;
+  color: #3b3838;
   font-weight: 400;
   font-size: 14px;
   height: 21px;
@@ -1756,7 +1752,7 @@ export default {
   transform: translate(-50%);
   width: 243px;
 }
-.forever_delete_confirm_btn_container{
+.forever_delete_confirm_btn_container {
   width: 332px;
   height: 48px;
   position: relative;
@@ -1764,12 +1760,12 @@ export default {
   left: 50%;
   transform: translate(-50%);
 }
-.forever_delete_confirm_btn{
+.forever_delete_confirm_btn {
   width: 150px;
   height: 48px;
   border-radius: 14px;
   cursor: pointer;
-  background-color: #B82C30;
+  background-color: #b82c30;
   color: white;
   font-size: 18px;
   letter-spacing: 1.25px;
@@ -1779,17 +1775,28 @@ export default {
   float: right;
   user-select: none;
 }
-.forever_delete_confirm_btn_cancel{
+.forever_delete_confirm_btn_cancel {
   background-color: white;
   color: #120405;
   float: left !important;
 }
-.recover_trash_pic{
-  background-color: black;
-  width: 20px;
-  height: 30px;
+.recover_trash_pic {
+  position: absolute;
+  /* margin-left: auto; */
+  margin-top: 7px;
+  left: 87%;
+}
+.forever_delete_trash_pic{
+  position: absolute;
+  /* margin-left: auto; */
+  margin-top: 7px;
+  left: 92%;
+  /* margin-left: 1100px; */
+}
+
+router-link {
+  color: black;
 }
 /* 垃圾桶的部分 終點 */
-
-
 </style>
+
