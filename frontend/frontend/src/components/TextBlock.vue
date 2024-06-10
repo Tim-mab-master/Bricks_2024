@@ -10,8 +10,8 @@
         <div class="split-line" style="width: 100%;"></div>
         <div class="tags">
       <el-tag
-        v-for="tag in dynamicTags"
-        :key="tag"
+        v-for="(tag, index) in visibleTags"
+        :key="index"
         class="tag"
         closable
         :disable-transitions="false"
@@ -19,9 +19,13 @@
       >
         {{ tag }}
       </el-tag>
+      <el-tag v-if="hiddenTagCount > 0" class="tag"
+        @click="showHiddenTags"  style="cursor: pointer;">
+      +{{ hiddenTagCount }}
+    </el-tag>
       <el-input
         v-if="inputVisible"
-        ref="InputRef"
+        ref="inputRef"
         v-model="inputValue"
         class="ml-1 w-20"
         size="small"
@@ -33,13 +37,15 @@
         class="button-new-tag ml-1"
         size="small"
         @click="showInput"
-        :disabled="isCartDisabled" @locked="isLocked">+ 事項</el-button>
+        :disabled="isCartDisabled"
+        @locked="isLocked">+ 事項</el-button>
       <el-button
       v-if="!inputVisible"
         class="button-new-tag ml-1"
         size="small"
         @click="showInput"
-        :disabled="isCartDisabled" @locked="isLocked">+ 組別</el-button>
+        :disabled="isCartDisabled" 
+        @locked="isLocked">+ 組別</el-button>
     </div>
     </div>
   </div>
@@ -50,7 +56,7 @@
 </template>
 
 <script>
-import { ref, onMounted, onUnmounted,nextTick } from 'vue';
+import { ref, onMounted, mounted, onUnmounted,nextTick } from 'vue';
 import EditTextara from './EditTextara.vue';
 import Unlock from './Unlock.vue';
 export default {
@@ -64,32 +70,69 @@ props: {
 },
 setup(props, { emit }) {
   const textarea1 = ref("");
-  const inputValue = ref("");
-  const dynamicTags = ref([]);
   const inputVisible = ref(false);
+  const inputValue = ref("");
+  const dynamicTags = ref(['Tag1', 'Tag2', 'Tag3', 'Tag4', 'Tag5', 'Tag6', 'Tag7', 'Tag8', 'Tag9', 'Tag10']);
   const isShowed= ref(false);
   const rightClickRef = ref(null);
   const isCartDisabled = ref(false);
   const isUnlockShowed = ref(false);
+  const hiddenTagCount = ref(0);
+  const visibleTags = ref([]);
+  const inputRef = ref(null); 
+  const showHiddenTags = () => {
+    visibleTags.value = dynamicTags.value;//顯示所有
+    hiddenTagCount.value = 0; 
+    //移除resize監聽器
+    window.removeEventListener('resize', calculateVisibleTags);
+    };
+  
+  const calculateVisibleTags = () => {
+      nextTick(() => { //確保在 DOM 更新完成後執行回調函數。這樣可以確保容器的寬度已正確計算。
+        const container = document.querySelector('.tags');
+        if (!container) return;
+        
+        const containerWidth = container.clientWidth;
+        const tagWidth =75; // 假設每個標籤的寬度是80px，包括邊距
+        const maxVisibleTags = Math.floor(containerWidth / tagWidth); //最多可以容納幾個tag
+        console.log(maxVisibleTags)
+        
+        if (dynamicTags.value.length >= maxVisibleTags) {// >11 maxVisibleTags =11
+          visibleTags.value = dynamicTags.value.slice(0, maxVisibleTags );
+          console.log("contaner",visibleTags.value);
+          hiddenTagCount.value = dynamicTags.value.length - visibleTags.value.length;
+        } else {
+          visibleTags.value = dynamicTags.value;
+          hiddenTagCount.value = 0;
+        }
+      });
+    };
 
-  const handleClose = (tag) => {
-    dynamicTags.value.splice(dynamicTags.value.indexOf(tag), 1);
-  };
+    const handleClose = (tag) => {//關掉tag時
+      const index = dynamicTags.value.indexOf(tag);
+      if (index !== -1) {
+        dynamicTags.value.splice(index, 1);
+      }
+      calculateVisibleTags();
+    };
 
-  const showInput = () => {
-    inputVisible.value = true;
-    // this.$nextTick(() => {
-    //   this.$refs.InputRef.focus();
-    // });
-  };
-
-  const handleInputConfirm = () => {
-    if (inputValue.value) {
-      dynamicTags.value.push(inputValue.value);
-    }
-    inputVisible.value = false;
-    inputValue.value = "";
-  };
+    const showInput = () => {
+      inputVisible.value = true;
+      nextTick(() => {
+        if (inputRef.value) {
+          inputRef.value.focus();
+        }
+      });
+    };
+    const handleInputConfirm = () => {
+      if (inputValue.value) {
+        dynamicTags.value.push(inputValue.value);
+      }
+      inputVisible.value = false;
+      inputValue.value = '';
+      calculateVisibleTags();
+    };
+    
 
   const edit_textArea = () => {
 
@@ -134,6 +177,10 @@ setup(props, { emit }) {
     // });
     emit('add_cart');
   };
+  onMounted(() => {
+      calculateVisibleTags();
+      window.addEventListener('resize', calculateVisibleTags);
+  });
   
 
   onMounted(() => {
@@ -145,22 +192,27 @@ setup(props, { emit }) {
   });
   return {
     textarea1,
-    inputValue,
-    dynamicTags,
-    inputVisible,
-    handleClose,
-    showInput,
-    handleInputConfirm,
     edit_textArea,
     show,
     unShow,
     isShowed,
     rightClickRef,
     add_cart,
-    isCartDisabled,
     isUnlockShowed,
     isLocked,
     unlocked,
+    dynamicTags,
+      inputVisible,
+      inputValue,
+      inputRef,
+      isCartDisabled,
+      hiddenTagCount,
+      showHiddenTags,
+      visibleTags,
+      calculateVisibleTags,
+      handleClose,
+      showInput,
+      handleInputConfirm,
   };
 },
 };
@@ -227,6 +279,7 @@ flex-wrap: wrap;
 margin: 6px 10px;
 }
 .tag {
+  margin: 2px;
 margin-right: 4px;
 }
 .ml-1 {
