@@ -103,7 +103,14 @@ const routes = [
       },
       {
         path: "cards/newRecord",
-        alias: "cards/meetingRecord/:cardId",
+        // alias: "cards/meetingRecord/:cardId",
+        name: "newRecord",
+        component: () => import("../views/NewMeetingRecord.vue"),
+        
+      },
+      {
+        path: "cards/meetingRecord/:cardId",
+        // alias: "",
         name: "meetingRecord",
         component: () => import("../views/MeetingRecord.vue"),
         

@@ -1,9 +1,13 @@
 <template>
-    
-  <div class="cart_container" >
-    <el-button class="add_cartButton"  @click="add_cart"><el-icon><Plus /></el-icon></el-button>
-    <div class="additional-textarea">
-        <div class="textarea-container">
+
+  <!-- <transition name="move"> -->
+  <div class="cart_container" @mouseenter.stop="showAddbtn = true" @mouseleave="showAddbtn = false">
+    <transition name="show">
+      <el-button class="add_cartButton"  @click="add_cart" v-show="showAddbtn" ><el-icon><Plus /></el-icon></el-button>
+  </transition>
+    <transition name="move">
+      <div class="additional-textarea">
+        <div class="textarea-container" >
           <resize-textarea class="textArea" placeholder="請輸入內容" v-model="textValue" :disabled="isCartDisabled" ></resize-textarea>
           <el-button class="edit_textButton" @click="show"><el-icon><MoreFilled /></el-icon></el-button>
         </div>
@@ -42,137 +46,115 @@
         :disabled="isCartDisabled" @locked="isLocked">+ 組別</el-button>
     </div>
     </div>
-    <div v-if="isShowed" id="rightClick" ref = "rightClick" @click="unShow()"><EditTextara @locked="isLocked"/></div>        
-    <div v-if="isUnlockShowed" id="rightClick" ref = "rightClick" @click="unShow()"><Unlock @unlocked="unLocked"/></div>
+    </transition>
+    <div v-if="isShowed" id="rightClick" ref = "rightClick" @click="unShow()" @blur="unShow"><EditTextara @locked="isLocked" @delete = "deleteCart"/></div>        
+    <div v-if="isUnlockShowed" id="rightClick" ref = "rightClick" @click="unShow()" @blur="unShow"><Unlock @unlocked="unlocked"/></div>
+    
+    
+  
   </div>
-
-          
-
+<!-- </transition> -->
 </template>
 
-<script>
-import { ref, onMounted, onUnmounted,nextTick } from 'vue';
+<script setup>
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import EditTextara from './EditTextara.vue';
 import Unlock from './Unlock.vue';
-export default {
-components: {
-  EditTextara,
-  Unlock,
-},
-props: {
+
+const props = defineProps({
   isShowed: Boolean,
   isUnlockShowed: Boolean,
-},
-setup(props, { emit }) {
-  const textarea1 = ref("");
-  const inputValue = ref("");
-  const dynamicTags = ref([]);
-  const inputVisible = ref(false);
-  const isShowed= ref(false);
-  const rightClickRef = ref(null);
-  const isCartDisabled = ref(false);
-  const isUnlockShowed = ref(false);
+  showAddbtn: Boolean,
+  content: String,
+});
 
-  const handleClose = (tag) => {
-    dynamicTags.value.splice(dynamicTags.value.indexOf(tag), 1);
-  };
+const emit = defineEmits(['add_cart']);
 
-  const showInput = () => {
-    inputVisible.value = true;
-    // this.$nextTick(() => {
-    //   this.$refs.InputRef.focus();
-    // });
-  };
+const textValue = computed(() => props.content);
+const inputValue = ref("");
+const dynamicTags = ref([]);
+const inputVisible = ref(false);
+const isShowed = ref(props.isShowed);
+const rightClickRef = ref(null);
+const isCartDisabled = ref(false);
+const isUnlockShowed = ref(props.isUnlockShowed);
 
-  const handleInputConfirm = () => {
-    if (inputValue.value) {
-      dynamicTags.value.push(inputValue.value);
-    }
-    inputVisible.value = false;
-    inputValue.value = "";
-  };
-
-  const edit_textArea = () => {
-
-  };
-  const show = () => {
-    if (isCartDisabled) {
-      console.log(isCartDisabled.value);
-      isShowed.value = !isShowed.value;
-    } else {
-      isUnlockShowed.value = true;
-    }
+const handleClose = (tag) => {
+  dynamicTags.value.splice(dynamicTags.value.indexOf(tag), 1);
 };
 
-  const unShow = () => {
-    isUnlockShowed.value = false;
-    isShowed.value = false;
-  };
-  const isLocked = () =>{
-    isCartDisabled.value = true;
+const showInput = () => {
+  inputVisible.value = true;
+};
+
+const handleInputConfirm = () => {
+  if (inputValue.value) {
+    dynamicTags.value.push(inputValue.value);
   }
-  const unlocked = () =>{
-    isCartDisabled.value = false;
-  };
-  const handleClickOutside = (event) => {
+  inputVisible.value = false;
+  inputValue.value = "";
+};
+
+const show = () => {
+  if (!isCartDisabled.value) {
+    isShowed.value = true;
+  } else {
+    isUnlockShowed.value = true;
+  }
+};
+
+const unShow = () => {
+  isUnlockShowed.value = false;
+  isShowed.value = false;
+};
+
+const isLocked = () => {
+  isCartDisabled.value = true;
+};
+
+const unlocked = () => {
+  isCartDisabled.value = false;
+};
+
+const handleClickOutside = (event) => {
   const rightClick = rightClickRef.value;
   if (rightClick && !rightClick.contains(event.target)) {
-    unShow(index); // 或者使用具體的索引值
+    unShow(); // 确保调用没有参数
   }
 };
 
+const deleteCart = () =>{
+  emit('deleteCart');
+}
 
-  const add_cart = () => {
-    
-    // const uniqueId = Date.now().toString();
-    // cartContainers.value.push({
-    //   id: uniqueId,
-    //   textValue: '',  
-    //   dynamicTags: [],
-    //   inputValue: '',
-    //   inputVisible: false,
-    //   isShowed: false,
-    // });
-    emit('add_cart');
-  };
-  
-
-  onMounted(() => {
-    document.addEventListener('click', handleClickOutside);
-  });
-
-  onUnmounted(() => {
-    document.removeEventListener('click', handleClickOutside);
-  });
-  return {
-    textarea1,
-    inputValue,
-    dynamicTags,
-    inputVisible,
-    handleClose,
-    showInput,
-    handleInputConfirm,
-    edit_textArea,
-    show,
-    unShow,
-    isShowed,
-    rightClickRef,
-    add_cart,
-    isCartDisabled,
-    isUnlockShowed,
-    isLocked,
-    unlocked,
-  };
-},
+const add_cart = () => {
+  emit('add_cart');
 };
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside);
+});
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside);
+});
 </script>
 
 <style scoped>
-  .cart_container{
-      position: relative;
-      display: flex;
-  }
-  .additional-textarea {
+.show-enter-active, .show-leave-active {
+  transition: opacity 0.5s;
+}
+.show-enter-from, .show-leave-to {
+  opacity: 0;
+}
+
+.cart_container{
+  position: relative;
+  display: flex;
+}
+.additional-textarea {
+  position: relative;
+  /* left:-30px; */
   border-radius: 4px;
   width: 890px;
   padding: 10px;
@@ -207,8 +189,11 @@ setup(props, { emit }) {
 }
 
 .add_cartButton{
+  /* display: inline-block; */
   height: 40px;
   width: 50px;
+  position: relative;
+  /* left: -65px; */
   margin-right: 15px;
   background-color: white;
   border: 1px solid #ccc;
