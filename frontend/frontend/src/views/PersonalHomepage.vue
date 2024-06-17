@@ -144,6 +144,9 @@
                               <img v-else src="../assets/trash_page/recover_active.svg" alt="" class="recover_trash_pic" >
                               <img v-if="trashcan" src="../assets/trash_page/trashcan_default.svg" alt="" class="forever_delete_trash_pic">
                               <img v-else src="../assets/trash_page/trashcan_active.svg" alt="" class="forever_delete_trash_pic" style="cursor: pointer;" @click="forever_delete_project">
+                              <div class="box_container">
+                                  <div class="box" v-for="(proj_name,index2) in trash_carts.proj_box" :key="index2">{{ proj_name }}</div>
+                              </div>
                               <div class="trash_box_container">
                                   <div class="trash_box" v-for="(trash_box,index) in trash_boxes" :key="index">
                                     
@@ -220,7 +223,8 @@ export default {
           //已結束專案的
           ended_projs:[],
           cart_box_name_list: [],
-          trash_boxes: [],
+          //垃圾桶
+          trash_carts: [],
           checked_trash_box: [],
           recover: true,
           trashcan: true,
@@ -290,7 +294,7 @@ export default {
           this.selectOption = 'option1';
           this.show_add_proj_type_list = false;
           this.proj_type_color = '#b6aeae';
-          const path = "http://34.81.186.58:5000/add_project";
+          const path = "http://34.81.219.139:5000/add_project";
           const add_new_project = {
               "project_type": [this.proj_type],
               "project_image": this.project_image,
@@ -441,7 +445,7 @@ export default {
               this.proj_type_color = 'black';
               this.add_proj_type_text = '';
 
-              const path="http://35.194.196.179:5000/add_type"
+              const path="http://34.81.219.139:5000/add_type"
               const insert_type={
                   
                       "user_id": 1,
@@ -491,7 +495,7 @@ export default {
           this.search_project='';
       },
       search_bar(){
-          const path="http://34.81.186.58:5000/search_history";
+          const path="http://34.81.219.139:5000/search_history";
           const search_bar={
               "user_id":this.user_id
           };
@@ -615,7 +619,7 @@ export default {
   },
   mounted() {
       window.addEventListener('click' , this.handleClickOutside);
-      const path = "http://104.199.143.218:5000/project_index";
+      const path = "http://34.81.219.139:5000/project_index";
         const get_proj = {
             "user_id":25,
             "project_status":"normal"
@@ -645,7 +649,7 @@ export default {
                 });
                 }
           }) 
-        const path_end = "http://104.199.143.218:5000/project_index";
+        const path_end = "http://34.81.219.139:5000/project_index";
         const get_proj_end = {
             "user_id":25,
             "project_status":"ended"
@@ -671,6 +675,34 @@ export default {
                       }else{
                         // 這裡寫未分類
                       }
+                          
+                });
+                }
+          }) 
+       const path_trash = "http://34.81.219.139:5000/project_index";
+      const get_proj_trash = {
+          "user_id":25,
+          "project_status":"trashcan"
+      };
+      axios.post(path_trash,get_proj_trash)
+            .then((res) =>{
+                if(res.data.status == 'success'){
+                    const items_in_month = res.data.item.in_month
+                    console.log(items_in_month)
+                    items_in_month.forEach(element => {
+
+                      this.proj_type = element.project_type;
+                      this.proj_name = element.project_name;
+
+                      if(this.projectsAll){
+                        this.projectsAll.push(this.proj_name)
+                      }
+                      const new_cart={
+                        title_word: this.proj_type,
+                        proj_box: [this.proj_name],
+                      }
+                      this.trash_carts.push(new_cart);
+                      
                           
                 });
                 }
