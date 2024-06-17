@@ -197,7 +197,7 @@ export default {
         console.log("前端block");
         this.error = true;
       } else {
-        const path = "http://104.199.143.218:5000/bricks_login";
+        const path = "http://35.201.168.185:5000/bricks_login";
         const user = {
           user_email: this.account,
           user_password: this.password,
@@ -247,9 +247,11 @@ export default {
           });
       }
     },
+
+    //登入按鍵
     goToPersonalPage() {
       axios
-        .post("http://104.199.143.218:5000/bricks_login", {
+        .post("http://34.81.219.139:5000/bricks_login", {
           user_email: this.account,
           user_password: this.password,
         })
@@ -259,8 +261,8 @@ export default {
           if (res.data.status === "success") {
             console.log("yes");
             alert("登入成功");
-            this.authorization = res.headers.Authorization;
-            console.log(this.authorization);
+            this.authorization = res.headers.get("Authorization");
+            console.log("authorization: " + this.authorization);
             this.$router.push({
               name: "personalHomepage",
               params: { user_id: "25" },

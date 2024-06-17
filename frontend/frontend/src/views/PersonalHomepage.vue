@@ -211,7 +211,6 @@
               <input
                 class="cart_title_input"
                 placeholder="新增類型"
-                disabled="disabled"
                 @focus="new_type_focus"
                 @blur="new_type_blur"
                 @keyup.enter="add_a_cart"
@@ -613,7 +612,7 @@ export default {
       this.selectOption = "option1";
       this.show_add_proj_type_list = false;
       this.proj_type_color = "#b6aeae";
-      const path = "http://104.199.143.218:5000/project_index";
+      const path = "http://34.81.219.139:5000/project_index";
       const newProject = {
         project_type: this.proj_type,
         project_image: this.project_image,
@@ -657,7 +656,7 @@ export default {
           this.carts.push(new_cart);
           this.add_proj_type_options.push(new_cart.title_word);
 
-          const path = "http://104.199.143.218:5000/add_type";
+          const path = "http://34.81.219.139:5000/add_type";
           const type = {
             user_id: 25,
             project_id: 87,
@@ -676,7 +675,7 @@ export default {
         this.middle_show_overview_page = true;
         this.middle_show_over_page = false;
         this.middle_show_trash_page = false;
-        const path = "http://104.199.143.218:5000/project_index";
+        const path = "http://34.81.219.139:5000/project_index";
         const get_proj = {
           user_id: 25,
           project_status: "normal",
@@ -709,7 +708,7 @@ export default {
         this.middle_show_over_page = true;
         this.middle_show_overview_page = false;
         this.middle_show_trash_page = false;
-        const path_end = "http://104.199.143.218:5000/project_index";
+        const path_end = "http://34.81.219.139:5000/project_index";
         const get_proj_end = {
           user_id: 25,
           project_status: "normal",
@@ -742,7 +741,7 @@ export default {
         this.middle_show_overview_page = false;
         this.middle_show_over_page = false;
         console.log("jiji");
-        const path_trash = "http://104.199.143.218:5000/trashcan_search";
+        const path_trash = "http://34.81.219.139:5000/trashcan_search";
         const get_proj_trash = {
           project_id: 94,
         };
@@ -828,7 +827,7 @@ export default {
         this.proj_type_color = "black";
         this.add_proj_type_text = "";
 
-        const path = "http://104.199.143.218:5000/add_type";
+        const path = "http://34.81.219.139:5000/add_type";
         const type = {
           user_id: "25",
           project_id: 87,
@@ -882,7 +881,7 @@ export default {
       this.search_project = "";
     },
     search_bar() {
-      const path = "http://34.81.186.58:5000/search_history";
+      const path = "http://34.81.219.139:5000/search_history";
       const search_bar = {
         user_id: this.user_id,
       };
@@ -1010,7 +1009,7 @@ export default {
   },
   onMounted() {
     window.addEventListener("click", this.handleClickOutside);
-    const path = "http://104.199.143.218:5000/project_index";
+    const path = "http://34.81.219.139:5000/project_index";
     const get_proj = {
       user_id: 25,
       project_status: "normal",
@@ -1036,7 +1035,7 @@ export default {
         });
       }
     });
-    const path_end = "http://104.199.143.218:5000/project_index";
+    const path_end = "http://34.81.219.139:5000/project_index";
     const get_proj_end = {
       user_id: 25,
       project_status: "ended",
