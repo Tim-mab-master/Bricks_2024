@@ -36,7 +36,7 @@ export default {
       emit("unlocked");
     };
 
-    const emit = defineEmits(["deleteTxt"]);
+    // const emit = defineEmits(["deleteTxt"]);
 
     const deleteTxt = () => {
       emit("deleteTxt");

@@ -57,7 +57,7 @@
       </div>
     </div>
     <div v-if="isShowed" id="rightClick" ref="rightClick" @click="unShow()">
-      <EditTextara @locked="isLocked" @deleteTxt="deleteTxt" />
+      <EditTextara @locked="isLocked" @delete-txt="deleteTxt" />
     </div>
     <div v-else id="rightClick" ref="rightClick" @click="unShow()">
       <EditTextara @unlocked="unlocked" />
