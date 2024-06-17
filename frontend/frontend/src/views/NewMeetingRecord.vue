@@ -12,9 +12,9 @@
         
           <div :class="meetingClass" v-if="showedInfo">
           
-          <meeting :recordInfo="recordInfo"></meeting>
+          <meeting @submit = "submit" @recordInfo = "setInfo"></meeting>
           <div class="textBlock">
-            <text-block v-for="block in blocks" :key="block.id" @add_cart="add_block" :showAddBtn = "showAddBtn" @deleteCart = "deleteCart" :content="block.textBox_content"/>
+            <text-block v-for="block in blocks" :key="block.id" @add_cart="add_block" :showAddBtn = "showAddBtn" @deleteCart = "deleteCart" :content="block.textBox_content" />
           </div> 
           
         </div>
@@ -48,7 +48,7 @@ import { onMounted } from "vue";
 import { useStore } from "vuex";
   
     const meetingClass = ref("meeting");
-    const recordInfo = computed(() => store.getters['records/getCurrRecord']);
+    const recordInfo = ref({});
     const activeOption = ref(null);  
     const isShowed = ref(false); 
     const router = useRouter();
@@ -59,6 +59,26 @@ import { useStore } from "vuex";
     const showAddBtn = ref(false);
     const store = useStore();
     const blocks = computed(() => store.getters["records/getCurrTextBoxes"]);
+    
+    const setInfo = (value) =>{
+      recordInfo.value = value;
+    }
+
+    const submit = () =>{
+      console.log("recordInfo："+recordInfo);
+      // const body = {
+      //   "project_id": 86,
+      //   "record_name": recordInfo.value.data.formName,
+      //   "record_date": recordInfo.value.data.date,
+      //   "record_department": "後端",
+      //   "record_attendances": 4,
+      //   "record_host_name": "劉宸宇",
+      //   "record_place": recordInfo.value.data.place
+      // }
+      // const response = axios.post("http://34.81.219.139:5000/add_record", body);
+      // console.log(response.message);
+      // store.dispatch("records/fetchAllRecords");
+    }
 
     const deleteCart = async () =>{
       try{
@@ -86,18 +106,20 @@ import { useStore } from "vuex";
       showedInfo.value = value;
     };
     const add_block = () =>{
-      blocks.value +=1;
+      const block = {
+        "id": store.state.records.currTextBoxes[state.currTextBoxes.length - 1]+1,
+        "record_id": "3",
+        "textBox_content": "",
+        "textBox_update_time": new Date(),s
+      }
+      store.commit("records/addBlock",block);
+      
     }
 
     const showBtn = () =>{
       showAddBtn.value = true;
     }
 
-    onMounted(() => {
-      // if (route.path === '/cards/newRecord') {
-        store.dispatch('records/fetchOneRecord');
-      // }
-    });
 
 </script>
 

@@ -49,12 +49,10 @@ export default {
         // };
         
         const lockEdit = () => {
-            emit('locked')
+            emit('locked');
         };
         const deleteTxt =()=>{
-            
-            // status = false;
-            // emit('clicked',status)
+            emit('delete');
         };
         return{
             // change,
