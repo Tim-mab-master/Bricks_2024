@@ -183,14 +183,38 @@ export default {
     };
   },
 };
+
+onMounted(() => {
+  document.addEventListener("click", handleClickOutside);
+});
+
+onUnmounted(() => {
+  document.removeEventListener("click", handleClickOutside);
+});
 </script>
 
 <style scoped>
+<<<<<<< HEAD
 .cart_container {
+=======
+.show-enter-active, .show-leave-active {
+  transition: opacity 0.5s;
+}
+.show-enter-from, .show-leave-to {
+  opacity: 0;
+}
+
+.cart_container{
+>>>>>>> 245679f8a4b1ee9a42bb82f68069e9b08a07d567
   position: relative;
   display: flex;
 }
 .additional-textarea {
+<<<<<<< HEAD
+=======
+  position: relative;
+  /* left:-30px; */
+>>>>>>> 245679f8a4b1ee9a42bb82f68069e9b08a07d567
   border-radius: 4px;
   width: 890px;
   padding: 10px;
@@ -224,9 +248,16 @@ export default {
   margin-bottom: 10px;
 }
 
+<<<<<<< HEAD
 .add_cartButton {
+=======
+.add_cartButton{
+  /* display: inline-block; */
+>>>>>>> 245679f8a4b1ee9a42bb82f68069e9b08a07d567
   height: 40px;
   width: 50px;
+  position: relative;
+  /* left: -65px; */
   margin-right: 15px;
   background-color: white;
   border: 1px solid #ccc;

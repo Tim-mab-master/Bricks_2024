@@ -47,6 +47,7 @@ export default {
   },
   //   methods: {
 
+<<<<<<< HEAD
   //     deleteTxt() {
   //       // status = false;
   //       // emit('clicked',status)
@@ -83,6 +84,27 @@ export default {
   //     emit('chosen', status);
   // };
 };
+=======
+        // const change = (status) => {
+        //     status = false;
+        //     emit('chosen', status);
+        // };
+        
+        const lockEdit = () => {
+            emit('locked');
+        };
+        const deleteTxt =()=>{
+            emit('delete');
+        };
+        return{
+            // change,
+            // status,
+            lockEdit,
+            deleteTxt,
+        }
+    }
+}
+>>>>>>> 245679f8a4b1ee9a42bb82f68069e9b08a07d567
 </script>
 
 <style scoped>
