@@ -106,14 +106,7 @@ import { useStore } from "vuex";
       showedInfo.value = value;
     };
     const add_block = () =>{
-      const block = {
-        "id": store.state.records.currTextBoxes[state.currTextBoxes.length - 1]+1,
-        "record_id": "3",
-        "textBox_content": "",
-        "textBox_update_time": new Date(),s
-      }
-      store.commit("records/addBlock",block);
-      
+      store.commit("records/addBlock");
     }
 
     const showBtn = () =>{
