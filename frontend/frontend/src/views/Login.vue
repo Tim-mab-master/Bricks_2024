@@ -251,7 +251,7 @@ export default {
     //登入按鍵
     goToPersonalPage() {
       axios
-        .post("http://35.201.168.185:5000/bricks_login", {
+        .post("http://34.81.219.139:5000/bricks_login", {
           user_email: this.account,
           user_password: this.password,
         })
