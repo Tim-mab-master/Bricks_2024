@@ -190,6 +190,9 @@ export default {
       // router.push('/searching');
         emit('showBlock',false);
       }
+      else{
+        emit('showBlock',true);
+      }
     };
 
     const arraySorter = (arrayGroup) => {
@@ -205,6 +208,7 @@ export default {
       // arraySorter();  //刪除後想要重新排序內部
       arrayFilter();
       console.log(tag.label);
+      // goSearch();
     };
     
 
@@ -328,5 +332,22 @@ export default {
 
 .taglist{
  
+}
+
+@media screen and (min-width: 1024px) and (max-width: 1440px) {
+  .tagUnchecked, .tagChecked{
+    font-size: 10px;
+    line-height: 1.5vh;
+    width: fit-content;
+    margin: 3px;
+  }
+  .demo-collapse .el-collapse-item{
+    line-height: 20px;
+    padding: 12px;
+    font-size: 12px;
+  }
+  .tagSearchArea .tagTypingArea .el-select {
+     font-size: 10px;
+  }
 }
 </style>

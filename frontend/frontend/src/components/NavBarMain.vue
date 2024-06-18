@@ -7,8 +7,8 @@
             </el-breadcrumb>
         </div>
         <div id="meetingName">
-            <input type="text" id="name" placeholder="未命名會議紀錄">
-            <el-icon id="edit"><edit-pen/></el-icon>
+            <input type="text" id="name" placeholder="未命名會議紀錄" :value="meetingName" :readonly="readOnly" ref="meetingInput" @keydown.enter="saveEdit">
+            <el-icon id="edit" @click="edit"><edit-pen/></el-icon>
         </div>
         <div id="toolBar">
             <div id="searchPlace">
@@ -26,15 +26,39 @@
 import UserInfo from './UserInfo.vue';
 import SearchBar from './SearchBar.vue';
 import NotificationMenu from './NotificationMenu.vue';
+import { useStore } from 'vuex';
+import { ref, watchEffect, onBeforeMount } from 'vue';
 export default {
+    // props:['meetingName'],
     components:{
         UserInfo,
         SearchBar,
         NotificationMenu,
     },
-    setup(){
-        return{
+    setup(props, {emit}){
+        const meetingName = ref("未命名會議紀錄")
+        const store = useStore();
+        const readOnly = ref(true);
+        const edit = () =>{
+            readOnly.value = false;
+            // if (!readOnly.value) {
+            //     this.refs.meetingInput.focus();
+            // }
+        }
+        const saveEdit = () =>{
+            readOnly.value = true;
+            store.commit('setName', props.meetingName);
             
+        }
+        // onBeforeMount(() => {
+        //     meetingName.value = store.state.
+        // })
+        
+        return{
+            readOnly,
+            edit,
+            saveEdit,
+            meetingName,
         };
     }
 }
@@ -44,7 +68,7 @@ export default {
     #navBar{
         z-index: 5;
         position: fixed;
-        left: 200px;
+        /* left: 200px; */
         display: flex;
         width: auto;
         height: 48px;
@@ -65,6 +89,7 @@ export default {
         top: 0;
         padding: 12px 0 12px 16px;
         font-size: 14px;
+        width: auto;
     }
     #breadCrumb #first{
         color: #909399;
@@ -85,7 +110,7 @@ export default {
         justify-content: center;
         align-items: center;
         /* position: absolute; */
-        margin-left: 420px;
+        margin-left: 30%;
     }
 
     #meetingName #edit{
@@ -158,6 +183,9 @@ export default {
     #userInfo{
         position: inherit;
         /* right: 16px; */
+    }
+    @media screen and (max-width: 1440px) and (min-width:1240px) {
+        
     }
 
 </style>

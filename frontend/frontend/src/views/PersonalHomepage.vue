@@ -1,65 +1,244 @@
 <template>
   <div>
-      <div class="nav">
-          <img src="../assets/brickslogo.svg" @click=" ">
-          <div class="tri_btn">
-              <input type="text" placeholder='查詢專案' class="add_search_project" v-model.trim="search_project" 
-              @keyup.enter="list_add_a_search" @keyup="keyboardEvent"
-              @blur="show_his_search_list = false">
-              <div class="his_search_list" v-show="show_his_search_list">
-                  <div v-for="(history, index) in this.projects.slice().reverse().slice(0,6)" :key="index" 
-                  class="add_history_search"  @click="his_search_choosen" >
-                      {{ history}}
-              </div>
-                  <!-- <div v-for="(history, index) in projectsAll.slice().reverse().slice(0,6)" :key="index" class="add_history_search" @click="his_search_choosen(history)" >
+    <div class="nav">
+      <img src="../assets/brickslogo.svg" @click="" />
+      <div class="tri_btn">
+        <input
+          type="text"
+          placeholder="查詢專案"
+          class="add_search_project"
+          v-model.trim="search_project"
+          @keyup.enter="list_add_a_search"
+          @keyup="keyboardEvent"
+          @blur="show_his_search_list = false"
+        />
+        <div class="his_search_list" v-show="show_his_search_list">
+          <div
+            v-for="(history, index) in this.projects
+              .slice()
+              .reverse()
+              .slice(0, 6)"
+            :key="index"
+            class="add_history_search"
+            @click="his_search_choosen"
+          >
+            {{ history }}
+          </div>
+          <!-- <div v-for="(history, index) in projectsAll.slice().reverse().slice(0,6)" :key="index" class="add_history_search" @click="his_search_choosen(history)" >
                       {{ history}}
                   </div> -->
-                  <ul class="autoComplete position-absolute box-shadow bg-white w-100 w-md-50 z-index-3"
-                    :class=" autoComplete ? '' : 'd-none'">
-                    <!--     控制按鈕事件的選取背景 -->
-                      <li class="searchHover p-2 w-100" v-for="(item,index) in filterProjects" :key="index"
-                      :class=" selectedIndex === i ?'bg-light': ''">
-                        <router-link class="text-dark d-inline-block w-100" :to="`/project/${item.id}`">{{item.name}}
-                        </router-link>
-                      </li>
-                  </ul>
-              </div>
-              <div class="clear_search" @click="clear_search_bar"></div>
+          <ul
+            class="autoComplete position-absolute box-shadow bg-white w-100 w-md-50 z-index-3"
+            :class="autoComplete ? '' : 'd-none'"
+          >
+            <!--     控制按鈕事件的選取背景 -->
+            <li
+              class="searchHover p-2 w-100"
+              v-for="(item, index) in filterProjects"
+              :key="index"
+              :class="selectedIndex === i ? 'bg-light' : ''"
+            >
+              <router-link
+                class="text-dark d-inline-block w-100"
+                :to="`/project/${item.id}`"
+                >{{ item.name }}
+              </router-link>
+            </li>
+          </ul>
+        </div>
+        <div class="clear_search" @click="clear_search_bar"></div>
 
-              <img src="../assets/search.svg" alt="" class="search">
-              <img src="../assets/Notice/Notice_Default.svg" alt="" class="notice">
-              <img src="../assets/Profile/Profile_Default.svg" alt="" class="profile">
-          </div>
-     </div>
-      <div class="left_bar">
-          <div class="add_btn" @click="add_btn">新增專案</div>
-          <div class="plus" @click="add_btn"></div>
-          <div class="three_pointer">
-              <input type="radio" id="overview" class="list" name="list" value="option1" v-model="selectOption">
-              <label for="overview" @click="change(1)">專案總覽</label>
-              <img src="../assets/icon/icon_file.svg" style="top: 26px">
-              <input type="radio" id="over" class="list" name="list" value="option2" v-model="selectOption">
-              <label for="over" @click="change(2)">已結束專案</label>
-              <img src="../assets/icon/icon_over.svg" style="top: 102px">
-              <input type="radio" id="trash" class="list" name="list" value="option3" v-model="selectOption">
-              <label for="trash" @click="change(3)">垃圾桶</label>
-              <img src="../assets/icon/icon_trashcan.svg" style="top: 178px">
-          </div>
+        <img src="../assets/search.svg" alt="" class="search" />
+        <img src="../assets/Notice/Notice_Default.svg" alt="" class="notice" />
+        <img
+          src="../assets/Profile/Profile_Default.svg"
+          alt=""
+          class="profile"
+        />
       </div>
-      <div class="add_proj_box" v-show="add_proj_show">
-          <div class="close_add_proj_box" @click="add_btn(); close_add_proj()"></div>
-          <p class="add_proj_title">新增專案</p>
-          <div class="add_proj_pic">
-              <img src="../assets/add_proj_pic_plus.svg" class="add_proj_pic_plus">
-          </div>
-          <input type="text" placeholder="輸入專案名稱" class="add_proj_name" v-model="add_proj_name">
-          <div class="add_proj_type" @click="add_proj_type_btn" :style="{background: add_proj_type_arrow, color:proj_type_color}" ref="add_proj_type">{{proj_type}}</div>
-          <div class="add_proj_type_list" v-show="show_add_proj_type_list" ref="add_proj_type_list">
-              <div class="add_proj_type_option" @click="type_not_choose">未分類</div>
-              <div v-for="(option,index) in add_proj_type_options" :key="index" class="add_proj_type_option" @click="type_choosen(option)">
-                  {{ option }}
+    </div>
+    <div class="left_bar">
+      <div class="add_btn" @click="add_btn">新增專案</div>
+      <div class="plus" @click="add_btn"></div>
+      <div class="three_pointer">
+        <input
+          type="radio"
+          id="overview"
+          class="list"
+          name="list"
+          value="option1"
+          v-model="selectOption"
+        />
+        <label for="overview" @click="change(1)">專案總覽</label>
+        <img src="../assets/icon/icon_file.svg" style="top: 26px" />
+        <input
+          type="radio"
+          id="over"
+          class="list"
+          name="list"
+          value="option2"
+          v-model="selectOption"
+        />
+        <label for="over" @click="change(2)">已結束專案</label>
+        <img src="../assets/icon/icon_over.svg" style="top: 102px" />
+        <input
+          type="radio"
+          id="trash"
+          class="list"
+          name="list"
+          value="option3"
+          v-model="selectOption"
+        />
+        <label for="trash" @click="change(3)">垃圾桶</label>
+        <img src="../assets/icon/icon_trashcan.svg" style="top: 178px" />
+      </div>
+    </div>
+
+    <!-- 新增專案彈出視窗 -->
+    <div class="add_proj_box" v-show="add_proj_show">
+      <div
+        class="close_add_proj_box"
+        @click="
+          add_btn();
+          close_add_proj();
+        "
+      ></div>
+      <p class="add_proj_title">新增專案</p>
+      <div class="add_proj_pic">
+        <img src="../assets/add_proj_pic_plus.svg" class="add_proj_pic_plus" />
+      </div>
+      <input
+        type="text"
+        placeholder="輸入專案名稱"
+        class="add_proj_name"
+        v-model="add_proj_name"
+      />
+      <div
+        class="add_proj_type"
+        @click="add_proj_type_btn()"
+        :style="{ background: add_proj_type_arrow, color: proj_type_color }"
+        ref="add_proj_type"
+      >
+        {{ proj_type }}
+      </div>
+      <div
+        class="add_proj_type_list"
+        v-show="show_add_proj_type_list"
+        ref="add_proj_type_list"
+      >
+        <div class="add_proj_type_option" @click="type_not_choose">未分類</div>
+        <div
+          v-for="(proj, index) in add_proj_type_options"
+          :key="index"
+          class="add_proj_type_option"
+          @click="type_choosen(proj)"
+        >
+          {{ proj }}
+        </div>
+
+        <div class="add_proj_type_list_line"></div>
+        <input
+          type="text"
+          class="add_proj_type_text"
+          placeholder="新增類別"
+          v-model="add_proj_type_text"
+          @keyup.enter="list_add_a_cart()"
+          @blur="list_add_a_cart()"
+        />
+        <div class="add_proj_type_text_plus" @click="list_add_a_cart"></div>
+      </div>
+      <div class="add_proj_build" @click="new_project_btn">建立專案</div>
+    </div>
+    <div class="main_body">
+      <div class="bg">
+        <!-- 背景透明灰色 -->
+        <div class="overlay" v-if="showOverlay"></div>
+        <div class="middle">
+          <!-- 專案總覽 -->
+          <div class="overview_page" v-show="middle_show_overview_page">
+            <!-- 未分類的專案 -->
+            <div class="uncategorized cart" ref="uncategorized">
+              <p class="cart_title">未分類</p>
+              <div class="title_underline"></div>
+              <div class="box_container">
+                <!-- @click="getInPage" -->
+                <router-link to="/all"
+                  ><div
+                    class="box"
+                    v-for="(proj_name, index) in uncategorized_projs"
+                    :key="index"
+                    @contextmenu.prevent="right_click_box"
+                  >
+                    {{ proj_name }}
+                  </div></router-link
+                >
+              </div>
+            </div>
+            <!-- 各式類型的專案們，index1代表這個屬於這個類型 -->
+            <div v-for="(cart, index1) in carts" :key="index1">
+              <div class="cart">
+                <p class="cart_title" style="height: 0px">
+                  {{ cart.title_word }}
+                </p>
+                <!-- 那三條橫線(做為可以拖曳的標示) -->
+                <img
+                  src="../assets/cart_drag_icon.svg"
+                  alt=""
+                  class="cart_drag_icon"
+                />
+                <!-- 專案類型的下面的底線 -->
+                <div class="title_underline"></div>
+                <!-- 專案的那個區塊 -->
+                <div class="box_container">
+                  <!-- index2代表index1這個類型之下的專案id -->
+                  <div
+                    class="box"
+                    v-for="(proj_name, index2) in carts[index1].project_box"
+                    :key="index2"
+                    @contextmenu.prevent="right_click_box"
+                    @click="click_proj()"
+                  >
+                    {{ proj_name }}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- 新增類型 -->
+            <div
+              class="new_type cart"
+              :class="{ new_type_highlight: isFocused }"
+            >
+              <input
+                class="cart_title_input"
+                placeholder="新增類型"
+                @focus="new_type_focus"
+                @blur="new_type_blur"
+                @keyup.enter="add_a_cart"
+                v-model="cart_title_input"
+              />
+              <div class="title_underline"></div>
+              <div class="box_container"></div>
+            </div>
+
+            <!-- 重新命名 + 刪除專案 -->
+            <div
+              class="right_click_box_overview"
+              :style="{ top: mouseTop + 'px', left: mouseLeft + 'px' }"
+              v-show="right_click_box_overview_show"
+              ref="right_click_box_overview"
+            >
+              <div
+                class="right_click_box_overview_option"
+                style="
+                  border-top-left-radius: 5px;
+                  border-top-right-radius: 5px;
+                "
+                @click="rename"
+              >
+                重新命名
               </div>
               <div class="add_proj_type_list_line"></div>
+<<<<<<< HEAD
               <input type="text" class="add_proj_type_text" placeholder="新增類別" v-model="add_proj_type_text" @keyup.enter="list_add_a_cart">
               <div class="add_proj_type_text_plus" @click="list_add_a_cart"></div>
           </div>
@@ -179,428 +358,765 @@
                           </div>
                       </div>
                   </div>
+=======
+              <div
+                class="right_click_box_overview_option"
+                style="
+                  border-bottom-left-radius: 5px;
+                  border-bottom-right-radius: 5px;
+                "
+                @click="delete_project"
+              >
+                刪除專案
+>>>>>>> FE-DEV
               </div>
+            </div>
+            <!-- 確認刪除視窗 -->
+            <div class="delete_confirm" v-show="delete_confirm">
+              <div
+                class="close_delete_confirm"
+                @click="close_delete_confirm"
+              ></div>
+              <p class="delete_confirm_first_text">刪除專案</p>
+              <img src="../assets/delete_icon.svg" alt="" />
+              <p class="delete_confirm_second_text">確定刪除專案？</p>
+              <p class="delete_confirm_third_text">
+                刪除後若需還原，請至「垃圾桶」查看
+              </p>
+              <div class="delete_confirm_btn_container">
+                <button
+                  class="forever_delete_confirm_btn forever_delete_confirm_btn_cancel"
+                  @click="close_delete_confirm()"
+                >
+                  取消
+                </button>
+                <button
+                  class="forever_delete_confirm_btn forever_delete_confirm_btn_delete"
+                  @click="delete_project_confirm(cart)"
+                >
+                  刪除
+                </button>
+              </div>
+            </div>
+
+            <!-- 點擊專案 -->
+            <div class="click_proj_box" v-show="click_proj_show">
+              <div class="close_click_proj_box" @click="unclick_proj()"></div>
+              <p class="click_proj_title">寫專案名稱</p>
+              <!-- 專案的照片 add_proj_pic-->
+              <div class="click_proj_pic"></div>
+              <!-- 專案名稱 add_proj_name-->
+              <textarea class="click_proj_narrative" />
+              <!-- 專案類型 add_proj_type-->
+              <div
+                class="click_proj_type"
+                @click="add_proj_type_btn()"
+                :style="{
+                  background: add_proj_type_arrow,
+                  color: proj_type_color,
+                }"
+              >
+                {{ proj_type }}
+              </div>
+              <div
+                class="add_proj_type_list"
+                v-show="show_add_proj_type_list"
+                ref="add_proj_type_list"
+              >
+                <!-- <div class="add_proj_type_option" @click="type_not_choose">未分類</div> -->
+                <div class="add_proj_type_option_section">
+                  <div
+                    v-for="(option, index) in add_proj_type_options"
+                    :key="index"
+                    class="add_proj_type_option"
+                    @click="type_choosen(option)"
+                  >
+                    {{ option }}
+                  </div>
+                </div>
+
+                <div class="add_proj_type_list_line"></div>
+                <input
+                  type="text"
+                  class="add_proj_type_text"
+                  placeholder="新增類別"
+                  v-model="add_proj_type_text"
+                  @keyup.enter="list_add_a_cart()"
+                  @blur="list_add_a_cart()"
+                />
+                <div
+                  class="add_proj_type_text_plus"
+                  @click="list_add_a_cart"
+                ></div>
+              </div>
+              <!-- 建立專案 add_proj_build-->
+              <div class="click_proj_enter">進入專案</div>
+            </div>
+            <!-- 點擊專案 結束 -->
+
+            <div class="overlay" v-if="showOverlay_delete"></div>
           </div>
+          <!-- 已結束專案 -->
+          <div class="over_page" v-show="middle_show_over_page">
+            <div class="uncategorized cart" ref="uncategorized">
+              <p class="cart_title">未分類</p>
+              <div class="title_underline"></div>
+              <div class="box_container">
+                <div
+                  class="box"
+                  v-for="(proj_name, index) in uncategorized_projs"
+                  :key="index"
+                >
+                  {{ proj_name }}
+                </div>
+              </div>
+            </div>
+            <div v-for="(cart, index1) in carts" :key="index1">
+              <div class="cart">
+                <p class="cart_title" style="height: 0px">
+                  {{ cart.title_word }}
+                </p>
+                <img
+                  src="../assets/cart_drag_icon.svg"
+                  alt=""
+                  class="cart_drag_icon"
+                />
+                <div class="title_underline"></div>
+                <div class="box_container">
+                  <div
+                    class="box"
+                    v-for="(proj_name, index2) in ended_carts[index1]"
+                    :key="index2"
+                  >
+                    {{ proj_name }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- 垃圾桶 -->
+          <div class="trash_page" v-show="middle_show_trash_page">
+            <div class="trash_page_middle">
+              <img
+                v-if="recover"
+                src="../assets/trash_page/recover_default.svg"
+                alt=""
+                class="recover_trash_pic"
+                style="cursor: pointer"
+                @click="recover_project"
+              />
+              <img
+                v-else
+                src="../assets/trash_page/recover_active.svg"
+                alt=""
+                class="recover_trash_pic"
+              />
+              <img
+                v-if="trashcan"
+                src="../assets/trash_page/trashcan_default.svg"
+                style="cursor: pointer"
+                class="forever_delete_trash_pic"
+              />
+              <img
+                v-else
+                src="../assets/trash_page/trashcan_active.svg"
+                alt=""
+                class="forever_delete_trash_pic"
+                style="cursor: pointer"
+                @click="forever_delete_project"
+              />
+              <div class="last_30_days">
+                <div class="time_subline_up"></div>
+
+                <p class="last_time">近 30 天</p>
+                <div class="time_subline"></div>
+
+                <div class="trash_box_container">
+                  <div
+                    class="trash_box"
+                    v-for="(trash_box, index) in trash_boxes"
+                    :key="index"
+                  >
+                    <input
+                      type="checkbox"
+                      :id="'trash_box-' + index"
+                      v-model="checked_trash_box[index]"
+                      @change="selected_trash_box(index)"
+                    />
+                    <label
+                      :for="'trash_box-' + index"
+                      @contextmenu.prevent="right_click_box_trash"
+                      >{{ trash_box.text }}</label
+                    >
+                  </div>
+                </div>
+              </div>
+              <div class="last_one_year">
+                <p class="last_time">近一年</p>
+                <div class="time_subline"></div>
+                <div class="trash_box_container"></div>
+              </div>
+              <div class="recovered" v-show="recovered">
+                <img src="../assets/recovered_icon.svg" alt="" />
+                <p>檔案已還原</p>
+              </div>
+              <div
+                class="forever_delete_confirm"
+                v-show="forever_delete_confirm"
+              >
+                <div
+                  class="close_forever_delete_confirm"
+                  @click="close_forever_delete_confirm"
+                ></div>
+                <p class="forever_delete_confirm_first_text">永久刪除專案</p>
+                <img src="../assets/forever_delete_icon.svg" alt="" />
+                <p class="forever_delete_confirm_second_text">
+                  確定永久刪除專案？刪除後將無法復原
+                </p>
+                <div class="forever_delete_confirm_btn_container">
+                  <button
+                    class="forever_delete_confirm_btn forever_delete_confirm_btn_cancel"
+                    @click="close_forever_delete_confirm()"
+                  >
+                    取消
+                  </button>
+                  <button
+                    class="forever_delete_confirm_btn forever_delete_confirm_btn_delete"
+                    @click="close_forever_delete_confirm()"
+                  >
+                    刪除
+                  </button>
+                </div>
+              </div>
+              <div class="overlay" v-if="showOverlay_trash"></div>
+              <div
+                class="right_click_box_overview"
+                :style="{ top: mouseTop + 'px', left: mouseLeft + 'px' }"
+                v-show="right_click_box_trash_show"
+                ref="right_click_box_trash"
+              >
+                <div
+                  class="right_click_box_overview_option"
+                  style="
+                    border-top-left-radius: 5px;
+                    border-top-right-radius: 5px;
+                  "
+                  @click="recover_project"
+                >
+                  還原專案
+                </div>
+                <div class="add_proj_type_list_line"></div>
+                <div
+                  class="right_click_box_overview_option"
+                  style="
+                    border-bottom-left-radius: 5px;
+                    border-bottom-right-radius: 5px;
+                  "
+                  @click="forever_delete_project"
+                >
+                  刪除專案
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
+    </div>
   </div>
+  <!-- 
+    carts為所有的專案類型內的專案
+  -->
 </template>
 
 <script>
-import axios from 'axios';
-import { Base64 } from 'js-base64';
+import axios from "axios";
+import { Base64 } from "js-base64";
+import { computed, ref, onMounted } from "vue";
+import { useStore } from "vuex";
 export default {
-  name: 'Personal_homepage',
-  
-  data() {
-      return {
-          
-          middle_show_overview_page: true,
-          middle_show_over_page: false,
-          middle_show_trash_page: false,
-          add_proj_show: false,
-          showOverlay: false,
-          add_proj_type: '',
-          isFocused: false,
-          carts:[],
-          //已結束專案的cart
-          ended_carts:[],
-          cart_titles: '',
-          cart_title_input: '',
-          selectOption: 'option1',
-          show_add_proj_type_list: false,
+  name: "Personal_homepage",
 
-          add_proj_type_arrow: '',
-          add_proj_type_options: [],
-          proj_type: '選擇專案類型',
-          proj_type_color: '#b6aeae',
-          add_proj_type_text: '',
-          add_proj_name: '',
-          add_search:'',
-          uncategorized_projs: [],
-          //已結束專案的
-          ended_projs:[],
-          cart_box_name_list: [],
-          trash_boxes: [],
-          checked_trash_box: [],
-          recover: true,
-          trashcan: true,
-          recovered: false,
-          forever_delete_confirm: false,
-          showOverlay_trash: false,
-          mouseTop: 0,
-          mouseLeft: 0,
-          right_click_box_overview_show: false,
-          delete_confirm: false,
-          showOverlay_delete: false,
-          right_click_box_trash_show: false,
-          click_search_bar_time:0,
-          his_search_list:[],
-          show_his_search_list:false,
-          search_input:'',
-          //現在正在找的專案
-          search_project:'',
-          //所有project
-          projectsAll:[],
-          // 所有已結束專案
-          project_ended:[],
-          // 遠端資料庫 分頁資料十筆
-          projects:[], 
-          // 用 autoComplete 來控制是否顯示選單
-          autoComplete: false,
-          // 用 selectedIndex 來控制選單項目的選取
-          selectedIndex: 0,
-          user_id : 0,
-          project_status:"normal",
-          project_image:" ",
-          project_id: 0,
-          project_creation_date:" ",
-          project_edit_data:" "
-      };
+  data() {
+    return {
+      middle_show_overview_page: true,
+      middle_show_over_page: false,
+      middle_show_trash_page: false,
+      add_proj_show: false,
+      showOverlay: false,
+      add_proj_type: "",
+      isFocused: false,
+      carts: [],
+      trash_carts: [],
+      cart_titles: "",
+      cart_title_input: "",
+      selectOption: "option1",
+      show_add_proj_type_list: false,
+      show_his_search_list: false,
+
+      add_proj_type_arrow: "",
+      add_proj_type_options: [],
+      proj_type: "選擇專案類型",
+      proj_type_color: "#b6aeae",
+      add_proj_type_text: "",
+      add_proj_name: "",
+      add_search: "",
+      uncategorized_projs: [],
+      //已結束專案的
+      ended_projs: [],
+      cart_box_name_list: [],
+      trash_boxes: [],
+      checked_trash_box: [],
+      recover: true,
+      trashcan: true,
+      recovered: false,
+      forever_delete_confirm: false,
+      showOverlay_trash: false,
+      mouseTop: 0,
+      mouseLeft: 0,
+      right_click_box_overview_show: false,
+      delete_confirm: false,
+      showOverlay_delete: false,
+      right_click_box_trash_show: false,
+      search_input: "",
+      click_search_bar_time: 0,
+      his_search_list: [],
+      show_his_search_list: false,
+      search_input: "",
+      //現在正在找的專案
+      search_project: "",
+      //所有project
+      projectsAll: [],
+      // 所有已結束專案
+      project_ended: [],
+      // 遠端資料庫 分頁資料十筆
+      projects: [],
+      // 用 autoComplete 來控制是否顯示選單
+      autoComplete: false,
+      // 用 selectedIndex 來控制選單項目的選取
+      selectedIndex: 0,
+      user_id: 0,
+      project_status: "normal",
+      project_image: " ",
+      project_id: 0,
+      project_creation_date: " ",
+      project_edit_data: " ",
+      click_proj_show: false,
+    };
   },
   methods: {
-      // 點擊上角新增專案
-      
-      add_btn() {
-          this.add_proj_show = this.add_proj_show === false ? true : false;
-          this.showOverlay = !this.showOverlay;
-          this.proj_type = '選擇專案類型';
-          this.proj_type_color = '#b6aeae';
-          this.add_proj_name = '';
-          this.forever_delete_confirm = false;
-          this.showOverlay_trash = false;
-          this.add_proj_type_text = '';
-          this.show_add_proj_type_list = false;
-          this.show_his_search_list = false;
-          this.delete_confirm = false;
-          this.showOverlay_delete = false;
-      },
-      // 新增專案彈窗裡面的叉叉
-      close_add_proj(){
-          this.show_add_proj_type_list = false;
-          this.proj_type_color = '#b6aeae';
-          this.add_proj_type_text = '';
-      },
-      // 新增專案彈窗裡點擊建立專案
-      new_project_btn() {
-          this.add_proj_show = this.add_proj_show === false ? true : false;
-          this.showOverlay = false;
-          this.middle_show_overview_page = true;
-          this.middle_show_over_page = false;
-          this.middle_show_trash_page = false;
-          this.selectOption = 'option1';
-          this.show_add_proj_type_list = false;
-          this.proj_type_color = '#b6aeae';
-          const path = "http://34.81.186.58:5000/add_project";
-          const add_new_project = {
-              "project_type": [this.proj_type],
-              "project_image": this.project_image,
-              "project_name": this.add_proj_name,
-              "project_trashcan": true,
-              "project_ended": true,
-              "project_isEdit": false,
-              "project_isVisible": false,
-              "project_isComment": false,
-              "user_id": this.user_id
-           };
-           console.log("add_new_project:", add_new_project);
-           
-           axios
-          .post(path,add_new_project,{ timeout: 5000 })
-          .then((res) =>{
-              console.log("Response Data:", res.data);
-              this.token = res.data;
-              this.decode_token_json.status = this.decodeToken(this.token);
-              if(this.decode_token_json.status == 'success'){
-                  console.log("成功新增專案");
-                  const list = this.decode_token_json.items;
-                  console.log(list.message)
-              }
-          })
-          .catch((error) =>{
-              console.error("Error: ", error);
-          })
-          if(this.add_proj_name !== ''){
-              if(this.proj_type === '選擇專案類型'|| this.proj_type === '未分類'){//歸類未分類
-                  this.uncategorized_projs.push(this.add_proj_name);
-                  this.add_proj_name = '';
-              }
-              else if(this.add_proj_type_options.includes(this.proj_type) === true){
-                  this.carts[this.add_proj_type_options.indexOf(this.proj_type)].project_box.push(this.add_proj_name);
-                  this.add_proj_name = '';
-              }
-              else if(this.add_proj_type_options.includes(this.proj_type) === false){
-                  const new_cart={
-                      title_word: this.proj_type,
-                      project_box: [this.add_proj_name],
-                  }
-                  this.carts.push(new_cart);
-                  this.add_proj_type_options.push(new_cart.title_word)
+    add_btn() {
+      this.add_proj_show = this.add_proj_show === false ? true : false;
+      this.showOverlay = !this.showOverlay;
+      this.proj_type = "選擇專案類型";
+      this.proj_type_color = "#b6aeae";
+      this.add_proj_name = "";
+      this.forever_delete_confirm = false;
+      this.showOverlay_trash = false;
+      this.add_proj_type_text = "";
+      this.show_add_proj_type_list = false;
+      this.show_his_search_list = false;
+      this.delete_confirm = false;
+      this.showOverlay_delete = false;
+    },
+    // 新增專案彈窗裡面的叉叉
+    close_add_proj() {
+      this.show_add_proj_type_list = false;
+      this.proj_type_color = "#b6aeae";
+      this.add_proj_type_text = "";
+    },
+    // 新增專案彈跳視窗裡點擊建立專案
+    new_project_btn() {
+      this.add_proj_show = this.add_proj_show === false ? true : false;
+      this.showOverlay = false;
+      this.middle_show_overview_page = true;
+      this.middle_show_over_page = false;
+      this.middle_show_trash_page = false;
+      this.selectOption = "option1";
+      this.show_add_proj_type_list = false;
+      this.proj_type_color = "#b6aeae";
+      const path = "http://34.81.219.139:5000/project_index";
+      const newProject = {
+        project_type: this.proj_type,
+        project_image: this.project_image,
+        project_name: this.add_proj_name,
+        project_trashcan: false,
+        project_ended: false,
+        project_isEdit: false,
+        project_isVisible: false,
+        project_isComment: false,
+        user_id: "25",
+      };
+      console.log("add_new_project:", newProject);
 
-                  const path = "http://34.81.186.58:5000/add_type";
-                  const add_type ={
-                      "user_id": this.user_id,
-                      "project_ended": false,
-                      "project_type": "this.proj_type"
-                  }
-                  axios 
-                      .post(path, add_type)
-                      .then((res) =>{
-                          this.token = res.data;
-                          this.decode_token_json = this.decodeToken(this.token);
-                      
-                          if(this.decode_token_json.status == 'success'){
-                              console.log("新增類型成功");
-                              if(this.user_id === this.decode_token_json.user_id){
-                              console.log(this.decode_token_json.proj_name) 
-                         }
-                          }
-                      })
+      axios
+        .post(path, newProject, { timeout: 10000 })
+        .then((res) => {
+          console.log("status:" + res.data.status);
+        })
+        .catch((error) => {
+          console.error("Error: ", error);
+        });
+      if (this.add_proj_name !== "") {
+        if (this.proj_type === "選擇專案類型" || this.proj_type === "未分類") {
+          //歸類未分類
+          this.uncategorized_projs.push(this.add_proj_name);
+          this.add_proj_name = "";
+        } else if (
+          this.add_proj_type_options.includes(this.proj_type) === true
+        ) {
+          this.carts[
+            this.add_proj_type_options.indexOf(this.proj_type)
+          ].project_box.push(this.add_proj_name);
+          this.add_proj_name = "";
+        } else if (
+          this.add_proj_type_options.includes(this.proj_type) === false
+        ) {
+          const new_cart = {
+            title_word: this.proj_type,
+            project_box: [this.add_proj_name],
+          };
+          this.carts.push(new_cart);
+          this.add_proj_type_options.push(new_cart.title_word);
+
+          const path = "http://34.81.219.139:5000/add_type";
+          const type = {
+            user_id: 25,
+            project_id: 87,
+            project_type: this.add_proj_type_text,
+          };
+          axios.post(path, type).then((res) => {
+            console.log(res.data.status);
+          });
+        }
+      }
+      this.add_proj_type_text = "";
+    },
+    // 左邊總攬、已結束、垃圾桶切換
+    change(index) {
+      if (index === 1) {
+        this.middle_show_overview_page = true;
+        this.middle_show_over_page = false;
+        this.middle_show_trash_page = false;
+        const path = "http://34.81.219.139:5000/project_index";
+        const get_proj = {
+          user_id: 25,
+          project_status: "normal",
+        };
+        axios.post(path, get_proj).then((res) => {
+          if (res.data.status == "success") {
+            console.log("response_1:", res.data);
+            const items = res.data.items;
+            console.log("response_1", res.data.items);
+            items.forEach((element) => {
+              console.log(element.id);
+              this.proj_type = element.project_type;
+              this.proj_name = element.project_name;
+              console.log(this.proj_type);
+              if (
+                this.add_proj_type_options.includes(this.proj_type) === false
+              ) {
+                const new_cart = {
+                  title_word: this.proj_type,
+                  project_box: [this.proj_name],
+                };
+                this.carts.push(new_cart);
+                this.add_proj_type_options.push(new_cart.title_word);
               }
+            });
           }
-          this.add_proj_type_text = '';
-          
-      },
-      // 左邊總攬、已結束、垃圾桶切換
-      change(index) {
-          if (index === 1) {
-              this.middle_show_overview_page = true
-              this.middle_show_over_page = false
-              this.middle_show_trash_page = false
+        });
+      }
+      if (index === 2) {
+        this.middle_show_over_page = true;
+        this.middle_show_overview_page = false;
+        this.middle_show_trash_page = false;
+        const path_end = "http://34.81.219.139:5000/project_index";
+        const get_proj_end = {
+          user_id: 25,
+          project_status: "normal",
+        };
+        axios.post(path_end, get_proj_end).then((res) => {
+          if (res.data.status == "success") {
+            const items = res.data.items;
+            console.log("response_2", items);
+            items.forEach((element) => {
+              console.log(element.id);
+              this.proj_type = element.project_type;
+              this.proj_name = element.project_name;
+
+              if (
+                this.add_proj_type_options.includes(this.proj_type) === false
+              ) {
+                const new_cart = {
+                  title_word: this.proj_type,
+                  project_box: [this.proj_name],
+                };
+                this.carts.push(new_cart);
+                this.add_proj_type_options.push(new_cart.title_word);
+              }
+            });
           }
-          if (index === 2) {
-              this.middle_show_over_page = true
-              this.middle_show_overview_page = false
-              this.middle_show_trash_page = false
-          }
-          if (index === 3) {
-              this.middle_show_trash_page = true
-              this.middle_show_overview_page = false
-              this.middle_show_over_page = false
-          }
-      },
-      // 我忘了
-      blurSelect() {
-          this.$refs.select.blur();
-      },
-      // 滑鼠點擊新增專案的輸入框使其border變寬
-      new_type_focus(){
-          this.isFocused = true;
-      },
-      // 滑鼠離開新增專案的輸入框使其border還原
-      new_type_blur(){
-          this.isFocused = false;
-          this.cart_title_input = '';
-      },
-      // 從新增專案的輸入框直接新增一個類型
-      add_a_cart(){
-          if(this.cart_title_input !==''){
-              const new_cart={
-                  title_word: this.cart_title_input,
-                  project_box: [],
+        });
+      }
+      if (index === 3) {
+        this.middle_show_trash_page = true;
+        this.middle_show_overview_page = false;
+        this.middle_show_over_page = false;
+        console.log("jiji");
+        const path_trash = "http://34.81.219.139:5000/trashcan_search";
+        const get_proj_trash = {
+          project_id: 94,
+        };
+        axios.post(path_trash, get_proj_trash).then((res) => {
+          if (res.data.status == "success") {
+            const items = res.data.items;
+            items.forEach((element) => {
+              this.record_id = element.Record.id;
+              this.record_proj_id = element.Record.project_id;
+
+              const new_cart = {
+                record_id: this.record_id,
               };
-              this.carts.push(new_cart);
-              this.add_proj_type_options.push(this.cart_title_input)
-              this.cart_title_input = '';
+              this.trash_carts.push(new_cart);
+            });
+          } else {
+            console.error("Response returned success status false:", res.data);
           }
-      },
-      // 新增專案彈窗裡點擊選擇專案類型
-      add_proj_type_btn(){
-          this.show_add_proj_type_list = this.show_add_proj_type_list === false ? true : false;
-          this.add_proj_type_arrow = 'url(../assets/dropdown_arrow/dropdown_arrow_down.svg) no-repeat center right;';
-      },
-      
-      // 新增專案彈窗裡的選擇專案類型選擇其中一個已有專案
-      type_choosen(option){
-          this.show_add_proj_type_list = false;
-          this.proj_type = option;
-          this.proj_type_color = 'black';
-          this.add_proj_type_text = '';
-      },
-      //搜尋點擊已有的專案
-      his_search_choosen(){
-          console.log("koko")
-          this.show_his_search_list = false;
-          this.search_project = history.name;
-          //還要做點到專案的功能
-          // 將被點擊的歷史內容設定為輸入框的值
+        });
+      }
+    },
+    // 我忘了
+    blurSelect() {
+      this.$refs.select.blur();
+    },
+    // 滑鼠點擊新增專案的輸入框使其border變寬
+    new_type_focus() {
+      this.isFocused = true;
+    },
+    // 滑鼠離開新增專案的輸入框使其border還原
+    new_type_blur() {
+      this.isFocused = false;
+      this.cart_title_input = "";
+    },
+    // 從新增專案的輸入框直接新增一個類型
+    add_a_cart() {
+      if (this.cart_title_input !== "") {
+        const new_cart = {
+          title_word: this.cart_title_input,
+          project_box: [],
+        };
+        this.carts.push(new_cart);
+        this.add_proj_type_options.push(this.cart_title_input);
+        this.cart_title_input = "";
+      }
+    },
+    // 新增專案彈窗裡點擊選擇專案類型
+    add_proj_type_btn() {
+      this.show_add_proj_type_list =
+        this.show_add_proj_type_list === false ? true : false;
+      this.add_proj_type_arrow =
+        "url(../assets/dropdown_arrow/dropdown_arrow_down.svg) no-repeat center right;";
+    },
 
-      },
-      
-      // 新增專案彈窗裡的選擇專案類型沒有選擇其中一個已有專案
-      type_not_choose(){
-          this.show_add_proj_type_list = false;
-          this.proj_type = '未分類';
-          this.proj_type_color = 'black';
-          this.add_proj_type_text = '';
-      },
-      // 新增專案彈窗裡的選擇專案類型直接打字輸入新的專案
-      list_add_a_cart(){
-          if(this.add_proj_type_text !== ''){
-              this.show_add_proj_type_list = false;
-              this.proj_type = this.add_proj_type_text;
-              this.proj_type_color = 'black';
-              this.add_proj_type_text = '';
+    // 新增專案彈窗裡的選擇專案類型選擇其中一個已有專案
+    type_choosen(option) {
+      this.show_add_proj_type_list = false;
+      this.proj_type = option;
+      this.proj_type_color = "black";
+      this.add_proj_type_text = "";
+    },
+    //搜尋點擊已有的專案
+    his_search_choosen() {
+      console.log("koko");
+      this.show_his_search_list = false;
+      this.search_project = history.name;
+      //還要做點到專案的功能
+      // 將被點擊的歷史內容設定為輸入框的值
+    },
 
-              const path="http://35.194.196.179:5000/add_type"
-              const insert_type={
-                  
-                      "user_id": 1,
-                      "project_ended": false,
-                      "project_type": "課業＿高中"
+    // 新增專案彈窗裡的選擇專案類型沒有選擇其中一個已有專案
+    type_not_choose() {
+      this.show_add_proj_type_list = false;
+      this.proj_type = "未分類";
+      this.proj_type_color = "black";
+      this.add_proj_type_text = "";
+    },
+    // 新增專案彈窗裡的選擇專案類型直接打字輸入新的專案
+    list_add_a_cart() {
+      if (this.add_proj_type_text !== "") {
+        this.show_add_proj_type_list = false;
+        this.proj_type = this.add_proj_type_text;
+        this.proj_type_color = "black";
+        this.add_proj_type_text = "";
 
-              }
-              axios
-                  .post(path,insert_type)
-                  .then((res)=>{
-                      console.log(res)
-                  })
-          }
-      },
-      click_search_bar(){
-        
-          // if(this.click_search_bar_time===0){
-          //     const path = "http://34.81.186.58:5000/search_history";
-          //     const get_search_history = {
-          //         "user_id": this.user_id
-          //     };
-          //     axios
-          //         .post(path,get_search_history)
-          //         .then((res) => {
-          //             this.token = res.data;
-          //             this.decode_token_json = this.decodeToken(this.token);
-                     
-          //             if(this.decode_token_json.status == 'success'){
-          //                 const items = this.decode_token_json.items
-          //                 const searches = items.search_content
-          //                 const searchArray = searches.split(',');
-          //                 searchArray.forEach(search => {
-          //                     this.his_search_list.push(search.trim());
-          //                 });
-          //             }
-          //         })
-          //     this.click_search_bar_time++;
-          // }
-          this.show_his_search_list = true;
-      },
-      list_add_a_search(){
-          console.log("iij")
-                
-          
-      },
-      clear_search_bar(){
-          this.search_project='';
-      },
-      search_bar(){
-          const path="http://34.81.186.58:5000/search_history";
-          const search_bar={
-              "user_id":this.user_id
-          };
-          axios
-          .post(path,search_bar)
-          .then((res)=>{
-              this.token = res.data;
-              this.decode_token_json.status =  this.decodeToken(this.token);
-              if(this.decode_token_json.status =='success'){
-                  const list = this.decode_token_json.items
-                  this.his_search_list = list.search_content
-              }
-          })
-      },
-      // 實驗用，點擊bricks logo後垃圾桶跑一個專案
-      // test_btn(){
-      //     const trash_box={
-      //         text : '實驗',
+        const path = "http://34.81.219.139:5000/add_type";
+        const type = {
+          user_id: "25",
+          project_id: 87,
+          project_type: this.proj_type,
+        };
+        axios.post(path, type).then((res) => {
+          console.log(res.data.status);
+        });
+      }
+    },
+
+    // 點擊專案
+    click_proj() {
+      this.click_proj_show = true;
+    },
+
+    // 點旁邊，專案視窗消失
+    unclick_proj() {
+      this.click_proj_show = false;
+    },
+
+    click_search_bar() {
+      // if(this.click_search_bar_time===0){
+      //     const path = "http://34.81.186.58:5000/search_history";
+      //     const get_search_history = {
+      //         "user_id": this.user_id
       //     };
-      //     this.trash_boxes.push(trash_box);
-      // },
-     rename(){
+      //     axios
+      //         .post(path,get_search_history)
+      //         .then((res) => {
+      //             this.token = res.data;
+      //             this.decode_token_json = this.decodeToken(this.token);
 
-     },
-      //刪除後的專案跑到垃圾桶
-      delete_project(cart) {
-          console.log('刪除按鈕被點擊');
-          this.close_delete_confirm();
-          const trash_box={
-              text:deletedProject.text,
-          };
-          this.trash_boxes.push( trash_box );
-         
-      },
-      // 點擊垃圾桶裡的專案後又上兩個按鈕變色
-      selected_trash_box(index){
-          const allFalse = this.checked_trash_box.every(function(element){
-              return element === false
-          })
-          if (allFalse){
-              this.recover = true;
-              this.trashcan = true;
-          }
-          else{
-              this.recover = false;
-              this.trashcan = false;
-          }
-      },
-      // 垃圾桶點擊還原專案
-      recover_project(){
-          this.recovered = true;
-          setTimeout(() => {
-              this.recovered = false;
-          }, 1000);
-          this.recover = true;
-          this.trashcan = true;
-      },
-      // 垃圾桶點選永久刪除
-      forever_delete_project(){
-          this.forever_delete_confirm = true;
-          this.showOverlay_trash = true;
-      },
-      // 關閉永久刪除彈窗
-      close_forever_delete_confirm(){
-          this.forever_delete_confirm =false;
-          this.showOverlay_trash = false;
-      },
-      // 專案總覽右鍵點擊專案
-      right_click_box(event){
-          event.preventDefault();
-          this.right_click_box_overview_show = true;
-          this.mouseTop = event.clientY - 49;
-          this.mouseLeft = event.clientX - 368;
-      },
-      // 當滑鼠點擊非指定區域時關閉彈窗
-      handleClickOutside(){
-          // 專案總覽右鍵彈窗
-          if(this.right_click_box_overview_show === true && !this.$refs.right_click_box_overview.contains(event.target) && this.showOverlay_delete === false){
-              this.right_click_box_overview_show = false
-          }
-          // 新增專案彈窗裡的選擇新增專案類型彈窗
-          else if(this.show_add_proj_type_list === true && !this.$refs.add_proj_type_list.contains(event.target)){
-              if(!this.$refs.add_proj_type.contains(event.target)){
-                  this.show_add_proj_type_list = false;
-                  this.add_proj_type_text = '';
-              }
-          }
-          else if(this.right_click_box_trash_show === true && !this.$refs.right_click_box_trash.contains(event.target) && this.showOverlay_trash === false){
-              this.right_click_box_trash_show = false
-          }
-      },
-      // 專案總覽右鍵選擇刪除專案
-      delete_project(){
-          this.delete_confirm = true;
-          this.showOverlay_delete = true;
-      },
-      // 關閉刪除按鈕彈窗
-      close_delete_confirm(){
-          this.delete_confirm = false;
-          this.showOverlay_delete = false;
-      },
-      // 垃圾桶右鍵點擊專案
-      right_click_box_trash(event){
-          event.preventDefault();
-          this.right_click_box_trash_show = true;
-          this.mouseTop = event.clientY - 49;
-          this.mouseLeft = event.clientX - 368;
-      },
-      decodeToken(token) {
+      //             if(this.decode_token_json.status == 'success'){
+      //                 const items = this.decode_token_json.items
+      //                 const searches = items.search_content
+      //                 const searchArray = searches.split(',');
+      //                 searchArray.forEach(search => {
+      //                     this.his_search_list.push(search.trim());
+      //                 });
+      //             }
+      //         })
+      //     this.click_search_bar_time++;
+      // }
+      this.show_his_search_list = true;
+    },
+    list_add_a_search() {
+      console.log("iij");
+    },
+    clear_search_bar() {
+      this.search_project = "";
+    },
+    search_bar() {
+      const path = "http://34.81.219.139:5000/search_history";
+      const search_bar = {
+        user_id: this.user_id,
+      };
+      axios.post(path, search_bar).then((res) => {
+        this.token = res.data;
+        this.decode_token_json.status = this.decodeToken(this.token);
+        if (this.decode_token_json.status == "success") {
+          const list = this.decode_token_json.items;
+          this.his_search_list = list.search_content;
+        }
+      });
+    },
+    // 實驗用，點擊bricks logo後垃圾桶跑一個專案
+    // test_btn(){
+    //     const trash_box={
+    //         text : '實驗',
+    //     };
+    //     this.trash_boxes.push(trash_box);
+    // },
+    rename() {},
+    //刪除後的專案跑到垃圾桶，推到垃圾筒的部分還沒做
+    delete_project_confirm(cart) {
+      console.log("刪除按鈕被點擊");
+      this.close_delete_confirm();
+      // const trash_box = {
+      //   text: deletedProject.text,
+      // };
+      // this.trash_boxes.push(trash_box);
+    },
+    // 點擊垃圾桶裡的專案後又上兩個按鈕變色
+    selected_trash_box(index) {
+      const allFalse = this.checked_trash_box.every(function (element) {
+        return element === false;
+      });
+      if (allFalse) {
+        this.recover = true;
+        this.trashcan = true;
+      } else {
+        this.recover = false;
+        this.trashcan = false;
+      }
+    },
+    // 垃圾桶點擊還原專案
+    recover_project() {
+      this.recovered = true;
+      setTimeout(() => {
+        this.recovered = false;
+      }, 1000);
+      this.recover = true;
+      this.trashcan = true;
+    },
+    // 垃圾桶點選永久刪除
+    forever_delete_project() {
+      this.forever_delete_confirm = true;
+      this.showOverlay_trash = true;
+    },
+    // 關閉永久刪除彈窗
+    close_forever_delete_confirm() {
+      this.forever_delete_confirm = false;
+      this.showOverlay_trash = false;
+    },
+    // 專案總覽右鍵點擊專案
+    right_click_box(event) {
+      event.preventDefault();
+      this.right_click_box_overview_show = true;
+      this.mouseTop = event.clientY - 49;
+      this.mouseLeft = event.clientX - 368;
+    },
+    // 當滑鼠點擊非指定區域時關閉彈窗
+    handleClickOutside() {
+      // 專案總覽右鍵彈窗
+      if (
+        this.right_click_box_overview_show === true &&
+        !this.$refs.right_click_box_overview.contains(event.target) &&
+        this.showOverlay_delete === false
+      ) {
+        this.right_click_box_overview_show = false;
+      }
+      // 新增專案彈窗裡的選擇新增專案類型彈窗
+      else if (
+        this.show_add_proj_type_list === true &&
+        !this.$refs.add_proj_type_list.contains(event.target)
+      ) {
+        if (!this.$refs.add_proj_type.contains(event.target)) {
+          this.show_add_proj_type_list = false;
+          this.add_proj_type_text = "";
+        }
+      } else if (
+        this.right_click_box_trash_show === true &&
+        !this.$refs.right_click_box_trash.contains(event.target) &&
+        this.showOverlay_trash === false
+      ) {
+        this.right_click_box_trash_show = false;
+      }
+    },
+    // 專案總覽右鍵選擇刪除專案
+    delete_project() {
+      this.delete_confirm = true;
+      this.showOverlay_delete = true;
+    },
+    // 關閉刪除按鈕彈窗
+    close_delete_confirm() {
+      this.delete_confirm = false;
+      this.showOverlay_delete = false;
+    },
+    // 垃圾桶右鍵點擊專案
+    right_click_box_trash(event) {
+      event.preventDefault();
+      this.right_click_box_trash_show = true;
+      this.mouseTop = event.clientY - 49;
+      this.mouseLeft = event.clientX - 368;
+    },
+    decodeToken(token) {
       // 获取Token的第二部分（Payload）
       const encodedPayload = token.split(".")[1];
       // 解码Base64字符串
@@ -613,129 +1129,123 @@ export default {
       return payloadObject;
     },
   },
-  mounted() {
-      window.addEventListener('click' , this.handleClickOutside);
-      const path = "http://104.199.143.218:5000/project_index";
-        const get_proj = {
-            "user_id":25,
-            "project_status":"normal"
-        };
-        axios.post(path,get_proj)
-            .then((res) =>{
-                if(res.data.status == 'success'){
-                    const items = res.data.items
-                    items.forEach(element => {
+  onMounted() {
+    window.addEventListener("click", this.handleClickOutside);
+    const path = "http://34.81.219.139:5000/project_index";
+    const get_proj = {
+      user_id: 25,
+      project_status: "normal",
+    };
+    axios.post(path, get_proj).then((res) => {
+      if (res.data.status == "success") {
+        const items = res.data.items;
+        items.forEach((element) => {
+          this.proj_type = element.project_type;
+          this.proj_name = element.project_name;
+          if (this.projectsAll) {
+            this.projectsAll.push(this.proj_name);
+          }
+          //沒有這個類別才顯示顯示專案
+          if (this.add_proj_type_options.includes(this.proj_type) === false) {
+            const new_cart = {
+              title_word: this.proj_type,
+              project_box: [this.proj_name],
+            };
+            this.carts.push(new_cart);
+            this.add_proj_type_options.push(new_cart.title_word);
+          }
+        });
+      }
+    });
+    const path_end = "http://34.81.219.139:5000/project_index";
+    const get_proj_end = {
+      user_id: 25,
+      project_status: "ended",
+    };
+    axios.post(path_end, get_proj_end).then((res) => {
+      if (res.data.status == "success") {
+        const items = res.data.items;
+        items.forEach((element) => {
+          this.proj_type = element.project_type;
+          this.proj_name = element.project_name;
 
-                      this.proj_type = element.project_type;
-                      this.proj_name = element.project_name;
-                      if(this.projectsAll){
-
-                        this.projectsAll.push(this.proj_name)
-                      }
-                      //沒有這個類別才顯示顯示專案
-                      if(this.add_proj_type_options.includes(this.proj_type) === false){
-                        const new_cart={
-                          title_word: this.proj_type,
-                          project_box: [this.proj_name],
-                        }
-                        this.carts.push(new_cart);
-                        this.add_proj_type_options.push(new_cart.title_word)
-                      }
-                          
-                });
-                }
-          }) 
-        const path_end = "http://104.199.143.218:5000/project_index";
-        const get_proj_end = {
-            "user_id":25,
-            "project_status":"ended"
-        };
-        axios.post(path_end,get_proj_end)
-        .then((res) =>{
-          if(res.data.status == 'success'){
-            const items = res.data.items
-            items.forEach(element => {
-              
-              this.proj_type = element.project_type;
-              this.proj_name = element.project_name;
-                      
-                      //分類跟未分類要分開
-                      if(this.proj_type !== "已結束"){
-                        const new_cart={
-                          title_word: this.proj_type,
-                          project_box: [this.proj_name],
-                        }
-                        //搜尋已結束加正在進行
-                        this.projectsAll.push(this.proj_name)
-                        this.ended_carts.push(new_cart);
-                      }else{
-                        // 這裡寫未分類
-                      }
-                          
-                });
-                }
-          }) 
+          //分類跟未分類要分開
+          if (this.proj_type !== "已結束") {
+            const new_cart = {
+              title_word: this.proj_type,
+              project_box: [this.proj_name],
+            };
+            //搜尋已結束加正在進行
+            this.projectsAll.push(this.proj_name);
+            this.ended_carts.push(new_cart);
+          } else {
+            // 這裡寫未分類
+          }
+        });
+      }
+    });
   },
   beforeUnmount() {
-      window.removeEventListener('click', this.handleClickOutside);
+    console.log("beforeUnmount");
+    window.removeEventListener("click", this.handleClickOutside);
   },
-  searchProjects () {
-      this.projects = this.filterProjects
-      this.autoComplete = false
-    },
-    // 使用v-on的監聽按鍵事件，控制按鈕事件的選取背景
-  keyboardEvent (e) {
+  searchProjects() {
+    this.projects = this.filterProjects;
+    this.autoComplete = false;
+  },
+  // 使用v-on的監聽按鍵事件，控制按鈕事件的選取背景
+  keyboardEvent(e) {
     // 按鈕向上
     if (e.keyCode === 38) {
       if (this.selectedIndex > 0) {
-        this.selectedIndex--
+        this.selectedIndex--;
       }
-    // 按鈕向下
+      // 按鈕向下
     } else if (e.keyCode === 40) {
-      this.selectedIndex++
+      this.selectedIndex++;
       // enter
     } else if (e.keyCode === 13) {
       this.filterProducts.forEach((item, i) => {
         if (this.selectedIndex === i) {
           // 當 selectedIndex 與 filterProducts 的 index相同，就將 search 改成選取項目的書名
-          this.search = item.name
+          this.search = item.name;
         }
-      })
+      });
     }
   },
-  watch:{
-    search_project () {
-        // 如果有搜尋字詞的話，就顯示autoComplete選單
+  watch: {
+    search_project() {
+      // 如果有搜尋字詞的話，就顯示autoComplete選單
       if (this.search_project) {
-        this.projects = this.filterProducts
-        this.show_his_search_list = true
+        this.projects = this.filterProducts;
+        this.show_his_search_list = true;
       } else {
-        this.show_his_search_list= false
+        this.show_his_search_list = false;
       }
     },
     // 當選定選項，將 search 改成選取項目的專案名稱後，關閉autoComplete選單
-    prodjects () {
+    prodjects() {
       if (this.projects.length <= 1) {
-        this.autoComplete = false
+        this.autoComplete = false;
       }
-    }
+    },
   },
   computed: {
-    filterProducts () {
-          const str = this.search_project.toLowerCase()
-          const matches = [];
-          // 比對字串
-          this.projectsAll.forEach((proj) => {
-              if (proj.toLowerCase().includes(str)) {
-                matches.push(proj)
-              }
-            })
-          // 如果輸入兩個關鍵字就會出現重複的資料，所以需要刪除重複資料。
-          // 過濾出重複的元素
-          return [...new Set(matches)];
-        },
+    filterProducts() {
+      const str = this.search_project.toLowerCase();
+      const matches = [];
+      // 比對字串
+      this.projectsAll.forEach((proj) => {
+        if (proj.toLowerCase().includes(str)) {
+          matches.push(proj);
+        }
+      });
+      // 如果輸入兩個關鍵字就會出現重複的資料，所以需要刪除重複資料。
+      // 過濾出重複的元素
+      return [...new Set(matches)];
     },
-  }
+  },
+};
 </script>
 
 <style scoped>
@@ -946,6 +1456,124 @@ export default {
 
 /* 左側欄的部分 終點 */
 
+/* 點擊專案框框 起點 */
+.click_proj_box {
+  width: 424px;
+  height: 620px;
+  position: fixed;
+  border-radius: 14px;
+  background-color: white;
+  box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.4);
+  z-index: 6;
+  left: calc((100vw - 80px + 234px) / 2);
+  top: calc((100vh - 508px + 50px) / 2);
+}
+
+.close_click_proj_box {
+  /* border: 2px solid black; */
+  position: relative;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  top: 25px;
+  right: -380px;
+}
+.close_click_proj_box::before,
+.close_click_proj_box::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 2px;
+  height: 20px;
+  background-color: black;
+}
+.close_click_proj_box::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+.close_click_proj_box::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.click_proj_title {
+  font-size: 24px;
+  font-weight: 600;
+  position: relative;
+  top: 20px;
+  text-align: center;
+  user-select: none;
+}
+.click_proj_pic {
+  width: 340px;
+  height: 180px;
+  border-radius: 14px;
+  background-color: #f2eeee;
+  position: relative;
+  top: 60px;
+  left: 50%;
+  transform: translate(-50%);
+  cursor: pointer;
+  -webkit-user-drag: none;
+}
+.click_proj_narrative {
+  width: 340px;
+  height: 120px;
+  max-height: 180px;
+  overflow-y: auto;
+  border: 1px solid #c7c2c290;
+  border-radius: 12px;
+  font-size: 16px;
+  letter-spacing: 1.25px;
+  line-height: 38px;
+  text-indent: 20px;
+  position: relative;
+  top: 166px;
+  left: 50%;
+  transform: translate(-50%);
+}
+.click_proj_type {
+  width: 340px;
+  height: 40px;
+  border: 1px solid #b8b8b8;
+  border-radius: 12px;
+  position: relative;
+  top: -18px;
+  left: 50%;
+  transform: translate(-50%);
+  font-size: 16px;
+  letter-spacing: 1.25px;
+  line-height: 36px;
+  text-indent: 20px;
+  color: #b6aeae;
+  cursor: pointer;
+  user-select: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: url(../assets/dropdown_arrow/dropdown_arrow_right.svg) no-repeat
+    center right;
+}
+
+.click_proj_enter {
+  width: 340px;
+  height: 48px;
+  border-radius: 14px;
+  background-color: #b82c30;
+  color: white;
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 44px;
+  letter-spacing: 1.25px;
+  text-align: center;
+  position: relative;
+  top: 140px;
+  left: 50%;
+  transform: translate(-50%);
+  cursor: pointer;
+  user-select: none;
+}
+/* 點擊專案框框 終點 */
+
 /* 新增專案的框框 起點 */
 .add_proj_box {
   width: 344px;
@@ -1118,6 +1746,17 @@ export default {
     no-repeat center right;
 }
 
+<<<<<<< HEAD
+=======
+.add_proj_type_option_section {
+  position: relative;
+  width: 100%;
+  /* border: 2px solid black; */
+  max-height: 80px;
+  overflow-y: scroll;
+}
+
+>>>>>>> FE-DEV
 .add_proj_type_list {
   width: 214px;
   height: auto;
@@ -1129,6 +1768,7 @@ export default {
   left: 320px;
   z-index: 3;
   background-color: white;
+  /* border: 2px solid black; */
 }
 .his_search_list {
   width: 235px;
@@ -1142,6 +1782,21 @@ export default {
   z-index: 3;
   background-color: white;
 }
+<<<<<<< HEAD
+=======
+.match {
+  width: 235px;
+  height: auto;
+  padding-top: 0px;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3), 0px 2px 15px rgba(0, 0, 0, 0.15);
+  border-radius: 14px;
+  position: absolute;
+  top: 38px;
+  left: 15px;
+  z-index: 3;
+  background-color: white;
+}
+>>>>>>> FE-DEV
 .add_proj_type_option {
   width: 100%;
   height: 45px;
@@ -1153,6 +1808,7 @@ export default {
   cursor: pointer;
   color: #3b3838;
   user-select: none;
+  border-radius: 4px;
 }
 .add_history_search {
   width: 100%;
@@ -1439,7 +2095,7 @@ export default {
   height: 372px;
   position: absolute;
   top: 20%;
-  left: 520px;
+  left: 25%;
   background-color: white;
   border: 1.5px solid #c7c2c2;
   box-shadow: 0px 0px 5px 1px rgba(65, 65, 65, 0.25);
@@ -1474,7 +2130,7 @@ export default {
   top: 50%;
   left: 50%;
   width: 1.5px;
-  height: 17px;
+  height: 20px;
   background-color: black;
 }
 
@@ -1549,11 +2205,16 @@ export default {
   color: #120405;
   float: left !important;
 }
+
 /* 中間的部分 終點 */
 
 /* 垃圾桶的部分 起點 */
 .trash_page_middle {
+<<<<<<< HEAD
   width: 98%;
+=======
+  width: calc(100% - 50px);
+>>>>>>> FE-DEV
   height: 85vh;
   border: 1px solid #e1dcdc;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
@@ -1563,7 +2224,11 @@ export default {
 }
 .last_30_days {
   width: 100%;
+<<<<<<< HEAD
   
+=======
+
+>>>>>>> FE-DEV
   /* min-height: 222px; */
   margin-top: 70px;
   position: relative;
@@ -1786,7 +2451,11 @@ export default {
   margin-top: 7px;
   left: 87%;
 }
+<<<<<<< HEAD
 .forever_delete_trash_pic{
+=======
+.forever_delete_trash_pic {
+>>>>>>> FE-DEV
   position: absolute;
   /* margin-left: auto; */
   margin-top: 7px;

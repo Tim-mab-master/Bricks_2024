@@ -1,14 +1,13 @@
 <template>
-    <div class="karen">
   
       <div class="button-container">
         <el-backtop visibility-height="0" class="backtop">
                 <div id="backtop">
                     <el-icon class="icon"><upload/></el-icon>
                 </div>
-                </el-backtop>
+              </el-backtop>
             
-            <el-button type="button" @click="showBasicInfo"><el-icon><Edit /></el-icon>會議基本資訊</el-button>
+            <el-button type="button" @click="showBasicInfo" class="button"><el-icon><Edit /></el-icon>會議基本資訊</el-button>
             <el-button :plain="true" @click="copyLinkBtn"><el-icon><Link /></el-icon></el-button>
       </div>
       <div class="form-container">
@@ -19,7 +18,7 @@
               <label for="meetingName">會議名稱</label>
             </td>
             <td class="input-cell">
-              <input type="text" id="meetingName" v-model="meetingName" class="text-input" :placeholder="placeholder" @focus="clearPlaceholder" @blur="restorePlaceholder">
+              <input type="text" id="meetingName" v-model="meetingName" class="text-input" :placeholder="placeholder" @focus="clearPlaceholder" @blur="restorePlaceholder" readonly>
             </td>
           </tr>
           <tr>
@@ -27,7 +26,7 @@
               <label for="time">時間</label>
             </td>
             <td class="input-cell">
-              <input type="place" id="time" v-model="time" class="text-input" placeholder="-">
+              <input type="place" id="time" v-model="time" class="text-input" placeholder="-" readonly>
             </td>
           </tr>
           <tr>
@@ -44,7 +43,7 @@
               <label for="place">地點</label>
             </td>
             <td class="input-cell">
-              <input type="place" id="place" v-model="place" class="text-input" placeholder="-">
+              <input type="place" id="place" v-model="place" class="text-input" placeholder="-" readonly>
             </td>
           </tr>
           <tr>
@@ -176,221 +175,194 @@
       <!-- <BasicInfo /> -->
       <!-- <Delete /> -->
 
-    </div>
   </template>
   
-  <script >
-  
+  <script setup>
+  import { useStore } from 'vuex';
+  import { useRouter } from 'vue-router';
   import axios from 'axios';
-  import { ref } from 'vue';
-  import { ElNotification, useTransitionFallthroughEmits } from 'element-plus';
-  import { ElMessage } from 'element-plus';
-  export default {
-    components: {
-      // LinkCopy,
-      // Delete,
-      // BasicInfo,
+  import { ref, reactive, onMounted, computed} from 'vue';
+  import { defineProps, defineEmits } from 'vue';
+  import { ElNotification, ElMessage } from 'element-plus';
+  
+  // 引用 store
+  const store = useStore();
+  const router = useRouter();
+  // const props = defineProps(['recordInfo']);
+  const emit = defineEmits(['submit']);
+  
+  // 定義響應式數據
+  const form = reactive({
+    show: false,
+    data: {
+      formName: "",
+      date: new Date(),
+      time: [
+        new Date(),
+        new Date(Date.now() + 60 * 60 * 1000)
+      ],
+      place: '',
+      // 其他表單項目
     },
-    
-    mounted() {
-      const postData = {
-        project_id: 94,
-        record_id: 1
-      };
-      // window.addEventListener('click' , this.handleClickOutside);
-      // 在 mounted 鉤子中執行初始化請求
-      axios.post('http://35.194.196.179:5000/get_record', postData)
-      .then(res => {
-        // 處理後端返回的數據
-        console.log(res.data.status);
-        this.meetingName = res.data.record_info[0].record_name;
-        this.form.data.formName = this.meetingName;
-        this.time = res.data.record_info[0].record_date;
-        // time 的整合比較難用 之後再來用
-        this.place = res.data.record_info[0].record_place;
-        this.form.data.place = this.place;
-        // 這邊還要再修
-        this.optionsA.push(res.data.record_info[0].record_host_name);
+  });
 
-        console.log(res.data.record_info[0].record_host_name);
-      })
-      .catch(error => {
-        // 處理錯誤
-        console.error('Error fetching data:', error);
-      });
-
-    },
-    
-    data() {
-      return {
-        form: {
-          show: false,
-          data: {
-            formName: '',
-            date:'',
-            time:'',
-            place:'',
-            // 其他表單項目
-          },
-      },
-      meetingName: '',
-      time:'',
-      attends:[],
-      place:'',
-      absents:'',
-      recorder:'',
-        
-        formPlace:'',
-        
-        showOverlay: false,
-        value: '',
-        placeholder: "輸入會議名稱",
-
-        // height: '30px',
-        // basicComponent: null,
-        // date: '',
-        // value2: [
-        //   new Date(2016, 9, 10, 8, 40),
-        //   new Date(2016, 9, 10, 9, 40),
-        // ],
-
-        // height: '30px',
-        // basicComponent: null,
-        // value1: '',
-        // value2: [
-        //   new Date(), 
-        //   new Date(),
-        // ],
-
-        valueA: [],
-        optionsA: [],
-        valueB: [],
-        optionsB: [],
-        valueC: [],
-        optionsC: [
-          // { value: 'c', label: 'c' }
-        ],
+  const recordInfo = computed(() => store.getters["records/getCurrRecord"]);
+  const meetingName = ref('');
+  const time = ref('');
+  const place = ref('');
+  const showOverlay = ref(false);
+  const placeholder = ref('輸入會議名稱');
   
-      };
-    },
-    methods: {
-      clearPlaceholder() {
-        this.placeholder = "";
-      },
-      restorePlaceholder() {
-        if (!this.meetingName) {
-        this.placeholder = "輸入會議名稱";
-        }
-      },
-      recover() {
-        ElNotification({
-          dangerouslyUseHTMLString: true,
-          title: '成功復原會議記錄',
-          message: '<a href="/path/to/recovery/file" style="color: #67C23A; text-decoration: underline;">點擊檢視復原檔案</a>',
-          type: 'success',
-          position: 'bottom-right',
-        });
-        },
-        
-      copyLinkBtn() {
-        ElMessage({
-          message: '會議記錄連結已複製',
-          type: 'success',
-          position: 'bottom-right',
-        });
-      },
-      deleteForever(){
-        ElMessage('您已永久刪除會議記錄')
-      }, 
-      deleteRecord(){
-        ElMessage.error('您已刪除會議記錄');
-      },
-      showBasicInfo(){
-        this.showOverlay = true;
-        this.form.show = true;
-      },
+  const valueA = ref([]);
+  const optionsA = ref([]);
+  const valueB = ref([]);
+  const optionsB = ref([]);
+  const valueC = ref([]);
+  const optionsC = ref([]);
   
-      close(){
-        this.showOverlay = false;
-        this.form.show = false;
-      },
-      handleSelectChangeA(selectedValues) {
-        this.handleSelectChange(selectedValues, this.optionsA, this.valueA);
-      },
-      handleSelectChangeB(selectedValues) {
-        this.handleSelectChange(selectedValues, this.optionsB, this.valueB);
-      },
-      handleSelectChangeC(selectedValues) {
-        this.handleSelectChange(selectedValues, this.optionsC, this.valueC);
-      },
-      handleSelectChange(selectedValues, options, value,who) {
-        selectedValues.forEach((selectedValue) => {
-          const existsInOptions = options.some((option) => option.value === selectedValue);
-  
-          if (!existsInOptions) {
-            options.push({
-              value: selectedValue,
-              label: selectedValue,
-            });
-          }
-  
-          const existsInValue = value.includes(selectedValue);
-  
-          if (!existsInValue) {
-            value.push(selectedValue);
-          }
-          
-        });
-      },
-      onSubmit() {
-        const selectedDate = this.form.data.date;
-        const selectedTimeRange = this.form.data.time; // 獲取選擇的時間範圍
-
-        // 格式化開始時間的小時和分鐘
-        const startHours = ('0' + selectedTimeRange[0].getHours()).slice(-2);
-        const startMinutes = ('0' + selectedTimeRange[0].getMinutes()).slice(-2);
-
-        // 格式化結束時間的小時和分鐘
-        const endHours = ('0' + selectedTimeRange[1].getHours()).slice(-2);
-        const endMinutes = ('0' + selectedTimeRange[1].getMinutes()).slice(-2);
-        //開始加結束
-        const meetingTime = `${startHours}:${startMinutes} - ${endHours}:${endMinutes}`;
-
-
-        this.meetingName = this.form.data.formName;
-        this.time =new Date(selectedDate).toISOString().split('T')[0]+" "+ meetingTime;
-
-        this.place = this.form.data.place;
-        // this.attends = this.optionsA.map(option => option.label);
-        
-
-
-        ElMessage({
-          message: '已儲存會議基本資訊',
-          type: 'success',
-        });
-        this.showOverlay = false;
-        this.form.show = false;
-      },
-      
-    },
-  
+  const clearPlaceholder = () => {
+    placeholder.value = '';
   };
-  // const date = ref<[Date, Date]>([
-  //   new Date(2016, 9, 10, 8, 40),
-  //   new Date(2016, 9, 10, 9, 40),
-  // ])
+  
+  const restorePlaceholder = () => {
+    if (!meetingName.value) {
+      placeholder.value = '輸入會議名稱';
+    }
+  };
+  
+  const recover = () => {
+    ElNotification({
+      dangerouslyUseHTMLString: true,
+      title: '成功復原會議記錄',
+      message: '<a href="/path/to/recovery/file" style="color: #67C23A; text-decoration: underline;">點擊檢視復原檔案</a>',
+      type: 'success',
+      position: 'bottom-right',
+    });
+  };
+  
+  const copyLinkBtn = () => {
+    ElMessage({
+      message: '會議記錄連結已複製',
+      type: 'success',
+      position: 'bottom-right',
+    });
+  };
+  
+  const deleteForever = () => {
+    ElMessage('您已永久刪除會議記錄');
+  };
+  
+  const deleteRecord = () => {
+    ElMessage.error('您已刪除會議記錄');
+  };
+  
+  const showBasicInfo = () => {
+    showOverlay.value = true;
+    form.show = true;
+  };
+  
+  const close = () => {
+    showOverlay.value = false;
+    form.show = false;
+  };
+  
+  const handleSelectChangeA = (selectedValues) => {
+    handleSelectChange(selectedValues, optionsA.value, valueA.value);
+  };
+  
+  const handleSelectChangeB = (selectedValues) => {
+    handleSelectChange(selectedValues, optionsB.value, valueB.value);
+  };
+  
+  const handleSelectChangeC = (selectedValues) => {
+    handleSelectChange(selectedValues, optionsC.value, valueC.value);
+  };
+  
+  const handleSelectChange = (selectedValues, options, value) => {
+    for (let i = 0; i < selectedValues.length; i++) {
+      const existsInOptions = options.some((option) => option.value === selectedValues[i]);
+      if (!existsInOptions) {
+        options.push({
+          value: selectedValues[i],
+          label: selectedValues[i],
+        });
+      }
+  
+      const existsInValue = value.includes(selectedValues[i]);
+      if (!existsInValue) {
+        value.push(selectedValues[i]);
+      }
+    }
+    for (let i = options.length - 1; i >= 0; i--) {
+      if (!selectedValues.includes(options[i].value)) {
+        options.splice(i, 1);
+      }
+    }
+  };
+  
+  const onSubmit = () => {
+    
+    store.commit('setName', form.data.formName);
+    meetingName.value = form.data.formName;
+    place.value = form.data.place;
+  
+    const date = form.data.date;
+    const options = { year: 'numeric', month: 'short', day: '2-digit' };
+    const formattedDate = date.toLocaleDateString(options).replace(/,/g, '/');
+    
+    const format = { hour: '2-digit', minute: '2-digit', hour12: false };
+    const formattedTime = form.data.time.map(date => date.toLocaleTimeString('en-US', format));
+    const addTime = `${formattedTime[0].substring(0, 5)}-${formattedTime[1].substring(0, 5)}`;
+    time.value = `${formattedDate} ${addTime}`;
+    emit("submit");
+    emit("recordInfo", form.value);
+  
+    
+    // const editInfo = {
+    //     record_id: '26',
+    //     record_name: meetingName.value,
+    //     record_department: '',
+    //     record_attendances: 1,
+    //     record_place: place.value,
+    //   };
+    //   axios.post("http://104.199.143.218:5000/edit_record", editInfo)
+    //     .then(res => {
+    //       console.log(res.data.message);
+    //     });
+    // }
+  
+    ElMessage({
+      message: '已儲存會議基本資訊',
+      type: 'success',
+    });
+    showOverlay.value = false;
+    form.show = false;
+  
+    store.dispatch("records/fetchAllRecords");
+  };
+  
+  // 在組件掛載時執行初始化請求
+  onMounted(() => {
+    store.dispatch("records/fetchOneRecord");
+    // recordInfo = computed(() => store.getters(["records/getCurrRecord"]));
+    console.log(recordInfo);
+    if(recordInfo[0]){
+      meetingName.value = recordInfo[0].record_name;
+      time.value = recordInfo[0].record_creation_time;
+      place.value = recordInfo[0].record_place;
+      optionsA.value = recordInfo[0].record_attendees_name;
+      optionsB.value = recordInfo[0].record_absentees_name;
+      optionsC.value = recordInfo[0].record_recorder_name;
+    }
+  });
   </script>
+  
   
   <style scoped>
   .demo-range .el-date-editor {
     width: 100%;
     
   }
-
-  /* .karen{
-    position: relative;
-  } */
   
   .form-container {
     border-radius: 4px;
@@ -408,7 +380,7 @@
     width: 73px;
     text-align: left;
     font-size: 15px;
-    
+    font-weight: 700;
     border: 1px solid #ccc;
     background-color: #EBEEF5; /* 添加背景顏色 */
   }
@@ -417,6 +389,8 @@
     padding: 8px;
     border: 1px solid #ccc;
     width: 837px;
+    background-color: white;
+
   }
   
   .text-input {
@@ -429,33 +403,13 @@
   
   
   .button-container {
-      /* position: absolute; */
       display: flex;
       height:40px;
       width:910px;
       margin-bottom: 14px;
-      margin-left: 696px;
-      /* top: 20px;
-      left: 248px; */
-      /* margin-bottom: 0px; */
+      justify-content: flex-end;
+      
   }
-   /* .button-container button:first-child {
-     margin-left: 400px;
-      width: 50px;
-      background-color: white;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-  } */
-  /* .button-container button:nth-child(2) {
-    margin-right: 20px;
-    width: 140px;
-    background-color: white;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    
-  }  */
   .button-container button:nth-child(2) .el-icon {
     margin: 10px; /* 设置图标与文本之间的右边距 */
   }
@@ -548,8 +502,8 @@
     padding: 9px 16px;
     justify-content: left;
     position: fixed;
-    left: 255px;
-    top: 70px;
+    /* left: 255px; */
+    /* top: 70px; */
  }
  .input-cell {
   text-align: left;
@@ -557,5 +511,33 @@
 .el-tag {
   margin-left: 5px;
 }
+
+@media screen and (min-width: 1024px) and (max-width: 1440px) {
+    .form-container, .button-container{
+      /* width: 60vw; */
+      width: 685px;
+      transform-origin: left top;
+      font-size: 12px;
+    }
+    /* .button-container{
+      margin-bottom: 0px;
+    } */
+    .form{
+      transform: scale(0.75);
+      /* top: -140px; */
+      transform-origin: left top;
+      /* top: 0.01vh; */
+    }
+    .button-container{
+      margin-bottom: 5px;
+    }
+    .left-bar, .text-input{
+      font-size: 12px;
+      padding: auto 9px;
+    }
+    .button{
+      font-size: 12px;
+    }
+  }
 
   </style>

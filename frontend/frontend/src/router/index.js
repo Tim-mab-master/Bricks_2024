@@ -34,7 +34,7 @@ const routes = [
     component: () => import("../views/Karen.vue"),
   },
   {
-    path: "/meetingRecord1",
+    path: "/meetingRecord",
     name: "meetingRecord",
     component: () => import("../views/MeetingRecord.vue"),
   },
@@ -52,6 +52,9 @@ const routes = [
     path: "/login",
     name: "login",
     component: () => import("../views/Login.vue"),
+    meta: {
+      isLogin: false,
+    },
   },
   {
     path: "/questionnaire",
@@ -62,11 +65,17 @@ const routes = [
     path: "/register",
     name: "register",
     component: () => import("../views/Register.vue"),
+    meta: {
+      isLogin: false,
+    },
   },
   {
     path: "/personalHomepage",
     name: "personalHomepage",
     component: () => import("../views/PersonalHomepage.vue"),
+    meta: {
+      isLogin: true,
+    },
   },
   {
     path: "/empty",
@@ -81,7 +90,8 @@ const routes = [
   {
     path: "/all",
     name: "all",
-    component: () => import("../views/meetingAll.vue"),
+    redirect: "/all/cards",
+    // component: () => import("../views/meetingAll.vue"),
     children: [
       {
         path: "cards",
@@ -92,13 +102,18 @@ const routes = [
         component: () => import("../views/TrashBox.vue"),
       },
       {
-        path: "empty",
-        component: () => import("../views/Empty.vue"),
+        path: "cards/newRecord",
+        // alias: "cards/meetingRecord/:cardId",
+        name: "newRecord",
+        component: () => import("../views/NewMeetingRecord.vue"),
+        
       },
       {
         path: "cards/meetingRecord/:cardId",
+        // alias: "",
         name: "meetingRecord",
         component: () => import("../views/MeetingRecord.vue"),
+        
       },
     ],
   },
@@ -108,13 +123,5 @@ const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
 });
-
-// router.beforeEach((to, from) => {
-//   if (to.path === "/personalHomepage") {
-//     next("/login");
-//   } else {
-//     next("/personalHomepage");
-//   }
-// });
 
 export default router;

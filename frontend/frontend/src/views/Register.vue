@@ -1,226 +1,245 @@
 <template>
-  <div>
-    <div class="nav">
-      <a href="./homepage_2">
-        <img src="../assets/brickslogo.svg" alt="" />
-      </a>
-      <div class="tribtn">
-        <a href="" class="btn">試用</a>
-        <a
-          href="./login_2"
-          class="btn nav_login_btn"
-          style="
-            background-color: #b82c30;
-            border-color: #b82c30;
-            color: #ffffff;
-          "
-          >登入</a
-        >
-        <a href="./register_2" class="btn" style="margin-right: 0px">註冊</a>
-      </div>
-    </div>
-    <div class="bg">
-      <div class="middle">
-        <p class="title">註冊</p>
-        <div class="wrong" v-if="errorMessage1">
-          <img src="../assets/exclamation.svg" alt="" />
-          <!-- 跳出的錯誤信息在這 -->
-          <p>帳號或密碼格式錯誤</p>
-        </div>
-        <div class="wrong" v-if="errorMessage2">
-          <img src="../assets/exclamation.svg" alt="" />
-          <!-- 跳出的錯誤信息在這 -->
-          <p>您輸入的兩個密碼並不相符，請再試一次</p>
-        </div>
-        <div class="wrong" v-if="errorMessage3">
-          <img src="../assets/exclamation.svg" alt="" />
-          <!-- 跳出的錯誤信息在這 -->
-          <p>請輸入2~10個字元的使用者名稱</p>
-        </div>
-        <div class="wrong" v-if="errorMessage4">
-          <img src="../assets/exclamation.svg" alt="" />
-          <!-- 跳出的錯誤信息在這 -->
-          <p>請勾選隱私權政策</p>
-        </div>
-        <div class="wrong" v-if="errorMessage5">
-          <img src="../assets/exclamation.svg" alt="" />
-          <!-- 跳出的錯誤信息在這 -->
-          <p>此信箱已被註冊</p>
-        </div>
-        <div class="enter">
-          <input
-            autofocus
-            required
-            type="text"
-            class="email"
-            placeholder="請輸入帳號 (電子信箱)"
-            v-model="email"
-          />
-          <div v-if="showpassword_1" class="input_password">
-            <input
-              required
-              class="password"
-              type="text"
-              placeholder="請輸入 (規則) 密碼"
-              v-model="password1"
-            />
-            <img
-              class="eye1"
-              v-if="showpassword_1"
-              id="eye_on_1"
-              src="../assets/eye/eye_on.svg"
-              alt=""
-              @click="eyebtn_1"
-            />
-            <img
-              class="eye1"
-              v-else
-              id="eye_off_1"
-              src="../assets/eye/eye_origin.svg"
-              alt=""
-              @click="eyebtn_1"
-            />
-          </div>
-          <div v-else class="input_password">
-            <input
-              required
-              class="password"
-              type="password"
-              placeholder="請輸入 (規則) 密碼"
-              v-model="password1"
-            />
-            <img
-              class="eye1"
-              v-if="showpassword_1"
-              id="eye_on_1"
-              src="../assets/eye/eye_on.svg"
-              alt=""
-              @click="eyebtn_1"
-            />
-            <img
-              class="eye1"
-              v-else
-              id="eye_off_1"
-              src="../assets/eye/eye_origin.svg"
-              alt=""
-              @click="eyebtn_1"
-            />
-          </div>
-          <div v-if="showpassword_2" class="input_password">
-            <input
-              required
-              class="password"
-              type="text"
-              placeholder="請再次輸入密碼"
-              v-model="password2"
-            />
-            <img
-              class="eye2"
-              v-if="showpassword_2"
-              id="eye_on_2"
-              src="../assets/eye/eye_on.svg"
-              alt=""
-              @click="eyebtn_2"
-            />
-          </div>
-          <div v-else class="input_password">
-            <input
-              required
-              class="password"
-              type="password"
-              placeholder="請再次輸入密碼"
-              v-model="password2"
-            />
-            <img
-              class="eye2"
-              id="eye_off_2"
-              src="../assets/eye/eye_origin.svg"
-              alt=""
-              @click="eyebtn_2"
-            />
-          </div>
-          <input
-            required
-            class="account"
-            placeholder="請輸入2~10個字元的使用者名稱 (可更改)"
-            v-model="account"
-          />
-        </div>
-        <div class="agree">
-          <img
-            src="../assets/checkbox/CheckBox_off.svg"
-            class="agree_checkbox agree_checkbox_off"
-            v-if="checked"
-            @click="check_btn"
-          />
-          <img
-            src="../assets/checkbox/CheckBox_on.svg"
-            class="agree_checkbox agree_checkbox_on"
-            v-else
-            @click="check_btn"
-          />
-          <p style="user-select: none">
-            我已閱讀 Bricks 之
-            <a href="" style="text-decoration: underline; color: #3b3838"
-              >隱私權政策</a
-            >
-          </p>
-        </div>
-        <!-- 下面兩個是登入鍵 -->
-        <a
-          class="login_btn"
-          v-if="counter == 4"
-          @click="register_next"
-          style="
-            background-color: #b82c30;
-            cursor: pointer;
-            display: inline-block;
-          "
-          >下一步</a
-        >
-        <div class="login_btn" v-else>下一步</div>
-        <div class="line">
-          <div class="left_line"></div>
-          <div class="right_line"></div>
-          <p>或</p>
-        </div>
-        <div class="other_resource">
-          <a href="">
-            <div>
-              <img src="../assets/Google_login.svg" alt="" />
-              <p>Google 登入</p>
-            </div>
-          </a>
-          <a href="">
-            <div id="FB_login_btn">
-              <img src="../assets/FB_login.svg" alt="" />
-              <p>Facebook 登入</p>
-            </div>
-          </a>
-        </div>
-        <div class="login">
-          <p>已經有帳戶？</p>
-          <a href="./login_2">
-            <p>登入</p>
-          </a>
+  <div style="width: 100%; position: absolute; left: 0; top: 0">
+    <div>
+      <div class="nav">
+        <a href="./homepage">
+          <img src="../assets/brickslogo.svg" alt="" />
+        </a>
+        <div class="tribtn">
+          <a href="" class="btn">試用</a>
+          <a
+            href="./login"
+            class="btn nav_login_btn"
+            style="
+              background-color: #b82c30;
+              border-color: #b82c30;
+              color: #ffffff;
+            "
+            >登入</a
+          >
+          <a href="./register" class="btn" style="margin-right: 0px">註冊</a>
         </div>
       </div>
-    </div>
-    <div class="bottom">
-      <a href="" class="privacy"
-        ># <span style="text-decoration: underline">隱私權政策</span></a
-      >
-      <a href="" class="contact"
-        ># 聯絡我們 <span style="color: #b6aeae">bricks@gmail.com</span></a
-      >
-      <div class="photo">
-        # Photo by
-        <a href="https://unsplash.com/@charlesdeluvio">charlesdeluvio</a> on
-        Unsplash
-      </div>
-    </div>
+      <div class="bg">
+        <div class="warning">
+          <Transition name="errorIn">
+            <el-alert
+              title="帳號或密碼格式錯誤"
+              v-if="errorMessage1"
+              type="error"
+              show-icon
+          /></Transition>
+          <Transition name="errorIn">
+            <el-alert
+              title="您輸入的兩個密碼並不相符，請再試一次"
+              v-if="errorMessage2"
+              type="error"
+              show-icon
+            />
+          </Transition>
+          <Transition name="errorIn">
+            <el-alert
+              title="請輸入2~10個字元的使用者名稱"
+              v-if="errorMessage3"
+              type="error"
+              show-icon
+            />
+          </Transition>
+          <Transition name="errorIn">
+            <el-alert
+              title="請勾選隱私權政策"
+              v-if="errorMessage4"
+              type="error"
+              show-icon
+            />
+          </Transition>
+          <Transition name="errorIn">
+            <el-alert
+              title="此信箱已被註冊"
+              v-if="errorMessage5"
+              type="error"
+              show-icon
+          /></Transition>
+        </div>
+        <div class="middle">
+          <p class="title">註冊</p>
 
-    <!-- <component :is="currentPage" v-if="page2"></component> -->
+          <div class="enter">
+            <input
+              autofocus
+              required
+              type="text"
+              class="email"
+              placeholder="請輸入帳號 (電子信箱)"
+              v-model="email"
+            />
+            <div v-if="showpassword_1" class="input_password">
+              <input
+                required
+                class="password"
+                type="text"
+                placeholder="請輸入 (規則) 密碼"
+                v-model="password1"
+              />
+              <img
+                class="eye1"
+                v-if="showpassword_1"
+                id="eye_on_1"
+                src="../assets/eye/eye_on.svg"
+                alt=""
+                @click="eyebtn_1"
+              />
+              <img
+                class="eye1"
+                v-else
+                id="eye_off_1"
+                src="../assets/eye/eye_origin.svg"
+                alt=""
+                @click="eyebtn_1"
+              />
+            </div>
+            <div v-else class="input_password">
+              <input
+                required
+                class="password"
+                type="password"
+                placeholder="請輸入 (規則) 密碼"
+                v-model="password1"
+              />
+              <img
+                class="eye1"
+                v-if="showpassword_1"
+                id="eye_on_1"
+                src="../assets/eye/eye_on.svg"
+                alt=""
+                @click="eyebtn_1"
+              />
+              <img
+                class="eye1"
+                v-else
+                id="eye_off_1"
+                src="../assets/eye/eye_origin.svg"
+                alt=""
+                @click="eyebtn_1"
+              />
+            </div>
+            <div v-if="showpassword_2" class="input_password">
+              <input
+                required
+                class="password"
+                type="text"
+                placeholder="請再次輸入密碼"
+                v-model="password2"
+              />
+              <img
+                class="eye2"
+                v-if="showpassword_2"
+                id="eye_on_2"
+                src="../assets/eye/eye_on.svg"
+                alt=""
+                @click="eyebtn_2"
+              />
+            </div>
+            <div v-else class="input_password">
+              <input
+                required
+                class="password"
+                type="password"
+                placeholder="請再次輸入密碼"
+                v-model="password2"
+              />
+              <img
+                class="eye2"
+                id="eye_off_2"
+                src="../assets/eye/eye_origin.svg"
+                alt=""
+                @click="eyebtn_2"
+              />
+            </div>
+            <input
+              required
+              class="account"
+              style=""
+              placeholder="請輸入2~10個字元的使用者名稱 (可更改)"
+              v-model="account"
+            />
+          </div>
+          <div class="agree">
+            <img
+              src="../assets/checkbox/CheckBox_off.svg"
+              class="agree_checkbox agree_checkbox_off"
+              v-if="!checked"
+              @click="check_btn"
+            />
+            <img
+              src="../assets/checkbox/CheckBox_on.svg"
+              class="agree_checkbox agree_checkbox_on"
+              v-else
+              @click="check_btn"
+            />
+            <p style="user-select: none">
+              我已閱讀 Bricks 之
+              <a href="" style="text-decoration: underline; color: #3b3838"
+                >隱私權政策</a
+              >
+            </p>
+          </div>
+          <!-- 下面兩個是登入鍵 -->
+          <a
+            class="login_btn"
+            v-if="counter == 4"
+            @click="register_next"
+            style="
+              background-color: #b82c30;
+              cursor: pointer;
+              display: inline-block;
+            "
+            >下一步</a
+          >
+          <div class="login_btn" v-else>下一步</div>
+          <div class="line">
+            <div class="left_line"></div>
+            <div class="right_line"></div>
+            <p>或</p>
+          </div>
+          <div class="other_resource">
+            <a href="">
+              <div>
+                <img src="../assets/Google_login.svg" alt="" />
+                <p>Google 登入</p>
+              </div>
+            </a>
+            <a href="">
+              <div id="FB_login_btn">
+                <img src="../assets/FB_login.svg" alt="" />
+                <p>Facebook 登入</p>
+              </div>
+            </a>
+          </div>
+          <div class="login">
+            <p>已經有帳戶？</p>
+            <a href="./login">
+              <p>登入</p>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="bottom">
+        <a href="" class="privacy"
+          ># <span style="text-decoration: underline">隱私權政策</span></a
+        >
+        <a href="" class="contact"
+          ># 聯絡我們 <span style="color: #b6aeae">bricks@gmail.com</span></a
+        >
+        <div class="photo">
+          # Photo by
+          <a href="https://unsplash.com/@charlesdeluvio">charlesdeluvio</a> on
+          Unsplash
+        </div>
+      </div>
+
+      <!-- <component :is="currentPage" v-if="page2"></component> -->
+    </div>
   </div>
 </template>
 
@@ -234,7 +253,7 @@ export default {
     return {
       showpassword_1: false,
       showpassword_2: false,
-      checked: true,
+      checked: false,
       account: "",
       password1: "",
       password2: "",
@@ -287,7 +306,7 @@ export default {
         this.errorMessage3 = false;
       }
 
-      if (this.checked) {
+      if (!this.checked) {
         this.errorMessage4 = true;
         // console.log("t", this.errorMessage4);
       } else {
@@ -303,14 +322,8 @@ export default {
           this.errorMessage4
         )
       ) {
-        // this.page1 = false;
-        // this.page2 = true;
-
-        // 先測試跳轉頁面並傳輸資料
-        // this.$router.push({ name: 'Register_second', params: { user_id: 111 } });
-
         console.log("success");
-        const path = "http://34.81.186.58:5000/register";
+        const path = "http://104.199.143.218:5000/register";
         const user = {
           user_email: this.email,
           user_password: this.password1,
@@ -329,9 +342,10 @@ export default {
               this.userId = res.data.user_id;
               console.log(this.userId);
               console.log("註冊成功");
+              alert("註冊成功");
               this.$router.push({
-                name: "Register_second",
-                params: { user_id: this.userId },
+                path: "/questionnaire",
+                // params: { user_id: this.userId },
               });
             } else {
               // this.$refs.account.style = "border-color : #e03939";
@@ -501,7 +515,7 @@ export default {
 }
 
 .nav {
-  width: 100vw;
+  width: 100%;
   height: 65px;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
@@ -555,11 +569,36 @@ export default {
 }
 
 @media screen and (min-width: 1920px) {
+  .warning {
+    /* border: 2px solid black; */
+    width: 300px;
+    height: auto;
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    bottom: 58px;
+    right: 10px;
+    font-family: "Noto Sans TC";
+  }
+  .warning .el-alert {
+    border-radius: 10px;
+    margin: 14px 0 0;
+    height: 38px;
+    padding-left: 10px;
+    font-size: 8px;
+  }
+
+  .errorIn-enter-active {
+    transition: opacity 0.5s ease;
+  }
+  .errorIn-enter-from {
+    opacity: 0;
+  }
   .middle {
     width: 576px;
     height: auto;
     position: absolute;
-    top: 105px;
+    top: 200px;
     left: 50%;
     transform: translate(-50%);
   }
@@ -582,11 +621,36 @@ export default {
 }
 
 @media screen and (min-width: 1600px) and (max-width: 1920px) {
+  .warning {
+    /* border: 2px solid black; */
+    width: 300px;
+    height: auto;
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    bottom: 58px;
+    right: 10px;
+    font-family: "Noto Sans TC";
+  }
+  .warning .el-alert {
+    border-radius: 10px;
+    margin: 14px 0 0;
+    height: 38px;
+    padding-left: 10px;
+    font-size: 8px;
+  }
+
+  .errorIn-enter-active {
+    transition: opacity 0.5s ease;
+  }
+  .errorIn-enter-from {
+    opacity: 0;
+  }
   .middle {
     width: 470px;
     height: auto;
     position: absolute;
-    top: 105px;
+    top: 200px;
     left: 50%;
     transform: translate(-50%);
   }
@@ -596,19 +660,45 @@ export default {
   }
 
   .privacy {
-    left: 285px;
+    left: 405px;
   }
 
   .contact {
-    left: 396px;
+    left: 516px;
   }
 
   .photo {
-    right: 285px;
+    right: 405px;
   }
 }
 
 @media screen and (max-width: 1600px) {
+  .warning {
+    /* border: 2px solid black; */
+    width: 300px;
+    height: auto;
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    bottom: 58px;
+    right: 10px;
+    font-family: "Noto Sans TC";
+  }
+  .warning .el-alert {
+    border-radius: 10px;
+    margin: 14px 0 0;
+    height: 38px;
+    padding-left: 10px;
+    font-size: 8px;
+  }
+
+  .errorIn-enter-active {
+    transition: opacity 0.5s ease;
+  }
+  .errorIn-enter-from {
+    opacity: 0;
+  }
+
   .middle {
     width: 416px;
     height: auto;
@@ -619,19 +709,19 @@ export default {
   }
 
   .bg {
-    height: 770px;
+    height: 710px;
   }
 
   .privacy {
-    left: 285px;
+    left: 8%;
   }
 
   .contact {
-    left: 396px;
+    left: 20%;
   }
 
   .photo {
-    right: 285px;
+    right: 10%;
   }
 }
 
@@ -644,10 +734,10 @@ export default {
 
 .enter input {
   width: 99.8%;
-  height: 45px;
+  height: 33.75px;
   border: 1.5px solid #c7c2c2;
   border-radius: 12px;
-  font-size: 18px;
+  font-size: 16px;
   font-family: "Noto Sans TC";
   font-weight: 500;
   letter-spacing: 1.25px;
@@ -690,7 +780,7 @@ input::placeholder {
 }
 
 .input_password {
-  height: 75px;
+  height: 60px;
 }
 
 .input_password img {
@@ -698,7 +788,7 @@ input::placeholder {
   z-index: 9;
   user-select: none;
   position: relative;
-  top: -64px;
+  top: -59px;
   left: 90%;
   display: block;
 }
@@ -725,6 +815,7 @@ input::placeholder {
   background-color: #c7c2c2;
   border-radius: 14px;
   position: relative;
+  transform: translate(0%, -30%);
   font-size: 18px;
   font-weight: 500;
   font-family: "Noto Sans TC";
@@ -741,7 +832,7 @@ input::placeholder {
   height: 32px;
   position: relative;
   left: 50%;
-  transform: translate(-50%);
+  transform: translate(-50%, -30%);
   margin-bottom: 24px;
   font-size: 18px;
   font-family: "Noto Sans TC";
@@ -774,6 +865,7 @@ input::placeholder {
   height: 33px;
   width: 100%;
   position: relative;
+  transform: translate(0%, -60%);
   font-size: 18px;
   font-weight: 500;
   font-family: "Noto Sans TC";
@@ -799,6 +891,7 @@ input::placeholder {
 }
 
 .other_resource {
+  transform: translate(0%, -20%);
   width: 100%;
   height: 48px;
   position: relative;

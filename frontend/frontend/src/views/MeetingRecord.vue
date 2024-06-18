@@ -1,272 +1,226 @@
 <template>
-  <div class="sharon" @contextmenu.prevent>
-      <!-- <side-bar class="sideBar"></side-bar>-->
-      <nav-bar-main class="navBar"></nav-bar-main> 
+  <!-- <div class="all"> -->
+  <side-bar class="sideBar"></side-bar>
+  <nav-bar-main class="navBar"></nav-bar-main>
 
-    <!-- 新增、會議記錄主頁 -->
-    <div class="navAndCont"  id="new" v-if="showedInfo">
-      <!-- <el-backtop visibility-height="0" class="backtop">
-      <div id="backtop">
-          <el-icon class="icon"><upload/></el-icon>
-        </div>
-      </el-backtop> -->
-      <div :class="meetingClass">
-        <div class="info"><meeting ></meeting></div>
-        <div class="textBlock">
-          <text-block v-for="cart in quantity" :key="cart" @add_cart="add_block"/>
-      </div>
-        
+  <div class="navAndCont" id="new">
+    <div class="tag">
+      <!-- 標籤 -->
+      <tag-place @show="showInfo" />
+    </div>
+
+    <div :class="meetingClass" v-if="showedInfo">
+      <meeting :recordInfo="recordInfo"></meeting>
+      <div class="textBlock">
+        <text-block
+          v-for="block in blocks"
+          :key="block.id"
+          @add_cart="add_block"
+          :showAddBtn="showAddBtn"
+          @deleteCart="deleteCart"
+          :content="block.textBox_content"
+        />
       </div>
     </div>
-    <div class="result" v-else>    
-            <div class="toolBar">
-            <ordering/>
-            <sort/>
-        </div>
-            <document-with-info v-for="item in 10" :key="item"/>
+    <div class="result" v-else>
+      <div class="toolBar">
+        <ordering />
+        <sort />
       </div>
-    <el-backtop visibility-height="0" class="backtop">
-      <div id="backtop">
-          <el-icon class="icon"><upload/></el-icon>
-        </div>
-      </el-backtop>
-      
-
-      <!-- 標籤 -->
-      <div trigger="click" class="tagsPlace" @click="showTags">
-        <span class="el-dropdown-link">
-          標籤<el-icon class="el-icon--right"><arrow-down /></el-icon>
-        </span>
-      </div>
-      <tag-search-area v-show="tagShowed" class="tagInside" @showBlock="showInfo"></tag-search-area>
-      
+      <document-with-info v-for="item in 10" :key="item" />
+    </div>
   </div>
 </template>
 
-
-<script>
-import { ref } from "vue";
+<script setup>
+import { computed, ref } from "vue";
 // import axios from "axios";
 import SideBar from "../components/SideBar.vue";
-import NavBarMain from '../components/NavBarMain.vue';
-import meeting from '../components/meeting.vue';
+import NavBarMain from "../components/NavBarMain.vue";
+import meeting from "../components/meeting.vue";
 import TextBlock from "@/components/TextBlock.vue";
-import TagSearchArea from '../components/KerwinBricks/TagSearchArea.vue';
+import TagPlace from "../components/TagPlace.vue";
 import { useRouter } from "vue-router";
-import Ordering from '../components/SharonBricks/Ordering.vue';
-import sort from '../components/SharonBricks/Sort.vue';
+import Ordering from "../components/SharonBricks/Ordering.vue";
+import sort from "../components/SharonBricks/Sort.vue";
 import DocumentWithInfo from "@/components/KerwinBricks/DCMwithDate.vue";
-import axios from 'axios';
+import axios from "axios";
 import { onMounted } from "vue";
+import { useStore } from "vuex";
 
+const meetingClass = ref("meeting");
+const recordInfo = computed(() => store.getters["records/getCurrRecord"]);
+const activeOption = ref(null);
+const isShowed = ref(false);
+const router = useRouter();
+const currentActive = ref("1-1");
+const showedInfo = ref(true);
+const quantity = ref(1);
+const recordID = ref("");
+const showAddBtn = ref(false);
+const store = useStore();
+const blocks = computed(() => store.getters["records/getCurrTextBoxes"]);
 
-export default {
-  components: {
-    SideBar,
-    NavBarMain,
-    meeting,
-    TextBlock,
-    TagSearchArea,
-    sort,
-    Ordering,
-    DocumentWithInfo,
+const deleteCart = async () => {
+  try {
+    const response = await fetch("http://34.81.219.139:5000/delete_textBox", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        textBox_id: "16",
+      }),
+      credentials: "include",
+    });
+    console.log(response.data.message);
+  } catch (error) {
+    console.log("刪除失敗");
+  }
 
-  },
-  // props: {
-  //   record_id: Number,
-  // },
-  setup(props,{emit}) {
-    const meetingClass = ref("meeting");
-    const activeOption = ref(null);  
-    const isShowed = ref(false);  
-    const tagShowed = ref(false);
-    const router = useRouter();
-    const currentActive = ref("1-1");
-    const showedInfo = ref(true);
-    const quantity = ref(1);
-    const recordID = ref("");
-
-    // onMounted(() => {
-    //   recordID.value = this.router.query.cardId;
-    //   console.log(recordID.value);
-    // });
-
-    const showTags = () =>{
-      // console.log(recordID);
-      tagShowed.value = !tagShowed.value;
-      if(tagShowed.value === true){
-        meetingClass.value = "showingClass";
-      }
-      else{
-        meetingClass.value = "meeting";
-      }
-    }
-
-    const showInfo = (value) =>{
-      showedInfo.value = value;
-    };
-    const add_block = () =>{
-      quantity.value +=1;
-    }
-
-    return {
-      activeOption,
-      // selectedItemUpdate,
-      isShowed,
-      // StopShowing,
-      // show,
-      showTags,
-      tagShowed,
-      meetingClass,
-      // nextPage,
-      currentActive,
-      showInfo,
-      showedInfo,
-      quantity,
-      add_block,
-      recordID,
-    };
-  },
-  // mounted(){
-    // axios.post("http://35.194.196.179:5000/get_record",{params:{}})
-  // },
+  if (quantity > 1) {
+    quantity--;
+  }
 };
+
+const showInfo = (value) => {
+  showedInfo.value = value;
+};
+const add_block = () => {
+  blocks.value += 1;
+};
+
+const showBtn = () => {
+  showAddBtn.value = true;
+};
+
+onMounted(() => {
+  // if (route.path === '/cards/newRecord') {
+  store.dispatch("records/fetchOneRecord");
+  // }
+});
 </script>
 
 <style scoped>
- .sharon{
-    position: absolute;
- }
-  .navBar{
-    position: relative;
-    top: 0;
-    left: 200px;
-    right: 0;
-    /* grid-area: navBar; */
- }
- .sideBar{
-    /* grid-area: sideBar; */
-    position: relative;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    height: 100vh;
- }
- .navAndCont{
-  background-color: #F2F3F5;
-  position: absolute;
-  left: 200px;
+.navBar {
+  position: relative;
   top: 0;
+  left: 200px;
   right: 0;
-  
- }
- .info{
+  /* grid-area: navBar; */
+}
+.sideBar {
+  /* grid-area: sideBar; */
   position: relative;
- }
+  top: 0;
+  left: 0;
+  bottom: 0;
+  height: 100vh;
+}
+.navAndCont {
+  background-color: #f2f3f5;
+  /* display: flex; */
+  position: fixed;
+  overflow-y: scroll;
 
- .textBlock{
+  left: 200px;
+  top: 48px;
+  height: 100vh;
+  width: calc(100vw - 200px);
+}
+.info {
   position: relative;
-  top:8px;
-  left: -65px;
+}
+.textBlock {
+  position: relative;
+  top: 8px;
+  /* left: -65px; */
   display: grid;
   grid-row-gap: 8px;
+  padding-bottom: 10px;
   /* gap: 8px; */
- }
+  background-color: #f2f3f5;
+}
+/* .textBlock :hover{
+  left: -63px;
+ } */
 
- .meeting{
-  position: relative;
-  top: 68px;
-  left:248px;
+.meeting {
+  position: absolute;
+  display: inline-block;
+  top: 20px;
+  margin-bottom: 20px;
+  left: 10%;
+  width: calc(100vw - 200px);
+  /* background-color: #F2F3F5; */
   /* width:200px;  */
   /* right:0; */
   /* width: auto; */
- }
+  padding-bottom: 10px;
+  background-color: none;
+}
 
- .tagsPlace{
+.showingClass {
   position: absolute;
-  left: 97rem;
-  width:65px;
-  top: 68px;
-  border-radius: var(--radius-button-large-radius, 4px);
-  border: 1px solid var(--base-color-border-el-border-color, #DCDFE6);
-  background: #FFF;
-  padding: 4px 16px;
- }
-
- .el-dropdown-link{
-  display: flex;
-  gap: 8px;
-  cursor: pointer;
- }
-
- .el-dropdown-link{
-  color: #C91F2F;
- }
-
- .tagInside{
-  position: absolute;
-  left: 1280px;
-  top: 114px;
-  z-index: 10;
-  width: 372px;
- }
-
- .tagMenu{
-  width: 372px;
- }
-
- .showingClass{
-  position: absolute;
-  top: 68px;
+  top: 20px;
   /* right: 430px; */
   left: 66px;
- }
+}
 
- .result{
-    position: absolute;
-    display:grid;
-    /* flex-direction: row; */
-    /* flex-wrap: wrap; */
-    row-gap: 8px;
-    top: 68px;
-    /* margin-top: 128px; */
-    /* width: 572px; */
-    left:246px;
- }
+.result {
+  position: absolute;
+  display: grid;
+  /* flex-direction: row; */
+  /* flex-wrap: wrap; */
+  row-gap: 8px;
+  top: 20px;
+  /* margin-top: 128px; */
+  /* width: 572px; */
+  left: 46px;
+}
 
- .backtop{
+/* .backtop{
     position: fixed;
- }
+ } */
 
- #backtop{
-    background-color: var(--el-bg-color-overlay);
-    box-shadow: var(--el-box-shadow-lighter);
-    text-align: center;
-    color: #C91F2F;
-    padding: 9px 16px;
-    justify-content: left;
-    /* position: relative; */
-    /* left: 255px; */
-    top: fixed(70px);
- }
+#backtop {
+  background-color: var(--el-bg-color-overlay);
+  box-shadow: var(--el-box-shadow-lighter);
+  text-align: center;
+  color: #c91f2f;
+  padding: 9px 16px;
+  justify-content: left;
+  top: fixed(70px);
+}
 
- .icon{
-    font-size: 14px;
- }
+.icon {
+  font-size: 14px;
+}
 
- .toolBar{
-    display:flex;
-    gap: 12px;
-    /* position: absolute; */
-    top: 68px;
-    /* right:0; */
-    margin-bottom: 12px;
-    justify-content: right;
-    text-align: right;
-    width: 1fr;
-    /* background: #F2F3F5; */
-    /* left: 46px; */
-    /* right: 700px; */
- }
+.toolBar {
+  display: flex;
+  gap: 12px;
+  top: 68px;
+  margin-bottom: 12px;
+  justify-content: right;
+  text-align: right;
+  /* width: 1fr; */
+}
+.tag {
+  position: absolute;
+  /* margin-left: 100px; */
+  right: 32px;
+  /* top: 68px; */
+  z-index: 5;
+}
 
+@media screen and (min-width: 1024px) and (max-width: 1440px) {
+  .tag {
+    right: 32px;
+    top: 20px;
+  }
+  .textBlock {
+    width: 665px;
+  }
+}
 </style>
