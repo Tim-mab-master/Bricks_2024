@@ -350,6 +350,8 @@
                 </div>
               </div>
             </div>
+
+            <!-- 這裡有問題，v-for有問題 -->
             <div v-for="(cart, index1) in carts" :key="index1">
               <div class="cart">
                 <p class="cart_title" style="height: 0px">
@@ -613,7 +615,7 @@ export default {
       this.selectOption = "option1";
       this.show_add_proj_type_list = false;
       this.proj_type_color = "#b6aeae";
-      const path = "http://104.199.143.218:5000/project_index";
+      const path = "http://34.81.219.139:5000/project_index";
       const newProject = {
         project_type: this.proj_type,
         project_image: this.project_image,
@@ -657,7 +659,7 @@ export default {
           this.carts.push(new_cart);
           this.add_proj_type_options.push(new_cart.title_word);
 
-          const path = "http://104.199.143.218:5000/add_type";
+          const path = "http://34.81.219.139:5000/add_type";
           const type = {
             user_id: 25,
             project_id: 87,
@@ -676,21 +678,20 @@ export default {
         this.middle_show_overview_page = true;
         this.middle_show_over_page = false;
         this.middle_show_trash_page = false;
-        const path = "http://104.199.143.218:5000/project_index";
+        const path = "http://34.81.219.139:5000/project_index";
         const get_proj = {
           user_id: 25,
           project_status: "normal",
         };
         axios.post(path, get_proj).then((res) => {
           if (res.data.status == "success") {
-            console.log("response_1:", res.data);
             const items = res.data.items;
             console.log("response_1", res.data.items);
             items.forEach((element) => {
               console.log(element.id);
               this.proj_type = element.project_type;
               this.proj_name = element.project_name;
-              console.log(this.proj_type);
+              console.log("巴拉巴拉請出現" + this.proj_name);
               if (
                 this.add_proj_type_options.includes(this.proj_type) === false
               ) {
@@ -709,7 +710,7 @@ export default {
         this.middle_show_over_page = true;
         this.middle_show_overview_page = false;
         this.middle_show_trash_page = false;
-        const path_end = "http://104.199.143.218:5000/project_index";
+        const path_end = "http://34.81.219.139:5000/project_index";
         const get_proj_end = {
           user_id: 25,
           project_status: "normal",
@@ -742,7 +743,7 @@ export default {
         this.middle_show_overview_page = false;
         this.middle_show_over_page = false;
         console.log("jiji");
-        const path_trash = "http://104.199.143.218:5000/trashcan_search";
+        const path_trash = "http://34.81.219.139:5000/trashcan_search";
         const get_proj_trash = {
           project_id: 94,
         };
@@ -828,7 +829,7 @@ export default {
         this.proj_type_color = "black";
         this.add_proj_type_text = "";
 
-        const path = "http://104.199.143.218:5000/add_type";
+        const path = "http://34.81.219.139:5000/add_type";
         const type = {
           user_id: "25",
           project_id: 87,
@@ -1010,7 +1011,7 @@ export default {
   },
   onMounted() {
     window.addEventListener("click", this.handleClickOutside);
-    const path = "http://104.199.143.218:5000/project_index";
+    const path = "http://34.81.219.139:5000/project_index";
     const get_proj = {
       user_id: 25,
       project_status: "normal",
@@ -1036,7 +1037,7 @@ export default {
         });
       }
     });
-    const path_end = "http://104.199.143.218:5000/project_index";
+    const path_end = "http://34.81.219.139:5000/project_index";
     const get_proj_end = {
       user_id: 25,
       project_status: "ended",
