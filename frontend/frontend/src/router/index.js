@@ -91,7 +91,7 @@ const routes = [
     path: "/all",
     name: "all",
     redirect: "/all/cards",
-    // component: () => import("../views/meetingAll.vue"),
+    component: () => import("../views/meetingAll.vue"),
     children: [
       {
         path: "cards",
@@ -106,14 +106,12 @@ const routes = [
         // alias: "cards/meetingRecord/:cardId",
         name: "newRecord",
         component: () => import("../views/NewMeetingRecord.vue"),
-        
       },
       {
         path: "cards/meetingRecord/:cardId",
         // alias: "",
         name: "meetingRecord",
         component: () => import("../views/MeetingRecord.vue"),
-        
       },
     ],
   },
