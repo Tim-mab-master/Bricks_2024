@@ -156,9 +156,9 @@
         <img src="../assets/add_proj_pic_plus.svg" class="proj_info_pic_plus" />
       </div>
       <input type="text" class="proj_info_name" v-model="proj_info_title" />
-      <div class="proj_info_type" @click="" ref="">
-        {{ proj_type }}
-      </div>
+      <input type="text" class="proj_info_type" v-model="proj_info_type" />
+      <!-- {{ proj_info_type }} -->
+
       <div class="proj_info_enter" @click="enter_project_btn">進入專案</div>
     </div>
     <div class="main_body">
@@ -525,6 +525,8 @@ export default {
       project_creation_date: " ",
       project_edit_data: " ",
       project_info_show: false,
+      proj_info_title: "",
+      proj_info_type: "",
     };
   },
   methods: {
@@ -730,6 +732,8 @@ export default {
     proj_info(index1, index2) {
       this.project_info_show = true;
       this.proj_info_title = this.carts[index1].project_box[index2];
+      this.proj_info_type = "類型: " + this.carts[index1].title_word;
+      console.log(this.proj_info_type);
       // this.$router.push({ name: "all" });
     },
 
@@ -1679,7 +1683,7 @@ export default {
   letter-spacing: 1.25px;
   line-height: 36px;
   text-indent: 20px;
-  color: #b6aeae;
+  color: rgba(0, 0, 0, 0.937);
   cursor: pointer;
   user-select: none;
   -webkit-appearance: none;
