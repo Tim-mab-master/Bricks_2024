@@ -278,8 +278,7 @@ export default {
               alertWrongPassword.value = true;
             } else if (res.data.status === "success") {
               // authorization.value = res.headers.Authorization;
-              if (checked) {
-                console.log("keep");
+              if (checked.value) {
                 setCookie(account._value, password._value);
               } else {
                 deleteCookie("password");
@@ -293,7 +292,7 @@ export default {
             } else {
               console.log("no");
             }
-            console.log(res);
+            // console.log(res);
           })
           .catch((error) => {
             // 請求失敗則觸發/執行這個 function 函式
@@ -345,27 +344,19 @@ export default {
     const checkCookie = () => {
       if (document.cookie.length > 0) {
         let arr = document.cookie.split(";");
-        let checkAccount = "";
-        let checkPassword = "";
         for (let i = 0; i < arr.length; i++) {
           let element = arr[i].trim();
-          if (element.substring(0, 7) == "account=") {
-            checkAccount = element.substring(8);
-            // alert(account);
-          } else if (element.substring(0, 8) == "password=") {
-            checkPassword = element.substring(9);
-            // alert(password.value);
+          if (element.substring(0, 8) == "account=") {
+            //有cookie
+            checked.value = true;
+            getCookie();
           }
-        }
-        if (checkAccount != "undefined" || checkPassword != "undefined") {
-          getCookie();
         }
       }
     };
 
     onMounted(() => {
       checkCookie();
-      console.log(document.cookie);
     });
 
     return {
