@@ -171,11 +171,14 @@ import axios from "axios";
 import { Base64 } from "js-base64";
 import PersonalHomepageVue from "./PersonalHomepage.vue";
 import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
 
 export default {
   name: "Login",
 
   setup() {
+    const router = useRouter();
+
     const account = ref("");
     const password = ref("");
     const showpassword = ref(false);
@@ -269,11 +272,11 @@ export default {
       if (password == "" || account == "") {
         alertBlankInput.value = true;
       } else {
-        // this.setCookie(this.account, this.password);
+        console.log(account._value);
         axios
           .post("http://34.81.219.139:5000/bricks_login", {
-            user_email: account,
-            user_password: password,
+            user_email: account._value,
+            user_password: password._value,
           })
           .then((res) => {
             // 請求成功會觸發/執行這個 function 函式
@@ -282,15 +285,17 @@ export default {
               alertWrongPassword.value = true;
               console.log(alertWrongPassword.value);
             } else if (res.data.status === "success") {
-              authorization = res.headers.Authorization;
-              console.log(authorization);
-              this.$router.push({
+              console.log("成功登入");
+              // authorization = res.headers.Authorization;
+              // console.log(authorization);
+              // if (checked) {
+              //   console.log("keeplogin");
+              //   setCookie();
+              // }
+              router.push({
                 name: "personalHomepage",
                 params: { user_id: "25" },
               });
-              if (checked) {
-                console.log("keeplogin");
-              }
             } else {
               console.log("no");
             }
@@ -345,9 +350,9 @@ export default {
       getCookie();
     };
 
-    onMounted(() => {
-      checkCookie();
-    });
+    // onMounted(() => {
+    //   checkCookie();
+    // });
 
     return {
       showpassword,
