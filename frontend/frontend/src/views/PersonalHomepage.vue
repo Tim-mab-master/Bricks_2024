@@ -124,14 +124,18 @@
         v-show="show_add_proj_type_list"
         ref="add_proj_type_list"
       >
-        <div class="add_proj_type_option" @click="type_not_choose">未分類</div>
-        <div
-          v-for="(option, index) in add_proj_type_options"
-          :key="index"
-          class="add_proj_type_option"
-          @click="type_choosen(option)"
-        >
-          {{ option }}
+        <div class="add_proj_type_option_container">
+          <div class="add_proj_type_option" @click="type_not_choose">
+            未分類
+          </div>
+          <div
+            v-for="(option, index) in add_proj_type_options"
+            :key="index"
+            class="add_proj_type_option"
+            @click="type_choosen(option)"
+          >
+            {{ option }}
+          </div>
         </div>
         <div class="add_proj_type_list_line"></div>
         <input
@@ -144,6 +148,18 @@
         <div class="add_proj_type_text_plus" @click="list_add_a_cart"></div>
       </div>
       <div class="add_proj_build" @click="new_project_btn">建立專案</div>
+    </div>
+    <div class="proj_info" v-if="project_info_show">
+      <div class="close_add_proj_box" @click="close_proj_info()"></div>
+      <p class="proj_info_title">專案資訊</p>
+      <div class="proj_info_pic">
+        <img src="../assets/add_proj_pic_plus.svg" class="proj_info_pic_plus" />
+      </div>
+      <input type="text" class="proj_info_name" v-model="proj_info_title" />
+      <div class="proj_info_type" @click="" ref="">
+        {{ proj_type }}
+      </div>
+      <div class="proj_info_enter" @click="enter_project_btn">進入專案</div>
     </div>
     <div class="main_body">
       <div class="bg">
@@ -182,6 +198,7 @@
                     class="box"
                     v-for="(proj_name, index2) in carts[index1].project_box"
                     :key="index2"
+                    @click="proj_info(index1, index2)"
                   >
                     {{ proj_name }}
                   </div>
@@ -507,6 +524,7 @@ export default {
       project_id: 0,
       project_creation_date: " ",
       project_edit_data: " ",
+      project_info_show: false,
     };
   },
   methods: {
@@ -707,6 +725,23 @@ export default {
         });
       }
     },
+
+    //點擊進入專案
+    proj_info(index1, index2) {
+      this.project_info_show = true;
+      this.proj_info_title = this.carts[index1].project_box[index2];
+      // this.$router.push({ name: "all" });
+    },
+
+    //在proj_info裡面點擊進入專案
+    enter_project_btn() {
+      // this.$router.push({ name: "all" });
+    },
+
+    close_proj_info() {
+      this.project_info_show = false;
+    },
+
     click_search_bar() {
       // if(this.click_search_bar_time===0){
       //     const path = "http://34.81.186.58:5000/search_history";
@@ -1394,7 +1429,7 @@ export default {
   box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3), 0px 2px 15px rgba(0, 0, 0, 0.15);
   border-radius: 14px;
   position: absolute;
-  top: 320px;
+  top: 260px;
   left: 320px;
   z-index: 3;
   background-color: white;
@@ -1411,6 +1446,14 @@ export default {
   z-index: 3;
   background-color: white;
 }
+.add_proj_type_option_container {
+  width: 214px;
+  height: 180px;
+  overflow: scroll;
+  color: white;
+  border-radius: 10px;
+}
+
 .add_proj_type_option {
   width: 100%;
   height: 45px;
@@ -1422,6 +1465,7 @@ export default {
   cursor: pointer;
   color: #3b3838;
   user-select: none;
+  border-radius: 4px;
 }
 .add_history_search {
   width: 100%;
@@ -1546,6 +1590,110 @@ export default {
 }
 
 /* 新增專案的框框 終點 */
+
+/* 點擊專案資訊開始 */
+.proj_info {
+  width: 344px;
+  height: 500px;
+  position: fixed;
+  border-radius: 14px;
+  background-color: white;
+  box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.4);
+  z-index: 6;
+  left: calc((100vw - 344px + 234px) / 2);
+  top: calc((100vh - 524px + 50px) / 2);
+}
+
+.proj_info_title {
+  font-size: 20px;
+  font-weight: 600;
+  position: relative;
+  top: 20px;
+  text-align: center;
+  user-select: none;
+}
+
+.proj_info_pic {
+  width: 280px;
+  height: 140px;
+  border-radius: 14px;
+  background-color: #f2eeee;
+  position: relative;
+  top: 60px;
+  left: 50%;
+  transform: translate(-50%);
+  cursor: pointer;
+  -webkit-user-drag: none;
+}
+
+.proj_info_pic_plus {
+  position: relative;
+  top: 40px;
+  left: 110px;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.proj_info_name {
+  width: 278px;
+  height: 34px;
+  border: 1px solid #c7c2c2;
+  border-radius: 12px;
+  font-size: 16px;
+  letter-spacing: 1.25px;
+  line-height: 38px;
+  text-indent: 20px;
+  position: relative;
+  top: 108px;
+  left: 50%;
+  transform: translate(-50%);
+}
+.proj_info_enter {
+  width: 280px;
+  height: 42px;
+  border-radius: 14px;
+  background-color: #b82c30;
+  color: white;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 40px;
+  letter-spacing: 1.25px;
+  text-align: center;
+  position: relative;
+  top: 166px;
+  left: 50%;
+  transform: translate(-50%);
+  cursor: pointer;
+  user-select: none;
+}
+
+.proj_info_type {
+  width: 278px;
+  height: 34px;
+  border: 1px solid #b8b8b8;
+  border-radius: 12px;
+  position: relative;
+  top: 124px;
+  left: 50%;
+  transform: translate(-50%);
+  font-size: 16px;
+  letter-spacing: 1.25px;
+  line-height: 36px;
+  text-indent: 20px;
+  color: #b6aeae;
+  cursor: pointer;
+  user-select: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: url(../assets/dropdown_arrow/dropdown_arrow_right.svg) no-repeat
+    center right;
+}
+.proj_info_type:hover {
+  border-color: #7b7b7b;
+  background: url(../assets/dropdown_arrow/dropdown_arrow_right_hover.svg)
+    no-repeat center right;
+}
+/* 點擊專案資訊結束終點 */
 
 /* 背景灰色 */
 .overlay {
