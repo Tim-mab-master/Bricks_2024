@@ -278,8 +278,6 @@ export default {
             if (res.data.status === "failure") {
               this.alertWrongPassword = true;
             } else if (res.data.status === "success") {
-              console.log("yes");
-              alert("登入成功");
               this.authorization = res.headers.Authorization;
               console.log(this.authorization);
               this.$router.push({
