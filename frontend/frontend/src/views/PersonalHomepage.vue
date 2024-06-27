@@ -869,7 +869,7 @@ export default {
     window.addEventListener("click", this.handleClickOutside);
     const path = "http://34.81.219.139:5000/project_index";
     const get_proj = {
-      user_id: 25,
+      user_id: 44,
       project_status: "normal",
     };
     axios.post(path, get_proj).then((res) => {
@@ -895,7 +895,7 @@ export default {
     });
     const path_end = "http://34.81.219.139:5000/project_index";
     const get_proj_end = {
-      user_id: 25,
+      user_id: 44,
       project_status: "ended",
     };
     axios.post(path_end, get_proj_end).then((res) => {
@@ -922,7 +922,7 @@ export default {
     });
     const path_trash = "http://34.81.219.139:5000/project_index";
     const get_proj_trash = {
-      user_id: 25,
+      user_id: 44,
       project_status: "trashcan",
     };
     axios.post(path_trash, get_proj_trash).then((res) => {
