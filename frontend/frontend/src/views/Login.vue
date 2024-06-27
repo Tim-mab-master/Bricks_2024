@@ -24,14 +24,14 @@
       <div class="warning">
         <Transition name="errorIn">
           <el-alert
-            v-if="alertWrongPassword.value"
+            v-if="alertWrongPassword"
             title="您的帳號或密碼不正確，請再輸入一次"
             type="error"
             show-icon
         /></Transition>
         <Transition name="errorIn">
           <el-alert
-            v-if="alertBlankInput.value"
+            v-if="alertBlankInput"
             title="請填寫您的帳號與密碼資訊"
             type="error"
             show-icon
@@ -262,8 +262,10 @@ export default {
 
     //登入
     const goToPersonalPage = () => {
+      console.log("點擊登入");
       alertBlankInput.value = false;
       alertWrongPassword.value = false;
+      console.log(alertBlankInput.value);
       if (password == "" || account == "") {
         alertBlankInput.value = true;
       } else {
@@ -278,6 +280,7 @@ export default {
             // 確認用戶是否存在資料庫
             if (res.data.status === "failure") {
               alertWrongPassword.value = true;
+              console.log(alertWrongPassword.value);
             } else if (res.data.status === "success") {
               authorization = res.headers.Authorization;
               console.log(authorization);
