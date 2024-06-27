@@ -60,6 +60,13 @@
               type="error"
               show-icon
           /></Transition>
+          <Transition name="errorIn">
+            <el-alert
+              title="密碼長度需介於8~12之間"
+              v-if="errorMessage6"
+              type="error"
+              show-icon
+          /></Transition>
         </div>
         <div class="middle">
           <p class="title">註冊</p>
@@ -78,7 +85,7 @@
                 required
                 class="password"
                 type="text"
-                placeholder="請輸入 (規則) 密碼"
+                placeholder="請輸入 6~20 含英數之密碼"
                 v-model="password1"
               />
               <img
@@ -103,7 +110,7 @@
                 required
                 class="password"
                 type="password"
-                placeholder="請輸入 (規則) 密碼"
+                placeholder="請輸入 6~20 含英數之密碼"
                 v-model="password1"
               />
               <img
@@ -264,6 +271,7 @@ export default {
       errorMessage3: false,
       errorMessage4: false,
       errorMessage5: false,
+      errorMessage6: false, //密碼長度不介於8~12
       userId: 0, // 0 就等於沒有使用者id
       // page1: true,
       // page2: false,
@@ -313,17 +321,24 @@ export default {
         this.errorMessage4 = false;
         // console.log("f", this.errorMessage4);
       }
-
+      if (this.password1.length < 8 || this.password1.length > 12) {
+        this.errorMessage6 = true;
+        var testEnglish = new RegExp("[a-z]");
+      } else if (testEnglish.test(this.password1)) {
+        this.errorMessage6 = true;
+      } else {
+        this.errorMessage6 = false;
+      }
       if (
         !(
           this.errorMessage1 ||
           this.errorMessage2 ||
           this.errorMessage3 ||
-          this.errorMessage4
+          this.errorMessage4 ||
+          this.errorMessage6
         )
       ) {
-        console.log("success");
-        const path = "http://104.199.143.218:5000/register";
+        const path = "http://34.81.219.139:5000/register";
         const user = {
           user_email: this.email,
           user_password: this.password1,
@@ -337,11 +352,9 @@ export default {
         axios
           .post(path, user)
           .then((res) => {
-            console.log(res.data.status);
             if (res.data.status == "success") {
               this.userId = res.data.user_id;
-              console.log(this.userId);
-              console.log("註冊成功");
+              alert("註冊成功");
               this.$router.push({
                 path: "/questionnaire",
                 // params: { user_id: this.userId },
@@ -353,7 +366,6 @@ export default {
               // this.$refs.wrong2.style = "display : block";
               // this.accountError = res.data.accountError;
               // this.passwordError = res.data.passwordError;
-              console.log(res.data.message);
               this.errorMessage5 = true;
             }
           })
@@ -374,7 +386,6 @@ export default {
       if ((newaccount == "") & (oldaccount != "")) {
         this.counter -= 1;
       }
-      window.console.log(this.counter);
     },
     password1(newpassword1, oldpassword1) {
       if ((newpassword1 != "") & (oldpassword1 == "")) {
@@ -383,7 +394,6 @@ export default {
       if ((newpassword1 == "") & (oldpassword1 != "")) {
         this.counter -= 1;
       }
-      window.console.log(this.counter);
     },
     password2(newpassword2, oldpassword2) {
       if ((newpassword2 != "") & (oldpassword2 == "")) {
@@ -392,7 +402,6 @@ export default {
       if ((newpassword2 == "") & (oldpassword2 != "")) {
         this.counter -= 1;
       }
-      window.console.log(this.counter);
     },
     email(newemail, oldemail) {
       if ((newemail != "") & (oldemail == "")) {
@@ -401,7 +410,6 @@ export default {
       if ((newemail == "") & (oldemail != "")) {
         this.counter -= 1;
       }
-      window.console.log(this.counter);
     },
     check_btn(newValue, oldValue) {
       if (newValue) {

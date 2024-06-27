@@ -1,82 +1,45 @@
 <template>
   <div>
     <side-bar class="side" @update="activeChange"></side-bar>
-    <div v-if="cards.length === 0" class="navAndCont" id="empty">
-      <nav-bar class="navBar"></nav-bar>
-      <empty-back class="content" @showAdd="show"></empty-back>
-    </div>
-    <div v-else class="navAndCont" id="cards">
+    <div v-if="cards" class="navAndCont" id="cards">
       <nav-bar-all class="navBar"></nav-bar-all>
       <div class="cards">
         <meeting-cards
           v-for="card in cards"
-          :key="card.cardID"
-          :recordName="card.name"
-          :tags="card.tags"
+          :key="card.id"
+          :recordName="card.record_name"
         ></meeting-cards>
       </div>
       <router-view></router-view>
     </div>
+    <div v-else class="navAndCont" id="empty">
+      <nav-bar class="navBar"></nav-bar>
+      <empty-back class="content" @showAdd="show"></empty-back>
+    </div>
+    
   </div>
 </template>
 
-<script>
+<script setup>
 import NavBar from "../components/NavBar.vue";
 import EmptyBack from "../components/EmptyBack.vue";
 import NavBarAll from "../components/NavBarAll.vue";
 import SideBar from "../components/SideBar.vue";
 import MeetingCards from "../components/MeetingCards.vue";
-import { ref, onBeforeMount, computed } from "vue";
+import { ref,computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
-import axios from "axios";
 
-export default {
-  name: "RecordCard",
-  components: {
-    SideBar,
-    NavBarAll,
-    MeetingCards,
-    EmptyBack,
-    NavBar,
-  },
-  setup(props, { emit }) {
     const router = useRouter();
     const store = useStore();
-    const projectID = ref("94"); // 之後要放動態ID
-    const currentID = ref(0);
 
-    const cards = ref([]);
-
-    // const tags = ref([]);
-    // const currentID = ref(0);
-
-    // side bar 作用中的 index
-    const currentActive = ref("1-1");
-    const activeOption = ref(0);
-
-    const project = {
-      project_id: 94,
-    };
-
-    onBeforeMount(() => {
-      console.log("onBeforeMount");
-      axios
-        .post("http://104.199.143.218:5000/get_record_index", project)
-        .then((res) => {
-          console.log(res.data.record);
-          res.data.record.forEach((record) => {
-            const card = {
-              cardID: currentID.value++,
-              name: record.record_name,
-              tags: record.tags,
-            };
-            cards.value.push(card);
-            console.log("cardContent: " + cards);
-          });
-        });
+    onMounted(() => {
+      console.log("onMounted");
+      store.dispatch("records/fetchAllRecords");
     });
 
+    const cards = computed(() => store.getters["record/getAllRecords"]);
+    const activeOption = ref(0);
     const handleCardClick = (cardId) => {
       // 根据卡片点击情况进行路由导航
       router.push(`/all/cards/meetingRecord/${cardId}`);
@@ -86,19 +49,6 @@ export default {
       activeOption.value = computed(() => store.state.activeIndex);
     };
 
-    return {
-      cards,
-      currentActive,
-      // name,
-      projectID,
-      // recordName,
-      // tags,
-      handleCardClick,
-      activeOption,
-      activeChange,
-    };
-  },
-};
 </script>
 
 <style scoped>
