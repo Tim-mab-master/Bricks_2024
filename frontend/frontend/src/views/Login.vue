@@ -198,7 +198,7 @@ export default {
       showpassword.value = !showpassword.value;
     };
     const check_btn = () => {
-      checked = !checked;
+      checked.value = !checked.value;
     };
     // login的事件，目前這個用不到了
     const login = () => {
@@ -209,7 +209,6 @@ export default {
         // this.$refs.wrong1.style = "display : block";
         // this.$refs.wrong2.style = "display : block";
         alertBlankInput.value = true; // this.errorTime = this.errorTime + 1;
-        console.log("前端block");
         error = true;
       } else {
         const path = "http://34.81.219.139:5000/bricks_login";
@@ -226,14 +225,11 @@ export default {
           .then((res) => {
             // token 在 res.data裡面
             token = res.data;
-            console.log(token);
             // 在Vue组件中的某个方法中执行解密操作
             decode_token_json = decodeToken(token);
             // 直接取出要的東西
-            // console.log("decode_token_json: ", this.decode_token_json.status);
             if (decode_token_json.status == "success") {
               errorTime = 0;
-              console.log("登入成功");
 
               this.$router.push({
                 name: "PersonalHomepage",
@@ -265,14 +261,11 @@ export default {
 
     //登入
     const goToPersonalPage = () => {
-      console.log("點擊登入");
       alertBlankInput.value = false;
       alertWrongPassword.value = false;
-      console.log(alertBlankInput.value);
       if (password == "" || account == "") {
         alertBlankInput.value = true;
       } else {
-        console.log(account._value);
         axios
           .post("http://34.81.219.139:5000/bricks_login", {
             user_email: account._value,
@@ -283,15 +276,16 @@ export default {
             // 確認用戶是否存在資料庫
             if (res.data.status === "failure") {
               alertWrongPassword.value = true;
-              console.log(alertWrongPassword.value);
             } else if (res.data.status === "success") {
-              console.log("成功登入");
-              // authorization = res.headers.Authorization;
-              // console.log(authorization);
-              // if (checked) {
-              //   console.log("keeplogin");
-              //   setCookie();
-              // }
+              // authorization.value = res.headers.Authorization;
+              if (checked) {
+                console.log("keep");
+                setCookie(account._value, password._value);
+              } else {
+                deleteCookie("password");
+                deleteCookie("account");
+              }
+
               router.push({
                 name: "personalHomepage",
                 params: { user_id: "25" },
@@ -314,6 +308,11 @@ export default {
       document.cookie = "password=" + password;
     };
 
+    const deleteCookie = (name) => {
+      document.cookie =
+        name + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    };
+
     const decodeToken = (token) => {
       // 获取Token的第二部分（Payload）
       const encodedPayload = token.split(".")[1];
@@ -322,7 +321,7 @@ export default {
       // 将解码后的字符串转换为JavaScript对象
       const payloadObject = JSON.parse(decodedPayload);
       // 现在您可以在payloadObject中访问解密后的Token数据
-      console.log(payloadObject);
+      // console.log(payloadObject);
       // 返回解密后的Token数据，或进行其他后续处理
       return payloadObject;
     };
@@ -333,13 +332,10 @@ export default {
         let arr = document.cookie.split(";");
         for (let i = 0; i < arr.length; i++) {
           let element = arr[i].trim();
-          console.log(element);
-          if (element.substring(0, 7) == "account") {
+          if (element.substring(0, 8) == "account=") {
             account.value = element.substring(8);
-            // alert(account);
-          } else if (element.substring(0, 8) == "password") {
+          } else if (element.substring(0, 9) == "password=") {
             password.value = element.substring(9);
-            // alert(password.value);
           }
         }
       }
@@ -347,12 +343,30 @@ export default {
 
     //確認是否有登入過
     const checkCookie = () => {
-      getCookie();
+      if (document.cookie.length > 0) {
+        let arr = document.cookie.split(";");
+        let checkAccount = "";
+        let checkPassword = "";
+        for (let i = 0; i < arr.length; i++) {
+          let element = arr[i].trim();
+          if (element.substring(0, 7) == "account=") {
+            checkAccount = element.substring(8);
+            // alert(account);
+          } else if (element.substring(0, 8) == "password=") {
+            checkPassword = element.substring(9);
+            // alert(password.value);
+          }
+        }
+        if (checkAccount != "undefined" || checkPassword != "undefined") {
+          getCookie();
+        }
+      }
     };
 
-    // onMounted(() => {
-    //   checkCookie();
-    // });
+    onMounted(() => {
+      checkCookie();
+      console.log(document.cookie);
+    });
 
     return {
       showpassword,
@@ -376,6 +390,7 @@ export default {
       eyebtn,
       check_btn,
       login,
+      deleteCookie,
     };
   },
   created() {},
