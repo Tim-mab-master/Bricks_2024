@@ -369,7 +369,7 @@ export default {
           .then((res) => {
             if (res.data.status == "success") {
               this.userId = res.data.user_id;
-              alert("註冊成功");
+              // alert("註冊成功");
               this.$router.push({
                 path: "/questionnaire",
                 // params: { user_id: this.userId },
