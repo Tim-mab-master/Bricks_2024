@@ -20,6 +20,24 @@
       </div>
     </div>
     <div class="bg">
+      <!-- 帳號密碼輸入問題 -->
+      <div class="warning">
+        <Transition name="errorIn">
+          <el-alert
+            v-if="alertWrongPassword"
+            title="您的帳號或密碼不正確，請再輸入一次"
+            type="error"
+            show-icon
+        /></Transition>
+        <Transition name="errorIn">
+          <el-alert
+            v-if="alertBlankInput"
+            title="請填寫您的帳號與密碼資訊"
+            type="error"
+            show-icon
+        /></Transition>
+      </div>
+
       <div class="middle">
         <p class="title">登入</p>
         <div class="enter">
@@ -37,7 +55,7 @@
             required
             autofocus
             class="account"
-            placeholder="帳號"
+            placeholder="帳號 (電子信箱)"
             v-model="account"
           />
           <input
@@ -45,7 +63,7 @@
             required
             class="password"
             type="text"
-            placeholder="密碼"
+            placeholder="請輸入 6~20 含英數之密碼"
             v-model="password"
           />
           <input
@@ -53,7 +71,7 @@
             required
             class="password"
             type="password"
-            placeholder="密碼"
+            placeholder="請輸入 6~20 含英數之密碼"
             v-model="password"
           />
           <img
@@ -151,74 +169,67 @@
 <script>
 import axios from "axios";
 import { Base64 } from "js-base64";
-import { GoogleLogin, decodeCredential } from "vue3-google-login";
 import PersonalHomepageVue from "./PersonalHomepage.vue";
+import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
 
 export default {
   name: "Login",
 
-  data() {
-    return {
-      showpassword: false,
-      error: false, // 錯誤訊息的div顯示
-      checked: false,
-      account: "",
-      password: "",
-      authorization: "",
-      errorMessage: "",
-      errorTime: 0,
-      token: "",
-      decode_token_json: "",
-      loggedIn: false,
-      callback: (response) => {
-        console.log("logged in");
-        console.log(response);
-      },
+  setup() {
+    const router = useRouter();
+
+    const account = ref("");
+    const password = ref("");
+    const showpassword = ref(false);
+    const error = ref(false); // 錯誤訊息的div顯示
+    const checked = ref(false);
+
+    const authorization = ref("");
+    const errorMessage = ref("");
+    const errorTime = ref(0);
+    const token = ref("");
+    const decode_token_json = ref("");
+    const loggedIn = ref(false);
+    const alertWrongPassword = ref(false);
+    const alertBlankInput = ref(false);
+
+    const eyebtn = () => {
+      showpassword.value = !showpassword.value;
     };
-  },
-  setup() {},
-  methods: {
-    eyebtn() {
-      this.showpassword = !this.showpassword;
-    },
-    check_btn() {
-      this.checked = !this.checked;
-    },
-    // login的事件
-    login() {
+    const check_btn = () => {
+      checked.value = !checked.value;
+    };
+    // login的事件，目前這個用不到了
+    const login = () => {
       //前端部分先進行帳號密碼原則檢驗，還有其他條件式
-      if (this.password == "" || this.account == "") {
+      if (password == "" || account == "") {
         // this.$refs.account.style = "border-color : #e03939";
         // this.$refs.password.style = "border-color : #e03939";
         // this.$refs.wrong1.style = "display : block";
         // this.$refs.wrong2.style = "display : block";
-        this.errorMessage = "請填寫您的帳號與密碼資訊";
-        // this.errorTime = this.errorTime + 1;
-        console.log("前端block");
-        this.error = true;
+        alertBlankInput.value = true; // this.errorTime = this.errorTime + 1;
+        error = true;
       } else {
-        const path = "http://104.199.143.218:5000/bricks_login";
+        const path = "http://34.81.219.139:5000/bricks_login";
         const user = {
-          user_email: this.account,
-          user_password: this.password,
-          isKeepLogin: this.checked,
+          user_email: account,
+          user_password: password,
+          isKeepLogin: checked,
         };
         console.log("user: ", user);
-        this.account = "";
-        this.password = "";
+        account = "";
+        password = "";
         axios
           .post(path, user)
           .then((res) => {
             // token 在 res.data裡面
-            this.token = res.data;
-            console.log(this.token);
+            token = res.data;
             // 在Vue组件中的某个方法中执行解密操作
-            this.decode_token_json = this.decodeToken(this.token);
+            decode_token_json = decodeToken(token);
             // 直接取出要的東西
-            // console.log("decode_token_json: ", this.decode_token_json.status);
-            if (this.decode_token_json.status == "success") {
-              this.errorTime = 0;
-              console.log("登入成功");
+            if (decode_token_json.status == "success") {
+              errorTime = 0;
 
               this.$router.push({
                 name: "PersonalHomepage",
@@ -231,56 +242,77 @@ export default {
               // this.$refs.wrong2.style = "display : block";
               // this.accountError = res.data.accountError;
               // this.passwordError = res.data.passwordError;
-              this.errorTime = this.errorTime + 1;
-              if (this.errorTime >= 3) {
-                this.errorMessage = "如果登入時遇到困難，可點擊「忘記密碼」";
-                this.errorTime = this.errorTime + 1;
+              errorTime = errorTime + 1;
+              if (errorTime >= 3) {
+                errorMessage = "如果登入時遇到困難，可點擊「忘記密碼」";
+                errorTime = errorTime + 1;
               } else {
                 // 之後改成 this.decode_token_json.message
-                this.errorMessage = "您的帳號或密碼不正確，請再試一次";
+                errorMessage = "您的帳號或密碼不正確，請再試一次";
               }
-              this.error = true;
+              error = true;
             }
           })
           .catch((error) => {
             console.log(error);
           });
       }
-    },
-    goToPersonalPage() {
-      axios
-        .post("http://104.199.143.218:5000/bricks_login", {
-          user_email: this.account,
-          user_password: this.password,
-        })
-        .then((res) => {
-          // 請求成功會觸發/執行這個 function 函式
-          // 確認用戶是否存在資料庫
-          if (res.data.status === "success") {
-            console.log("yes");
-            alert("登入成功");
-            this.authorization = res.headers.Authorization;
-            console.log(this.authorization);
-            this.$router.push({
-              name: "personalHomepage",
-              params: { user_id: "25" },
-            });
-            if (this.checked) {
-              console.log("keeplogin");
+    };
+
+    //登入
+    const goToPersonalPage = () => {
+      alertBlankInput.value = false;
+      alertWrongPassword.value = false;
+      if (password == "" || account == "") {
+        alertBlankInput.value = true;
+      } else {
+        axios
+          .post("http://34.81.219.139:5000/bricks_login", {
+            user_email: account._value,
+            user_password: password._value,
+          })
+          .then((res) => {
+            // 請求成功會觸發/執行這個 function 函式
+            // 確認用戶是否存在資料庫
+            if (res.data.status === "failure") {
+              alertWrongPassword.value = true;
+            } else if (res.data.status === "success") {
+              // authorization.value = res.headers.Authorization;
+              if (checked.value) {
+                setCookie(account._value, password._value);
+              } else {
+                deleteCookie("password");
+                deleteCookie("account");
+              }
+
+              router.push({
+                name: "personalHomepage",
+                params: { user_id: "25" },
+              });
+            } else {
+              console.log("no");
             }
-          } else {
-            console.log("no");
-            alert("登入失敗");
-          }
-          console.log(res);
-        })
-        .catch((error) => {
-          // 請求失敗則觸發/執行這個 function 函式
-          console.log(error);
-          alert("登入失敗");
-        });
-    },
-    decodeToken(token) {
+            // console.log(res);
+          })
+          .catch((error) => {
+            // 請求失敗則觸發/執行這個 function 函式
+            console.log(error);
+          });
+      }
+    };
+
+    //保持登入 => 紀錄cookie
+    const setCookie = (account, password) => {
+      document.cookie = "account=" + account;
+      document.cookie = "password=" + password;
+    };
+
+    const deleteCookie = (name) => {
+      document.cookie =
+        name + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    };
+
+    const decodeToken = (token) => {
       // 获取Token的第二部分（Payload）
       const encodedPayload = token.split(".")[1];
       // 解码Base64字符串
@@ -288,10 +320,69 @@ export default {
       // 将解码后的字符串转换为JavaScript对象
       const payloadObject = JSON.parse(decodedPayload);
       // 现在您可以在payloadObject中访问解密后的Token数据
-      console.log(payloadObject);
+      // console.log(payloadObject);
       // 返回解密后的Token数据，或进行其他后续处理
       return payloadObject;
-    },
+    };
+
+    //保持登入 => 讀取cookie
+    const getCookie = () => {
+      if (document.cookie.length > 0) {
+        let arr = document.cookie.split(";");
+        for (let i = 0; i < arr.length; i++) {
+          let element = arr[i].trim();
+          if (element.substring(0, 8) == "account=") {
+            account.value = element.substring(8);
+          } else if (element.substring(0, 9) == "password=") {
+            password.value = element.substring(9);
+          }
+        }
+      }
+    };
+
+    //確認是否有登入過
+    const checkCookie = () => {
+      if (document.cookie.length > 0) {
+        let arr = document.cookie.split(";");
+        for (let i = 0; i < arr.length; i++) {
+          let element = arr[i].trim();
+          if (element.substring(0, 8) == "account=") {
+            //有cookie
+            checked.value = true;
+            getCookie();
+          }
+        }
+      }
+    };
+
+    onMounted(() => {
+      checkCookie();
+    });
+
+    return {
+      showpassword,
+      error, // 錯誤訊息的div顯示
+      checked,
+      account,
+      password,
+      authorization,
+      errorMessage,
+      errorTime,
+      token,
+      decode_token_json,
+      loggedIn,
+      alertWrongPassword,
+      alertBlankInput,
+      getCookie,
+      checkCookie,
+      decodeToken,
+      setCookie,
+      goToPersonalPage,
+      eyebtn,
+      check_btn,
+      login,
+      deleteCookie,
+    };
   },
   created() {},
 };
@@ -436,9 +527,9 @@ input::placeholder {
 
 .enter > img {
   position: absolute;
-  top: 119px;
-  right: 21px;
-  height: 18px;
+  top: 117px;
+  right: 16px;
+  height: 24px;
   cursor: pointer;
   z-index: 90;
   user-select: none;
@@ -581,6 +672,33 @@ input::placeholder {
   top: 50%;
   transform: translate(0, -50%);
   left: 9px;
+}
+
+/* warning登入問題警告 */
+.warning {
+  /* border: 2px solid black; */
+  width: 300px;
+  height: auto;
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  bottom: 58px;
+  right: 10px;
+  font-family: "Noto Sans TC";
+}
+.warning .el-alert {
+  border-radius: 10px;
+  margin: 14px 0 0;
+  height: 38px;
+  padding-left: 10px;
+  font-size: 8px;
+}
+
+.errorIn-enter-active {
+  transition: opacity 0.5s ease;
+}
+.errorIn-enter-from {
+  opacity: 0;
 }
 
 .register {

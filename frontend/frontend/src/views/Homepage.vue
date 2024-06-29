@@ -38,7 +38,7 @@
         </div>
         <p class="second_line">你的專案</p>
         <p class="third_line">為大學生設計的專案管理工具</p>
-        <a href="" class="try_now_first">立即試用</a>
+        <a href="./register" class="try_now_first">立即試用</a>
       </div>
     </div>
     <div class="sec_body">
@@ -52,7 +52,7 @@
             # 建立自訂的範本，不再需要每次重開<br />
             # 封存先前的紀錄，避免不慎更動
           </p>
-          <a href="" class="mid_try_btn">立即試用</a>
+          <a href="./register" class="mid_try_btn">立即試用</a>
         </div>
         <div class="cover"></div>
       </div>
@@ -92,7 +92,7 @@
           簡單易上手的操作介面<br />
           現在就用 <span style="color: #b82c30">BRICKS</span> 完善你的專案！
         </p>
-        <a href="" class="end_try_btn">立即試用</a>
+        <a href="./register" class="end_try_btn">立即試用</a>
       </div>
     </div>
 
