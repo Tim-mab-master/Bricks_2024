@@ -39,7 +39,7 @@ const actions = {
     async fetchAllRecords({ state, commit }) {
         try {
           const body = {
-            "project_id": 86,
+            "project_id": 86,   
           };
     
           const response = await axios.post('http://34.81.219.139:5000/get_record_index', body);
