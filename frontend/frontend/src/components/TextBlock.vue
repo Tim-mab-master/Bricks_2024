@@ -95,193 +95,145 @@
   <!-- </transition> -->
 </template>
 
-<script>
-import { ref, onMounted, mounted, onUnmounted, nextTick, computed } from "vue";
+<script setup>
+import { ref, onMounted, onUnmounted, nextTick, computed, defineEmits } from "vue";
+import { useEmit } from '@vueuse/core'
 import EditTextara from "./EditTextara.vue";
 import Unlock from "./Unlock.vue";
-export default {
-  components: {
-    EditTextara,
-    Unlock,
-  },
-  props: {
-    isShowed: Boolean,
-    isUnlockShowed: Boolean,
-    showAddbtn: Boolean,
-    content: String,
-  },
 
-  setup(props) {
-    const emit = defineEmits(["add_cart"]);
+const props = defineProps({
+  isShowed: Boolean,
+  isUnlockShowed: Boolean,
+  showAddbtn: Boolean,
+  content: String,
+});
 
-    const textValue = computed(() => props.content);
-    // const isShowed = ref(props.isShowed);
-    const isUnlockShowed = ref(props.isUnlockShowed);
+const emit = defineEmits(["add_cart", 'deleteCart']);
 
-    const textarea1 = ref("");
-    const inputVisible = ref(false);
-    const inputValue = ref("");
-    const dynamicTags = ref([
-      "Tag1",
-      "Tag2",
-      "Tag3",
-      "Tag4",
-      "Tag5",
-      "Tag6",
-      "Tag7",
-      "Tag8",
-      "Tag9",
-      "Tag10",
-    ]);
-    const isShowed = ref(false);
-    const rightClickRef = ref(null);
-    const isCartDisabled = ref(false);
-    // const isUnlockShowed = ref(false);
-    const hiddenTagCount = ref(0);
-    const visibleTags = ref([]);
-    const inputRef = ref(null);
-    const showHiddenTags = () => {
-      visibleTags.value = dynamicTags.value; //顯示所有
-      hiddenTagCount.value = 0;
-      //移除resize監聽器
-      window.removeEventListener("resize", calculateVisibleTags);
-    };
+const textValue = computed(() => props.content);
+const isUnlockShowed = ref(props.isUnlockShowed);
+const textarea1 = ref("");
+const inputVisible = ref(false);
+const inputValue = ref("");
+const dynamicTags = ref([
+  "Tag1",
+  "Tag2",
+  "Tag3",
+  "Tag4",
+  "Tag5",
+  "Tag6",
+  "Tag7",
+  "Tag8",
+  "Tag9",
+  "Tag10",
+]);
+const isShowed = ref(false);
+const rightClickRef = ref(null);
+const isCartDisabled = ref(false);
+const hiddenTagCount = ref(0);
+const visibleTags = ref([]);
+const inputRef = ref(null);
 
-    const calculateVisibleTags = () => {
-      nextTick(() => {
-        //確保在 DOM 更新完成後執行回調函數。這樣可以確保容器的寬度已正確計算。
-        const container = document.querySelector(".tags");
-        if (!container) return;
-
-        const containerWidth = container.clientWidth;
-        const tagWidth = 75; // 假設每個標籤的寬度是80px，包括邊距
-        const maxVisibleTags = Math.floor(containerWidth / tagWidth); //最多可以容納幾個tag
-        console.log(maxVisibleTags);
-
-        if (dynamicTags.value.length >= maxVisibleTags) {
-          // >11 maxVisibleTags =11
-          visibleTags.value = dynamicTags.value.slice(0, maxVisibleTags);
-          console.log("contaner", visibleTags.value);
-          hiddenTagCount.value =
-            dynamicTags.value.length - visibleTags.value.length;
-        } else {
-          visibleTags.value = dynamicTags.value;
-          hiddenTagCount.value = 0;
-        }
-      });
-    };
-
-    const handleClose = (tag) => {
-      //關掉tag時
-      const index = dynamicTags.value.indexOf(tag);
-      if (index !== -1) {
-        dynamicTags.value.splice(index, 1);
-      }
-      calculateVisibleTags();
-    };
-
-    const showInput = () => {
-      inputVisible.value = true;
-      nextTick(() => {
-        if (inputRef.value) {
-          inputRef.value.focus();
-        }
-      });
-    };
-    const handleInputConfirm = () => {
-      if (inputValue.value) {
-        dynamicTags.value.push(inputValue.value);
-      }
-      inputVisible.value = false;
-      inputValue.value = "";
-      calculateVisibleTags();
-    };
-
-    const edit_textArea = () => {};
-    const show = () => {
-      if (isCartDisabled) {
-        console.log(isCartDisabled.value);
-        isShowed.value = true;
-      } else {
-        isUnlockShowed.value = true;
-      }
-    };
-
-    const unShow = () => {
-      isUnlockShowed.value = false;
-      isShowed.value = false;
-    };
-
-    const isLocked = () => {
-      isCartDisabled.value = true;
-    };
-
-    const unlocked = () => {
-      isCartDisabled.value = false;
-    };
-
-    const handleClickOutside = (event) => {
-      const rightClick = rightClickRef.value;
-      if (rightClick && !rightClick.contains(event.target)) {
-        unShow(); // 确保调用没有参数
-      }
-    };
-
-    const deleteCart = () => {
-      emit("deleteCart");
-    };
-
-    const add_cart = () => {
-      // const uniqueId = Date.now().toString();
-      // cartContainers.value.push({
-      //   id: uniqueId,
-      //   textValue: '',
-      //   dynamicTags: [],
-      //   inputValue: '',
-      //   inputVisible: false,
-      //   isShowed: false,
-      // });
-      emit("add_cart");
-    };
-    onMounted(() => {
-      calculateVisibleTags();
-      window.addEventListener("resize", calculateVisibleTags);
-    });
-
-    onMounted(() => {
-      document.addEventListener("click", handleClickOutside);
-    });
-
-    onUnmounted(() => {
-      document.removeEventListener("click", handleClickOutside);
-    });
-    return {
-      textarea1,
-      edit_textArea,
-      show,
-      unShow,
-      isShowed,
-      rightClickRef,
-      add_cart,
-      isUnlockShowed,
-      isLocked,
-      unlocked,
-      dynamicTags,
-      inputVisible,
-      inputValue,
-      inputRef,
-      isCartDisabled,
-      hiddenTagCount,
-      showHiddenTags,
-      visibleTags,
-      calculateVisibleTags,
-      handleClose,
-      showInput,
-      handleInputConfirm,
-    };
-  },
+const showHiddenTags = () => {
+  visibleTags.value = dynamicTags.value;
+  hiddenTagCount.value = 0;
+  window.removeEventListener("resize", calculateVisibleTags);
 };
+
+const calculateVisibleTags = () => {
+  nextTick(() => {
+    const container = document.querySelector(".tags");
+    if (!container) return;
+
+    const containerWidth = container.clientWidth;
+    const tagWidth = 75;
+    const maxVisibleTags = Math.floor(containerWidth / tagWidth);
+
+    if (dynamicTags.value.length >= maxVisibleTags) {
+      visibleTags.value = dynamicTags.value.slice(0, maxVisibleTags);
+      hiddenTagCount.value =
+        dynamicTags.value.length - visibleTags.value.length;
+    } else {
+      visibleTags.value = dynamicTags.value;
+      hiddenTagCount.value = 0;
+    }
+  });
+};
+
+const handleClose = (tag) => {
+  const index = dynamicTags.value.indexOf(tag);
+  if (index !== -1) {
+    dynamicTags.value.splice(index, 1);
+  }
+  calculateVisibleTags();
+};
+
+const showInput = () => {
+  inputVisible.value = true;
+  nextTick(() => {
+    if (inputRef.value) {
+      inputRef.value.focus();
+    }
+  });
+};
+
+const handleInputConfirm = () => {
+  if (inputValue.value) {
+    dynamicTags.value.push(inputValue.value);
+  }
+  inputVisible.value = false;
+  inputValue.value = "";
+  calculateVisibleTags();
+};
+
+const edit_textArea = () => {};
+const show = () => {
+  if (isCartDisabled) {
+    isShowed.value = true;
+  } else {
+    isUnlockShowed.value = true;
+  }
+};
+
+const unShow = () => {
+  isUnlockShowed.value = false;
+  isShowed.value = false;
+};
+
+const isLocked = () => {
+  isCartDisabled.value = true;
+};
+
+const unlocked = () => {
+  isCartDisabled.value = false;
+};
+
+const handleClickOutside = (event) => {
+  const rightClick = rightClickRef.value;
+  if (rightClick && !rightClick.contains(event.target)) {
+    unShow();
+  }
+};
+
+const deleteCart = () => {
+  emit("deleteCart");
+};
+
+const add_cart = () => {
+  emit("add_cart");
+};
+
+onMounted(() => {
+  calculateVisibleTags();
+  window.addEventListener("resize", calculateVisibleTags);
+  document.addEventListener("click", handleClickOutside);
+});
+
+onUnmounted(() => {
+  document.removeEventListener("click", handleClickOutside);
+});
 </script>
+
 
 <style scoped>
 .show-enter-active,

@@ -14,7 +14,7 @@
           
           <meeting @submit = "submit" @recordInfo = "setInfo"></meeting>
           <div class="textBlock">
-            <text-block v-for="block in blocks" :key="block.id" @add_cart="add_block" :showAddBtn = "showAddBtn" @deleteCart = "deleteCart" :content="block.textBox_content" />
+            <text-block v-for="block in blocks" :key="block.id" @add_cart="add_block(block)" :showAddBtn = "showAddBtn" @deleteCart = "deleteCart(block)" :content="block.textBox_content" />
           </div> 
           
         </div>
@@ -80,33 +80,19 @@ import { useStore } from "vuex";
       // store.dispatch("records/fetchAllRecords");
     }
 
-    const deleteCart = async () =>{
-      try{
-        const response = await fetch('http://34.81.219.139:5000/delete_textBox',{
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            textBox_id: "16",
-          }),
-          credentials: 'include',
-        });
-        console.log(response.data.message);
-      }catch(error) {
-        console.log("刪除失敗");
-      }
-
-      if(quantity > 1){
-        quantity --;
-      }
+    const deleteCart = async (block) =>{
+      store.commit('records/setBlockNow', block);
+      // console.log(store.state.records.blockNow);
+      store.dispatch('records/deleteBlock');
     }
 
     const showInfo = (value) =>{
       showedInfo.value = value;
     };
-    const add_block = () =>{
-      store.commit("records/addBlock");
+    const add_block = (block) => {
+      store.commit('records/setBlockNow', block);
+      // console.log(store.state.records.blockNow);
+      store.dispatch('records/addBlock');
     }
 
     const showBtn = () =>{

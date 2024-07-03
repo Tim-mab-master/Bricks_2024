@@ -345,7 +345,7 @@
   onMounted(() => {
     store.dispatch("records/fetchOneRecord");
     // recordInfo = computed(() => store.getters(["records/getCurrRecord"]));
-    console.log(recordInfo);
+    console.log(recordInfo.value);
     if(recordInfo[0]){
       meetingName.value = recordInfo[0].record_name;
       time.value = recordInfo[0].record_creation_time;
