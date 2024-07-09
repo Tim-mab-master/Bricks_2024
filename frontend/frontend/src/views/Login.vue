@@ -277,7 +277,8 @@ export default {
             if (res.data.status === "failure") {
               alertWrongPassword.value = true;
             } else if (res.data.status === "success") {
-              // authorization.value = res.headers.Authorization;
+              authorization.value = res.headers.authorization;
+              console.log(authorization.value);
               if (checked.value) {
                 setCookie(account._value, password._value);
               } else {
@@ -287,7 +288,7 @@ export default {
 
               router.push({
                 name: "personalHomepage",
-                params: { user_id: "25" },
+                params: { authorization: authorization.value },
               });
             } else {
               console.log("no");
