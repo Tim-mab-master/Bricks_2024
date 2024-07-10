@@ -230,7 +230,7 @@
             </div>
             <div
               class="right_click_box_overview"
-              :style="{ top: mouseTop + 'px', left: mouseLeft + 'px' }"
+              :style="{ top: mouseTop + 'px', left: mouseLeft - 100 + 'px' }"
               v-show="right_click_box_overview_show"
               ref="right_click_box_overview"
             >
@@ -846,7 +846,9 @@ export default {
       this.mouseLeft = event.clientX;
     },
 
-    rename() {},
+    rename() {
+      this.right_click_box_overview_show = false;
+    },
     //刪除後的專案跑到垃圾桶
     delete_project_ing() {
       console.log("[this.currentCartIndex", this.currentCartIndex);
