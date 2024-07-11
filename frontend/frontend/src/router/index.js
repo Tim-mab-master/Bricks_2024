@@ -41,9 +41,10 @@ const routes = [
     component: () => import("../views/MeetingRecord.vue"),
   },
   {
-    path: "/kerwin",
+    path: "/kerwin/:authorization",
     name: "kerwin",
     component: () => import("../views/Kerwin.vue"),
+    props: { default: true },
   },
   {
     path: "/homepage",

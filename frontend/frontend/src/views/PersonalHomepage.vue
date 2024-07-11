@@ -478,10 +478,13 @@
 import axios from "axios";
 import { Base64 } from "js-base64";
 import { useRoute } from "vue-router";
-const route = useRoute();
 export default {
   name: "Personal_homepage",
-
+  // props: {
+  //   authorization: {
+  //     type: String,
+  //   },
+  // },
   data() {
     return {
       middle_show_overview_page: true,

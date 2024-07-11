@@ -172,6 +172,7 @@ import { Base64 } from "js-base64";
 import PersonalHomepageVue from "./PersonalHomepage.vue";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
+import store from "../store/store.js";
 
 export default {
   name: "Login",
@@ -279,14 +280,16 @@ export default {
             } else if (res.data.status === "success") {
               authorization.value = res.headers.authorization;
               console.log(authorization.value);
-              router.push({
-                name: "personalHomepage",
-                params: { authorization: authorization.value },
-              });
               // router.push({
-              //   name: "kerwin",
+              //   name: "personalHomepage",
               //   params: { authorization: authorization.value },
               // });
+              setAuth(authorization.value);
+              router.push({
+                name: "kerwin",
+                params: { authorization: authorization.value },
+              });
+
               if (checked.value) {
                 setCookie(account._value, password._value);
               } else {
@@ -303,6 +306,10 @@ export default {
             console.log(error);
           });
       }
+    };
+
+    const setAuth = (authorization) => {
+      store.commit("resetAuth");
     };
 
     //保持登入 => 紀錄cookie
