@@ -6,6 +6,7 @@
     <documentArea />
     <div style="margin: 20px"></div>
     <documentAreaWithInfo /> -->
+    <button @click="showid"></button>
     <div>
       <GoogleLogin :callback="callback" />
       <p>
@@ -17,19 +18,29 @@
 
 <script>
 import { ref } from "vue";
-
+import { useRoute } from "vue-router";
 export default {
   name: "Kerwin",
   setup() {
+    const route = useRoute();
+
+    let id = route.params.authorization;
     const data = ref();
     const callback = (response) => {
       console.log(response);
       // data.value = response;
     };
 
+    const showid = () => {
+      console.log(id);
+    };
+
     return {
       data,
       callback,
+      id,
+      route,
+      showid,
     };
   },
 };
