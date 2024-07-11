@@ -1,7 +1,9 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
+import { componentsPlugin } from "bootstrap-vue";
 // import Searching from "../views/Searching.vue";
 // import MeetingRecord from "../views/MeetingRecord.vue";
+import PersonalHomepage from "../views/PersonalHomepage.vue";
 
 const routes = [
   {
@@ -64,7 +66,7 @@ const routes = [
     component: () => import("../views/Register.vue"),
   },
   {
-    path: "/personalHomepage",
+    path: "/personalHomepage/:authorization",
     name: "personalHomepage",
     component: () => import("../views/PersonalHomepage.vue"),
   },

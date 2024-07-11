@@ -279,17 +279,20 @@ export default {
             } else if (res.data.status === "success") {
               authorization.value = res.headers.authorization;
               console.log(authorization.value);
+              router.push({
+                name: "personalHomepage",
+                params: { authorization: authorization.value },
+              });
+              // router.push({
+              //   name: "kerwin",
+              //   params: { authorization: authorization.value },
+              // });
               if (checked.value) {
                 setCookie(account._value, password._value);
               } else {
                 deleteCookie("password");
                 deleteCookie("account");
               }
-
-              router.push({
-                name: "personalHomepage",
-                params: { authorization: authorization.value },
-              });
             } else {
               console.log("no");
             }
