@@ -10,6 +10,11 @@ export default createStore({
     meetingName: "未命名會議紀錄",
     auth: "設定authorization",
   },
+  // actions: {
+  //   setAuth(authorization) {
+  //     SetAuth(authorization);
+  //   },
+  // },
   mutations: {
     changePage(state, index) {
       state.activeIndex = index;
@@ -25,8 +30,14 @@ export default createStore({
     //     meetingName: "未命名會議紀錄",
     //   };
     // },
-    resetAuth(authorization) {
-      this.state.auth = authorization;
+    setAuth(state, authorization) {
+      state.auth = authorization;
+    },
+  },
+  getters: {
+    getAuth(state) {
+      alert("get被呼叫");
+      return state.auth;
     },
   },
 });

@@ -280,15 +280,14 @@ export default {
             } else if (res.data.status === "success") {
               authorization.value = res.headers.authorization;
               console.log(authorization.value);
-              // router.push({
-              //   name: "personalHomepage",
-              //   params: { authorization: authorization.value },
-              // });
-              setAuth(authorization.value);
               router.push({
-                name: "kerwin",
-                params: { authorization: authorization.value },
+                name: "personalHomepage",
               });
+              setAuth(authorization.value);
+              // router.push({
+              //   name: "kerwin",
+              // params: { authorization: authorization.value },
+              // });
 
               if (checked.value) {
                 setCookie(account._value, password._value);
@@ -309,7 +308,7 @@ export default {
     };
 
     const setAuth = (authorization) => {
-      store.commit("resetAuth");
+      store.commit("setAuth", authorization);
     };
 
     //保持登入 => 紀錄cookie

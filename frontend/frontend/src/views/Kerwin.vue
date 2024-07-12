@@ -33,7 +33,7 @@ export default {
     };
 
     const showid = () => {
-      console.log(store.state.auth);
+      console.log(store.getters.getAuth);
     };
 
     return {
