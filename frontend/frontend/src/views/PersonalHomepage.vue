@@ -159,7 +159,9 @@
       <input type="text" class="proj_info_type" v-model="proj_info_type" />
       <!-- {{ proj_info_type }} -->
 
-      <div class="proj_info_enter" @click="enter_project_btn(project_id)">進入專案</div>
+      <div class="proj_info_enter" @click="enter_project_btn(project_id)">
+        進入專案
+      </div>
     </div>
     <div class="main_body">
       <div class="bg">
@@ -183,7 +185,12 @@
               </div>
             </div>
             <div v-for="(cart, index1) in carts" :key="index1">
-              <div class="cart">
+              <div
+                class="cart"
+                :ref="'cart_' + index1"
+                :data-index="index1"
+                @contextmenu.prevent="showRightClickBox($event, index1)"
+              >
                 <p class="cart_title" style="height: 0px">
                   {{ cart.title_word }}
                 </p>
@@ -198,6 +205,9 @@
                     class="box"
                     v-for="(proj_name, index2) in carts[index1].project_box"
                     :key="index2"
+                    @contextmenu.prevent="
+                      showRightClickBox($event, index1, index2)
+                    "
                     @click="proj_info(index1, index2)"
                   >
                     {{ proj_name }}
@@ -222,7 +232,7 @@
             </div>
             <div
               class="right_click_box_overview"
-              :style="{ top: mouseTop + 'px', left: mouseLeft + 'px' }"
+              :style="{ top: mouseTop + 'px', left: mouseLeft - 100 + 'px' }"
               v-show="right_click_box_overview_show"
               ref="right_click_box_overview"
             >
@@ -268,7 +278,7 @@
                 </button>
                 <button
                   class="forever_delete_confirm_btn forever_delete_confirm_btn_delete"
-                  @click="delete_project(cart)"
+                  @click="delete_project_ing()"
                 >
                   刪除
                 </button>
@@ -286,13 +296,21 @@
                   class="box"
                   v-for="(proj_name, index) in uncategorized_projs"
                   :key="index"
+                  @contextmenu.prevent="
+                    showRightClickBox($event, index1, index2)
+                  "
                 >
                   {{ proj_name }}
                 </div>
               </div>
             </div>
             <div v-for="(cart, index1) in ended_carts" :key="index1">
-              <div class="cart">
+              <div
+                class="cart"
+                :ref="'cart_' + index1"
+                :data-index="index1"
+                @contextmenu.prevent="showRightClickBox($event, index1)"
+              >
                 <p class="cart_title" style="height: 0px">
                   {{ cart.title_word }}
                 </p>
@@ -308,6 +326,9 @@
                     v-for="(proj_name, index2) in ended_carts[index1]
                       .project_box"
                     :key="index2"
+                    @contextmenu.prevent="
+                      showRightClickBox($event, index1, index2)
+                    "
                   >
                     {{ proj_name }}
                   </div>
@@ -389,6 +410,7 @@
                 <img src="../assets/recovered_icon.svg" alt="" />
                 <p>檔案已還原</p>
               </div>
+              <!-- 調整到這裡7/9 -->
               <div
                 class="forever_delete_confirm"
                 v-show="forever_delete_confirm"
@@ -459,6 +481,7 @@ import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import axios from "axios";
 import { Base64 } from "js-base64";
+// import { useRoute } from "vue-router";
 export default {
   name: "Personal_homepage",
 
@@ -501,6 +524,8 @@ export default {
       mouseTop: 0,
       mouseLeft: 0,
       right_click_box_overview_show: false,
+      currentCartIndex: null,
+      currentProjectIndex: null,
       delete_confirm: false,
       showOverlay_delete: false,
       right_click_box_trash_show: false,
@@ -536,6 +561,9 @@ export default {
   methods: {
     // 點擊上角新增專案
     add_btn() {
+      console.log("按下新增專案");
+      // let au = this.route.query.authorization;
+      console.log(this.$route.params.authorization);
       this.add_proj_show = this.add_proj_show === false ? true : false;
       this.showOverlay = !this.showOverlay;
       this.proj_type = "選擇專案類型";
@@ -742,7 +770,7 @@ export default {
 
     //在proj_info裡面點擊進入專案
     enter_project_btn() {
-      this.store.commit('records/setProjectID',this.project_id);
+      this.store.commit("records/setProjectID", this.project_id);
       this.router.push({ name: "all" });
     },
 
@@ -802,15 +830,65 @@ export default {
     //     };
     //     this.trash_boxes.push(trash_box);
     // },
-    rename() {},
+
+    showRightClickBox(event, cartIndex, projectIndex) {
+      console.log("karen");
+      this.right_click_box_overview_show = true;
+      const cartElement = this.$refs["cart_" + cartIndex][0];
+
+      if (cartElement) {
+        const cartRect = cartElement.getBoundingClientRect(); // 获取 cart 元素的边界框信息
+        console.log("Cart Rect:", cartRect);
+
+        this.mouseLeft = cartRect.right; // 右键菜单出现在 cart 元素的右侧
+        this.mouseTop = cartRect.top; // 右键菜单出现在 cart 元素的顶部
+        console.log("soifjdosjf", this.mouseTop); //可以顯示得出來 但是
+
+        this.currentCartIndex = cartIndex;
+        this.currentProjectIndex = projectIndex;
+      }
+      this.mouseTop = event.clientY;
+      console.log("mouseTop:", this.mouseTop);
+      this.mouseLeft = event.clientX;
+    },
+
+    rename() {
+      this.right_click_box_overview_show = false;
+    },
     //刪除後的專案跑到垃圾桶
-    delete_project(cart) {
-      console.log("刪除按鈕被點擊");
-      this.close_delete_confirm();
-      const trash_box = {
-        text: deletedProject.text,
+    delete_project_ing() {
+      console.log("[this.currentCartIndex", this.currentCartIndex);
+      console.log("this.currentProjectIndex", this.currentProjectIndex);
+
+      this.right_click_box_overview_show = false;
+      this.delete_confirm = false;
+      this.showOverlay_delete = false;
+      // 除的项目的 project_id
+      const projectId =
+        this.carts[this.currentCartIndex].project_box[this.currentProjectIndex]
+          .project_id;
+
+      const path = "http://34.81.219.139:5000/to_trashcan";
+      const to_trash = {
+        project_id: projectId,
       };
-      this.trash_boxes.push(trash_box);
+      axios.post(path, to_trash).then((res) => {
+        console.log("有連到了");
+        if (res.data.status == "success") {
+          console.log("hello", res.data.message);
+        }
+      });
+
+      // // 获取要删除的项目名称
+      // const deletedProject = this.carts[cartIndex].project_box[projIndex];
+      // // 将项目名称添加到垃圾桶
+      // const trash_box = {
+      //   text: deletedProject
+      // };
+      // this.trash_boxes.push(trash_box);
+
+      // 从原数组中删除项目
+      // this.$set(this.carts[cartIndex].project_box, projIndex, null); // 使用 $set 删除并保持响应式
     },
     // 點擊垃圾桶裡的專案後又上兩個按鈕變色
     selected_trash_box(index) {
@@ -930,6 +1008,7 @@ export default {
             const new_cart = {
               title_word: this.proj_type,
               project_box: [this.proj_name],
+              project_id: this.project_id,
             };
             this.carts.push(new_cart);
             this.add_proj_type_options.push(new_cart.title_word);
