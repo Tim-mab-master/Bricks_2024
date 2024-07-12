@@ -36,7 +36,6 @@ export default createStore({
   },
   getters: {
     getAuth(state) {
-      alert("get被呼叫");
       return state.auth;
     },
   },

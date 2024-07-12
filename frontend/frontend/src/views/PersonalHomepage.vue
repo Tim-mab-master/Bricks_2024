@@ -1001,7 +1001,6 @@ export default {
   },
   mounted() {
     window.addEventListener("click", this.handleClickOutside);
-    alert("成功" + store.getters.getAuth);
     const path = "http://35.201.168.185:5000/project_index";
     const get_proj = {
       //  let au = this.$route.params.authorization;
