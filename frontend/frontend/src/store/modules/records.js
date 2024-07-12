@@ -1,9 +1,10 @@
 import axios from "axios";
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 const state = {
+    userID: 44,
     allRecords: [],
     currRecord : {},
-    projectID: "86",
+    projectID: 86,
     recordID: 3,
     currTextBoxes: [],
     blockNow: {},
@@ -29,6 +30,15 @@ const mutations = {
     },
     setBlockNow(state, block){
         state.blockNow = block;
+    },
+    setProjectID(state, ID){
+        state.projectID = ID;
+    },
+    setRecordID(state, ID){
+        state.recordID = ID;
+    },
+    setUserID(state, ID){
+        state.userID = ID;
     }
 };
 const actions = {

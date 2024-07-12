@@ -66,18 +66,6 @@ import { useStore } from "vuex";
 
     const submit = () =>{
       console.log("recordInfo："+recordInfo);
-      // const body = {
-      //   "project_id": 86,
-      //   "record_name": recordInfo.value.data.formName,
-      //   "record_date": recordInfo.value.data.date,
-      //   "record_department": "後端",
-      //   "record_attendances": 4,
-      //   "record_host_name": "劉宸宇",
-      //   "record_place": recordInfo.value.data.place
-      // }
-      // const response = axios.post("http://34.81.219.139:5000/add_record", body);
-      // console.log(response.message);
-      // store.dispatch("records/fetchAllRecords");
     }
 
     const deleteCart = async (block) =>{

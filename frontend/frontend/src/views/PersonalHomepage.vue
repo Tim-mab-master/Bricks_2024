@@ -159,7 +159,9 @@
       <input type="text" class="proj_info_type" v-model="proj_info_type" />
       <!-- {{ proj_info_type }} -->
 
-      <div class="proj_info_enter" @click="enter_project_btn">進入專案</div>
+      <div class="proj_info_enter" @click="enter_project_btn(project_id)">
+        進入專案
+      </div>
     </div>
     <div class="main_body">
       <div class="bg">
@@ -475,6 +477,8 @@
 </template>
 
 <script>
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
 import axios from "axios";
 import { Base64 } from "js-base64";
 import { useRoute } from "vue-router";
@@ -556,11 +560,12 @@ export default {
       project_info_show: false,
       proj_info_title: "",
       proj_info_type: "",
+      router: useRouter(),
+      store: useStore(),
     };
   },
   methods: {
     // 點擊上角新增專案
-
     add_btn() {
       this.add_proj_show = this.add_proj_show === false ? true : false;
       this.showOverlay = !this.showOverlay;
@@ -776,7 +781,8 @@ export default {
 
     //在proj_info裡面點擊進入專案
     enter_project_btn() {
-      // this.$router.push({ name: "all" });
+      this.store.commit("records/setProjectID", this.project_id);
+      this.router.push({ name: "all" });
     },
 
     close_proj_info() {
@@ -1016,7 +1022,7 @@ export default {
           items.forEach((element) => {
             this.proj_type = element.project_type;
             this.proj_name = element.project_name;
-            this.proj_id = element.id;
+            this.project_id = parseInt(element.id);
 
             if (this.projectsAll) {
               this.projectsAll.push(this.proj_name);
@@ -1026,7 +1032,7 @@ export default {
               const new_cart = {
                 title_word: this.proj_type,
                 project_box: [this.proj_name],
-                project_id: this.proj_id,
+                project_id: this.project_id,
               };
               this.carts.push(new_cart);
               this.add_proj_type_options.push(new_cart.title_word);

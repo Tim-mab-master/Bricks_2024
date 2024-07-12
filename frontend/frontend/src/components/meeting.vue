@@ -307,8 +307,12 @@
     place.value = form.data.place;
   
     const date = form.data.date;
-    const options = { year: 'numeric', month: 'short', day: '2-digit' };
-    const formattedDate = date.toLocaleDateString(options).replace(/,/g, '/');
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // 月份是從0開始的，所以需要加1
+    const day = date.getDate().toString().padStart(2, '0'); // 確保日期是兩位數
+    // const options = { year: 'numeric', month: 'short', day: '2-digit' };
+    const formattedDate = `${year}/${month}/${day}`;
+    const formatted = `${year}-${month}-${day}`;
     
     const format = { hour: '2-digit', minute: '2-digit', hour12: false };
     const formattedTime = form.data.time.map(date => date.toLocaleTimeString('en-US', format));
@@ -318,18 +322,18 @@
     emit("recordInfo", form.value);
   
     
-    // const editInfo = {
-    //     record_id: '26',
-    //     record_name: meetingName.value,
-    //     record_department: '',
-    //     record_attendances: 1,
-    //     record_place: place.value,
-    //   };
-    //   axios.post("http://104.199.143.218:5000/edit_record", editInfo)
-    //     .then(res => {
-    //       console.log(res.data.message);
-    //     });
-    // }
+    const editInfo = {
+        "record_id": store.state.records.recordID,
+        "record_name": meetingName.value,
+        "record_date": formatted,
+        "record_department": "",
+        "record_host_name": optionsC.value[0].value,
+        "record_place": place.value,
+    };
+    axios.post("http://34.81.186.58:5000/edit_record", editInfo)
+      .then(res => {
+        console.log(res.data.message);
+      });
   
     ElMessage({
       message: '已儲存會議基本資訊',
@@ -344,7 +348,6 @@
   // 在組件掛載時執行初始化請求
   onMounted(() => {
     store.dispatch("records/fetchOneRecord");
-    // recordInfo = computed(() => store.getters(["records/getCurrRecord"]));
     console.log(recordInfo.value);
     if(recordInfo[0]){
       meetingName.value = recordInfo[0].record_name;
