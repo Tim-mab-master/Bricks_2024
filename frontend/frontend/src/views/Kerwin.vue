@@ -19,6 +19,7 @@
 <script>
 import { ref } from "vue";
 import { useRoute } from "vue-router";
+import store from "../store/store.js";
 export default {
   name: "Kerwin",
   setup() {
@@ -32,7 +33,7 @@ export default {
     };
 
     const showid = () => {
-      console.log(id);
+      console.log(store.getters.getAuth);
     };
 
     return {

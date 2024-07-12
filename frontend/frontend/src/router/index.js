@@ -66,7 +66,7 @@ const routes = [
     component: () => import("../views/Register.vue"),
   },
   {
-    path: "/personalHomepage/:authorization",
+    path: "/personalHomepage",
     name: "personalHomepage",
     component: () => import("../views/PersonalHomepage.vue"),
   },

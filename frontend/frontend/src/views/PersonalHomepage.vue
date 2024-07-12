@@ -478,10 +478,15 @@
 import axios from "axios";
 import { Base64 } from "js-base64";
 import { useRoute } from "vue-router";
-const route = useRoute();
+import store from "../store/store.js";
+
 export default {
   name: "Personal_homepage",
-
+  // props: {
+  //   authorization: {
+  //     type: String,
+  //   },
+  // },
   data() {
     return {
       middle_show_overview_page: true,
@@ -557,9 +562,6 @@ export default {
     // 點擊上角新增專案
 
     add_btn() {
-      console.log("按下新增專案");
-      let au = this.$route.params.authorization;
-      console.log("成功" + au);
       this.add_proj_show = this.add_proj_show === false ? true : false;
       this.showOverlay = !this.showOverlay;
       this.proj_type = "選擇專案類型";
@@ -604,7 +606,7 @@ export default {
 
       axios
         .post(path, add_new_project, {
-          headers: { authorization: this.$route.params.authorization },
+          headers: { authorization: store.getters.getAuth },
           timeout: 5000,
         })
         .then((res) => {
@@ -649,7 +651,7 @@ export default {
           };
           axios
             .post(path, add_type, {
-              headers: { authorization: this.$route.params.authorization },
+              headers: { authorization: store.getters.getAuth },
             })
             .then((res) => {
               this.token = res.data;
@@ -755,7 +757,7 @@ export default {
         };
         axios
           .post(path, insert_type, {
-            headers: { authorization: this.$route.params.authorization },
+            headers: { authorization: store.getters.getAuth },
           })
           .then((res) => {
             console.log(res);
@@ -819,7 +821,7 @@ export default {
       // };
       axios
         .post(path, {
-          headers: { authorization: this.$route.params.authorization },
+          headers: { authorization: store.getters.getAuth },
         })
         .then((res) => {
           this.token = res.data;
@@ -881,7 +883,7 @@ export default {
       };
       axios
         .post(path, to_trash, {
-          headers: { authorization: this.$route.params.authorization },
+          headers: { authorization: store.getters.getAuth },
         })
         .then((res) => {
           console.log("有連到了");
@@ -999,6 +1001,7 @@ export default {
   },
   mounted() {
     window.addEventListener("click", this.handleClickOutside);
+    alert("成功" + store.getters.getAuth);
     const path = "http://35.201.168.185:5000/project_index";
     const get_proj = {
       //  let au = this.$route.params.authorization;
@@ -1006,7 +1009,7 @@ export default {
     };
     axios
       .post(path, get_proj, {
-        headers: { authorization: this.$route.params.authorization },
+        headers: { authorization: store.getters.getAuth },
       })
       .then((res) => {
         if (res.data.status == "success") {
@@ -1038,7 +1041,7 @@ export default {
     };
     axios
       .post(path_end, get_proj_end, {
-        headers: { authorization: this.$route.params.authorization },
+        headers: { authorization: store.getters.getAuth },
       })
       .then((res) => {
         if (res.data.status == "success") {
@@ -1068,7 +1071,7 @@ export default {
     };
     axios
       .post(path_trash, get_proj_trash, {
-        headers: { authorization: this.$route.params.authorization },
+        headers: { authorization: store.getters.getAuth },
       })
       .then((res) => {
         if (res.data.status == "success") {
