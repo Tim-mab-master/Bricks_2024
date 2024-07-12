@@ -481,10 +481,16 @@ import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import axios from "axios";
 import { Base64 } from "js-base64";
-// import { useRoute } from "vue-router";
+import { useRoute } from "vue-router";
+import store from "../store/store.js";
+
 export default {
   name: "Personal_homepage",
-
+  // props: {
+  //   authorization: {
+  //     type: String,
+  //   },
+  // },
   data() {
     return {
       middle_show_overview_page: true,
@@ -561,9 +567,6 @@ export default {
   methods: {
     // 點擊上角新增專案
     add_btn() {
-      console.log("按下新增專案");
-      // let au = this.route.query.authorization;
-      console.log(this.$route.params.authorization);
       this.add_proj_show = this.add_proj_show === false ? true : false;
       this.showOverlay = !this.showOverlay;
       this.proj_type = "選擇專案類型";
@@ -593,7 +596,7 @@ export default {
       this.selectOption = "option1";
       this.show_add_proj_type_list = false;
       this.proj_type_color = "#b6aeae";
-      const path = "http://34.81.219.139:5000/add_project";
+      const path = "http://35.201.168.185:5000/add_project";
       const add_new_project = {
         project_type: [this.proj_type],
         project_image: this.project_image,
@@ -603,12 +606,14 @@ export default {
         project_isEdit: false,
         project_isVisible: false,
         project_isComment: false,
-        user_id: this.user_id,
       };
       console.log("add_new_project:", add_new_project);
 
       axios
-        .post(path, add_new_project, { timeout: 5000 })
+        .post(path, add_new_project, {
+          headers: { authorization: store.getters.getAuth },
+          timeout: 5000,
+        })
         .then((res) => {
           console.log("Response Data:", res.data);
           this.token = res.data;
@@ -644,23 +649,26 @@ export default {
           this.carts.push(new_cart);
           this.add_proj_type_options.push(new_cart.title_word);
 
-          const path = "http://34.81.186.58:5000/add_type";
+          const path = "http://35.201.168.185:5000/add_type";
           const add_type = {
-            user_id: this.user_id,
             project_ended: false,
             project_type: "this.proj_type",
           };
-          axios.post(path, add_type).then((res) => {
-            this.token = res.data;
-            this.decode_token_json = this.decodeToken(this.token);
+          axios
+            .post(path, add_type, {
+              headers: { authorization: store.getters.getAuth },
+            })
+            .then((res) => {
+              this.token = res.data;
+              this.decode_token_json = this.decodeToken(this.token);
 
-            if (this.decode_token_json.status == "success") {
-              console.log("新增類型成功");
-              if (this.user_id === this.decode_token_json.user_id) {
-                console.log(this.decode_token_json.proj_name);
+              if (this.decode_token_json.status == "success") {
+                console.log("新增類型成功");
+                if (this.user_id === this.decode_token_json.user_id) {
+                  console.log(this.decode_token_json.proj_name);
+                }
               }
-            }
-          });
+            });
         }
       }
       this.add_proj_type_text = "";
@@ -747,15 +755,18 @@ export default {
         this.proj_type_color = "black";
         this.add_proj_type_text = "";
 
-        const path = "http://34.81.219.139:5000/add_type";
+        const path = "http://35.201.168.185:5000/add_type";
         const insert_type = {
-          user_id: 1,
           project_ended: false,
           project_type: "課業＿高中",
         };
-        axios.post(path, insert_type).then((res) => {
-          console.log(res);
-        });
+        axios
+          .post(path, insert_type, {
+            headers: { authorization: store.getters.getAuth },
+          })
+          .then((res) => {
+            console.log(res);
+          });
       }
     },
 
@@ -810,18 +821,22 @@ export default {
       this.search_project = "";
     },
     search_bar() {
-      const path = "http://34.81.219.139:5000/search_history";
-      const search_bar = {
-        user_id: this.user_id,
-      };
-      axios.post(path, search_bar).then((res) => {
-        this.token = res.data;
-        this.decode_token_json.status = this.decodeToken(this.token);
-        if (this.decode_token_json.status == "success") {
-          const list = this.decode_token_json.items;
-          this.his_search_list = list.search_content;
-        }
-      });
+      const path = "http://35.201.168.185:5000/search_history";
+      // const search_bar = {
+      //   user_id: this.user_id,
+      // };
+      axios
+        .post(path, {
+          headers: { authorization: store.getters.getAuth },
+        })
+        .then((res) => {
+          this.token = res.data;
+          this.decode_token_json.status = this.decodeToken(this.token);
+          if (this.decode_token_json.status == "success") {
+            const list = this.decode_token_json.items;
+            this.his_search_list = list.search_content;
+          }
+        });
     },
     // 實驗用，點擊bricks logo後垃圾桶跑一個專案
     // test_btn(){
@@ -868,16 +883,20 @@ export default {
         this.carts[this.currentCartIndex].project_box[this.currentProjectIndex]
           .project_id;
 
-      const path = "http://34.81.219.139:5000/to_trashcan";
+      const path = "http://35.201.168.185:5000/to_trashcan";
       const to_trash = {
         project_id: projectId,
       };
-      axios.post(path, to_trash).then((res) => {
-        console.log("有連到了");
-        if (res.data.status == "success") {
-          console.log("hello", res.data.message);
-        }
-      });
+      axios
+        .post(path, to_trash, {
+          headers: { authorization: store.getters.getAuth },
+        })
+        .then((res) => {
+          console.log("有連到了");
+          if (res.data.status == "success") {
+            console.log("hello", res.data.message);
+          }
+        });
 
       // // 获取要删除的项目名称
       // const deletedProject = this.carts[cartIndex].project_box[projIndex];
@@ -988,85 +1007,96 @@ export default {
   },
   mounted() {
     window.addEventListener("click", this.handleClickOutside);
-    const path = "http://34.81.219.139:5000/project_index";
+    const path = "http://35.201.168.185:5000/project_index";
     const get_proj = {
-      user_id: 44,
+      //  let au = this.$route.params.authorization;
       project_status: "normal",
     };
-    axios.post(path, get_proj).then((res) => {
-      if (res.data.status == "success") {
-        const items = res.data.items;
-        items.forEach((element) => {
-          this.proj_type = element.project_type;
-          this.proj_name = element.project_name;
-          this.project_id = parseInt(element.id);
-          if (this.projectsAll) {
-            this.projectsAll.push(this.proj_name);
-          }
-          //沒有這個類別才顯示顯示專案
-          if (this.add_proj_type_options.includes(this.proj_type) === false) {
-            const new_cart = {
-              title_word: this.proj_type,
-              project_box: [this.proj_name],
-              project_id: this.project_id,
-            };
-            this.carts.push(new_cart);
-            this.add_proj_type_options.push(new_cart.title_word);
-          }
-        });
-      }
-    });
-    const path_end = "http://34.81.219.139:5000/project_index";
+    axios
+      .post(path, get_proj, {
+        headers: { authorization: store.getters.getAuth },
+      })
+      .then((res) => {
+        if (res.data.status == "success") {
+          const items = res.data.items;
+          items.forEach((element) => {
+            this.proj_type = element.project_type;
+            this.proj_name = element.project_name;
+            this.project_id = parseInt(element.id);
+
+            if (this.projectsAll) {
+              this.projectsAll.push(this.proj_name);
+            }
+            //沒有這個類別才顯示顯示專案
+            if (this.add_proj_type_options.includes(this.proj_type) === false) {
+              const new_cart = {
+                title_word: this.proj_type,
+                project_box: [this.proj_name],
+                project_id: this.project_id,
+              };
+              this.carts.push(new_cart);
+              this.add_proj_type_options.push(new_cart.title_word);
+            }
+          });
+        }
+      });
+    const path_end = "http://35.201.168.185:5000/project_index";
     const get_proj_end = {
-      user_id: 44,
       project_status: "ended",
     };
-    axios.post(path_end, get_proj_end).then((res) => {
-      if (res.data.status == "success") {
-        const items = res.data.items;
-        items.forEach((element) => {
-          this.proj_type = element.project_type;
-          this.proj_name = element.project_name;
+    axios
+      .post(path_end, get_proj_end, {
+        headers: { authorization: store.getters.getAuth },
+      })
+      .then((res) => {
+        if (res.data.status == "success") {
+          const items = res.data.items;
+          items.forEach((element) => {
+            this.proj_type = element.project_type;
+            this.proj_name = element.project_name;
 
-          //分類跟未分類要分開
-          if (this.proj_type !== "已結束") {
-            const new_cart = {
-              title_word: this.proj_type,
-              project_box: [this.proj_name],
-            };
-            //搜尋已結束加正在進行
-            this.projectsAll.push(this.proj_name);
-            this.ended_carts.push(new_cart);
-          } else {
-            // 這裡寫未分類
-          }
-        });
-      }
-    });
-    const path_trash = "http://34.81.219.139:5000/project_index";
+            //分類跟未分類要分開
+            if (this.proj_type !== "已結束") {
+              const new_cart = {
+                title_word: this.proj_type,
+                project_box: [this.proj_name],
+              };
+              //搜尋已結束加正在進行
+              this.projectsAll.push(this.proj_name);
+              this.ended_carts.push(new_cart);
+            } else {
+              // 這裡寫未分類
+            }
+          });
+        }
+      });
+    const path_trash = "http://35.201.168.185:5000/project_index";
     const get_proj_trash = {
-      user_id: 44,
       project_status: "trashcan",
     };
-    axios.post(path_trash, get_proj_trash).then((res) => {
-      if (res.data.status == "success") {
-        const items_in_month = res.data.item.in_month;
-        console.log(items_in_month);
-        items_in_month.forEach((element) => {
-          this.proj_type = element.project_type;
-          this.proj_name = element.project_name;
+    axios
+      .post(path_trash, get_proj_trash, {
+        headers: { authorization: store.getters.getAuth },
+      })
+      .then((res) => {
+        if (res.data.status == "success") {
+          const items_in_month = res.data.item.in_month;
+          console.log(items_in_month);
+          items_in_month.forEach((element) => {
+            this.proj_type = element.project_type;
+            this.proj_name = element.project_name;
 
-          if (this.projectsAll) {
-            this.projectsAll.push(this.proj_name);
-          }
-          const new_cart = {
-            title_word: this.proj_type,
-            proj_box: [this.proj_name],
-          };
-          this.trash_carts.push(new_cart);
-        });
-      }
-    });
+            if (this.projectsAll) {
+              this.projectsAll.push(this.proj_name);
+            }
+            const new_cart = {
+              title_word: this.proj_type,
+              proj_box: [this.proj_name],
+            };
+            this.trash_carts.push(new_cart);
+          });
+        }
+      });
   },
   beforeUnmount() {
     window.removeEventListener("click", this.handleClickOutside);
