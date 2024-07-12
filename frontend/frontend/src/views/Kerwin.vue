@@ -17,11 +17,7 @@
 
 <script>
 import { ref } from "vue";
-const callback = (response) => {
-  // This callback will be triggered when the user selects or login to
-  // his Google account from the popup
-  console.log("Handle the response", response);
-};
+
 export default {
   name: "Kerwin",
   setup() {
