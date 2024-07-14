@@ -284,6 +284,7 @@ export default {
                 name: "personalHomepage",
               });
               setAuth(authorization.value);
+
               // router.push({
               //   name: "kerwin",
               // params: { authorization: authorization.value },
