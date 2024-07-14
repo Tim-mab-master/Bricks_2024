@@ -611,7 +611,7 @@ export default {
 
       axios
         .post(path, add_new_project, {
-          headers: { authorization: store.getters.getAuth },
+          headers: { authorization: JSON.parse(localStorage.getItem("auth")) },
           timeout: 5000,
         })
         .then((res) => {
@@ -656,7 +656,9 @@ export default {
           };
           axios
             .post(path, add_type, {
-              headers: { authorization: store.getters.getAuth },
+              headers: {
+                authorization: JSON.parse(localStorage.getItem("auth")),
+              },
             })
             .then((res) => {
               this.token = res.data;
@@ -762,7 +764,9 @@ export default {
         };
         axios
           .post(path, insert_type, {
-            headers: { authorization: store.getters.getAuth },
+            headers: {
+              authorization: JSON.parse(localStorage.getItem("auth")),
+            },
           })
           .then((res) => {
             console.log(res);
@@ -827,7 +831,7 @@ export default {
       // };
       axios
         .post(path, {
-          headers: { authorization: store.getters.getAuth },
+          headers: { authorization: JSON.parse(localStorage.getItem("auth")) },
         })
         .then((res) => {
           this.token = res.data;
@@ -889,7 +893,7 @@ export default {
       };
       axios
         .post(path, to_trash, {
-          headers: { authorization: store.getters.getAuth },
+          headers: { authorization: JSON.parse(localStorage.getItem("auth")) },
         })
         .then((res) => {
           console.log("有連到了");
@@ -1014,10 +1018,14 @@ export default {
     };
     axios
       .post(path, get_proj, {
-        headers: { authorization: store.getters.getAuth },
+        headers: { authorization: JSON.parse(localStorage.getItem("auth")) },
       })
       .then((res) => {
         if (res.data.status == "success") {
+          console.log("資料");
+          console.log(res);
+          console.log(store.getters.getAuth);
+
           const items = res.data.items;
           items.forEach((element) => {
             this.proj_type = element.project_type;
@@ -1046,7 +1054,7 @@ export default {
     };
     axios
       .post(path_end, get_proj_end, {
-        headers: { authorization: store.getters.getAuth },
+        headers: { authorization: JSON.parse(localStorage.getItem("auth")) },
       })
       .then((res) => {
         if (res.data.status == "success") {
@@ -1076,7 +1084,7 @@ export default {
     };
     axios
       .post(path_trash, get_proj_trash, {
-        headers: { authorization: store.getters.getAuth },
+        headers: { authorization: JSON.parse(localStorage.getItem("auth")) },
       })
       .then((res) => {
         if (res.data.status == "success") {
