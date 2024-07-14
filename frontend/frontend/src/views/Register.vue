@@ -24,7 +24,7 @@
         <div class="warning">
           <Transition name="errorIn">
             <el-alert
-              title="帳號或密碼格式錯誤"
+              title="請輸入有效之信箱"
               v-if="errorMessage1"
               type="error"
               show-icon
@@ -60,6 +60,19 @@
               type="error"
               show-icon
           /></Transition>
+          <Transition name="errorIn">
+            <el-alert
+              title="密碼長度需介於8~12之間"
+              v-if="errorMessage6"
+              type="error"
+              show-icon /></Transition
+          ><Transition name="errorIn">
+            <el-alert
+              title="密碼需由數字及英文組成"
+              v-if="errorMessage7"
+              type="error"
+              show-icon
+          /></Transition>
         </div>
         <div class="middle">
           <p class="title">註冊</p>
@@ -78,7 +91,7 @@
                 required
                 class="password"
                 type="text"
-                placeholder="請輸入 (規則) 密碼"
+                placeholder="請輸入 6~20 含英數之密碼"
                 v-model="password1"
               />
               <img
@@ -103,7 +116,7 @@
                 required
                 class="password"
                 type="password"
-                placeholder="請輸入 (規則) 密碼"
+                placeholder="請輸入 6~20 含英數之密碼"
                 v-model="password1"
               />
               <img
@@ -264,6 +277,8 @@ export default {
       errorMessage3: false,
       errorMessage4: false,
       errorMessage5: false,
+      errorMessage6: false, //密碼長度不介於8~12
+      errorMessage7: false,
       userId: 0, // 0 就等於沒有使用者id
       // page1: true,
       // page2: false,
@@ -313,17 +328,32 @@ export default {
         this.errorMessage4 = false;
         // console.log("f", this.errorMessage4);
       }
-
+      if (this.password1.length < 6 || this.password1.length > 20) {
+        this.errorMessage6 = true;
+      } else {
+        this.errorMessage6 = false;
+      }
+      if (!this.errorMessage6) {
+        var testEnglish = new RegExp("[A-Za-z]+");
+        var testNumber = new RegExp("[0-9]+");
+        if (!testEnglish.test(this.password1)) {
+          this.errorMessage7 = true;
+        } else {
+          if (!testNumber.test(this.password1)) {
+            this.errorMessage7 = true;
+          }
+        }
+      }
       if (
         !(
           this.errorMessage1 ||
           this.errorMessage2 ||
           this.errorMessage3 ||
-          this.errorMessage4
+          this.errorMessage4 ||
+          this.errorMessage6
         )
       ) {
-        console.log("success");
-        const path = "http://104.199.143.218:5000/register";
+        const path = "http://34.81.219.139:5000/register";
         const user = {
           user_email: this.email,
           user_password: this.password1,
@@ -337,12 +367,9 @@ export default {
         axios
           .post(path, user)
           .then((res) => {
-            console.log(res.data.status);
             if (res.data.status == "success") {
               this.userId = res.data.user_id;
-              console.log(this.userId);
-              console.log("註冊成功");
-              alert("註冊成功");
+              // alert("註冊成功");
               this.$router.push({
                 path: "/questionnaire",
                 // params: { user_id: this.userId },
@@ -354,7 +381,6 @@ export default {
               // this.$refs.wrong2.style = "display : block";
               // this.accountError = res.data.accountError;
               // this.passwordError = res.data.passwordError;
-              console.log(res.data.message);
               this.errorMessage5 = true;
             }
           })
@@ -375,7 +401,6 @@ export default {
       if ((newaccount == "") & (oldaccount != "")) {
         this.counter -= 1;
       }
-      window.console.log(this.counter);
     },
     password1(newpassword1, oldpassword1) {
       if ((newpassword1 != "") & (oldpassword1 == "")) {
@@ -384,7 +409,6 @@ export default {
       if ((newpassword1 == "") & (oldpassword1 != "")) {
         this.counter -= 1;
       }
-      window.console.log(this.counter);
     },
     password2(newpassword2, oldpassword2) {
       if ((newpassword2 != "") & (oldpassword2 == "")) {
@@ -393,7 +417,6 @@ export default {
       if ((newpassword2 == "") & (oldpassword2 != "")) {
         this.counter -= 1;
       }
-      window.console.log(this.counter);
     },
     email(newemail, oldemail) {
       if ((newemail != "") & (oldemail == "")) {
@@ -402,7 +425,6 @@ export default {
       if ((newemail == "") & (oldemail != "")) {
         this.counter -= 1;
       }
-      window.console.log(this.counter);
     },
     check_btn(newValue, oldValue) {
       if (newValue) {
@@ -700,7 +722,7 @@ export default {
   }
 
   .middle {
-    width: 416px;
+    width: 360px;
     height: auto;
     position: absolute;
     top: 105px;
@@ -737,7 +759,7 @@ export default {
   height: 33.75px;
   border: 1.5px solid #c7c2c2;
   border-radius: 12px;
-  font-size: 16px;
+  font-size: 14.5px;
   font-family: "Noto Sans TC";
   font-weight: 500;
   letter-spacing: 1.25px;
@@ -788,9 +810,10 @@ input::placeholder {
   z-index: 9;
   user-select: none;
   position: relative;
-  top: -59px;
+  top: -56px;
   left: 90%;
   display: block;
+  height: 26px;
 }
 
 #eye_off_1:hover {
@@ -811,16 +834,16 @@ input::placeholder {
 
 .login_btn {
   width: 100%;
-  height: 48px;
+  height: 36px;
   background-color: #c7c2c2;
   border-radius: 14px;
   position: relative;
   transform: translate(0%, -30%);
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 500;
   font-family: "Noto Sans TC";
   color: white;
-  line-height: 48px;
+  line-height: 34px;
   text-align: center;
   user-select: none;
   text-decoration: none;
@@ -873,7 +896,7 @@ input::placeholder {
   color: #b6aeae;
   text-align: center;
   user-select: none;
-  margin-bottom: 8px;
+  /* margin-bottom: -2px; */
 }
 
 .left_line {
@@ -895,33 +918,34 @@ input::placeholder {
   width: 100%;
   height: 48px;
   position: relative;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .other_resource div {
-  width: 171px;
-  height: 46px;
+  width: 150px;
+  height: 34.5px;
   border: 1px solid #b6aeae;
   border-radius: 14px;
-  font-size: 18px;
-  line-height: 46px;
+  font-size: 14.5px;
+  line-height: 32px;
   color: #b6aeae;
   font-weight: 500;
   font-family: "Noto Sans TC";
   letter-spacing: 1.25px;
   float: left;
   position: relative;
-  text-indent: 44px;
+  text-indent: 40px;
   background-color: white;
 }
 
 #FB_login_btn {
-  width: 195px;
+  width: 162px;
   float: right;
+  text-indent: 38px;
 }
 
 .other_resource a img {
-  width: 24px;
+  width: 18px;
   position: absolute;
   top: 50%;
   transform: translate(0, -50%);
@@ -934,7 +958,8 @@ input::placeholder {
   position: relative;
   bottom: 0px;
   left: 50%;
-  transform: translate(-50%);
+  transform: translate(-42%);
+  /* border: 2px solid black; */
 }
 
 .login p {

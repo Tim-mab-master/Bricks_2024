@@ -52,9 +52,6 @@ const routes = [
     path: "/login",
     name: "login",
     component: () => import("../views/Login.vue"),
-    meta: {
-      isLogin: false,
-    },
   },
   {
     path: "/questionnaire",
@@ -65,17 +62,11 @@ const routes = [
     path: "/register",
     name: "register",
     component: () => import("../views/Register.vue"),
-    meta: {
-      isLogin: false,
-    },
   },
   {
     path: "/personalHomepage",
     name: "personalHomepage",
     component: () => import("../views/PersonalHomepage.vue"),
-    meta: {
-      isLogin: true,
-    },
   },
   {
     path: "/empty",
@@ -91,7 +82,7 @@ const routes = [
     path: "/all",
     name: "all",
     redirect: "/all/cards",
-    // component: () => import("../views/meetingAll.vue"),
+    component: () => import("../views/meetingAll.vue"),
     children: [
       {
         path: "cards",
@@ -103,10 +94,15 @@ const routes = [
       },
       {
         path: "cards/newRecord",
-        alias: "cards/meetingRecord/:cardId",
+        // alias: "cards/meetingRecord/:cardId",
+        name: "newRecord",
+        component: () => import("../views/NewMeetingRecord.vue"),
+      },
+      {
+        path: "cards/meetingRecord/:cardId",
+        // alias: "",
         name: "meetingRecord",
         component: () => import("../views/MeetingRecord.vue"),
-        
       },
     ],
   },
