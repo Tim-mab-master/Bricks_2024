@@ -130,6 +130,7 @@ router.beforeEach((to) => {
     )
   ) {
     console.log("don't have auth");
+    alert("請先登入");
     return "/homepage";
   } else {
     console.log("have auth");
