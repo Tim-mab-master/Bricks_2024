@@ -1009,7 +1009,6 @@ export default {
             };
             this.carts.push(new_cart);
             this.add_proj_type_options.push(new_cart.title_word);
-            console.log("this.cart",this.cart)
           }
 
           let existingCart = this.carts.find(cart => cart.title_word === this.proj_type);
@@ -1047,12 +1046,14 @@ export default {
         items.forEach((element) => {
           this.proj_type = element.project_type;
           this.proj_name = element.project_name;
+          this.proj_id = element.id;
 
           //分類跟未分類要分開
           if (this.proj_type !== "已結束") {
             const new_cart = {
               title_word: this.proj_type,
               project_box: [this.proj_name],
+              project_id: this.proj_id,
             };
             //搜尋已結束加正在進行
             this.projectsAll.push(this.proj_name);
@@ -1060,6 +1061,26 @@ export default {
           } else {
             // 這裡寫未分類
           }
+          let existingCart = this.ended_carts.find(ended_carts => ended_carts.title_word === this.proj_type);
+          if (existingCart) {
+            // 如果存在，則將新專案名稱和 ID 添加到現有的 project_box 中
+            existingCart.project_box.push({
+              proj_name: this.proj_name,
+              project_id: this.proj_id,
+            });
+          } else {
+            // 如果不存在，則創建新的 cart 並推入 carts 陣列
+            const new_cart = {
+              title_word: this.proj_type,
+              project_box: [{
+                proj_name: this.proj_name,
+                project_id: this.proj_id,
+              }],
+            };
+            this.ended_carts.push(new_cart);
+            // this.add_proj_type_options.push(new_cart.title_word);
+          }
+          
         });
       }
     });
