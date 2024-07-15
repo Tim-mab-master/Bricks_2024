@@ -1,5 +1,14 @@
 import { createStore } from "vuex";
 
+const localStoragePlugin = (store) => {
+  store.subscribe((mutation, { auth }) => {
+    // 當執行 setUserData 時才執行以下程式碼
+    if (mutation.type === "setAuth") {
+      window.localStorage.setItem("auth", JSON.stringify(auth));
+    }
+  });
+};
+
 export default createStore({
   state: {
     activeIndex: "/",
@@ -8,7 +17,7 @@ export default createStore({
     testNum: 0,
     projectName: "專案名稱",
     meetingName: "未命名會議紀錄",
-    auth: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2VtYWlsIjoiODE4MTV0aW1AZ21haWwuY29tIiwiZXhwIjoxNzIzNDc5NDUzfQ.AZ6q7gSJVI2vt16zHoitKCmf5ED9aORxVLSeDF6QZzU",
+    auth: "no_login_yet",
   },
   // actions: {
   //   setAuth(authorization) {
@@ -22,14 +31,6 @@ export default createStore({
     setName(state, name) {
       state.meetingName = name;
     },
-    // state() {
-    //   return {
-    //     activeIndex: 0,
-    //     testNum: 0,
-    //     projectName: "專案名稱",
-    //     meetingName: "未命名會議紀錄",
-    //   };
-    // },
     setAuth(state, authorization) {
       state.auth = authorization;
     },
@@ -39,6 +40,7 @@ export default createStore({
       return state.auth;
     },
   },
+  plugins: [localStoragePlugin],
 });
 
 // export default store;

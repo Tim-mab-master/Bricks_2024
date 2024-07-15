@@ -45,13 +45,18 @@ const actions = {
   async fetchAllRecords({ state, commit }) {
     try {
       const body = {
-        project_id: state.projectID,
+        // project_id: state.projectID,
+        project_id: 96,
       };
+      console.log("projID" + state.projectID);
 
-      const response = await axios.post(
-        "http://34.81.219.139:5000/get_record_index",
-        body
-      );
+      const response = await axios
+        .post("http://35.201.168.185:5000/get_record_index", body, {
+          headers: { authorization: JSON.parse(localStorage.getItem("auth")) },
+        })
+        .then((res) => {
+          console.log(res);
+        });
       commit("setAllRecords", response.data.record);
     } catch (error) {
       console.log("出錯了");
