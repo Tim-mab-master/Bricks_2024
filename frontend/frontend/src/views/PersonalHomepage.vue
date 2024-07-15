@@ -159,9 +159,7 @@
       <input type="text" class="proj_info_type" v-model="proj_info_type" />
       <!-- {{ proj_info_type }} -->
 
-      <div class="proj_info_enter" @click="enter_project_btn(project_id)">
-        進入專案
-      </div>
+      <div class="proj_info_enter" @click="enter_project_btn">進入專案</div>
     </div>
     <div class="main_body">
       <div class="bg">
@@ -185,12 +183,8 @@
               </div>
             </div>
             <div v-for="(cart, index1) in carts" :key="index1">
-              <div
-                class="cart"
-                :ref="'cart_' + index1"
-                :data-index="index1"
-                @contextmenu.prevent="showRightClickBox($event, index1)"
-              >
+              <div class="cart" :ref="'cart_' + index1" :data-index="index1">
+                <!-- @contextmenu.prevent="showRightClickBox($event, index1)" -->
                 <p class="cart_title" style="height: 0px">
                   {{ cart.title_word }}
                 </p>
@@ -203,14 +197,24 @@
                 <div class="box_container">
                   <div
                     class="box"
-                    v-for="(proj_name, index2) in carts[index1].project_box"
+                    v-for="(project, index2) in cart.project_box"
                     :key="index2"
                     @contextmenu.prevent="
-                      showRightClickBox($event, index1, index2)
+                      showRightClickBox(
+                        $event,
+                        index1,
+                        index2,
+                        project.project_id
+                      )
                     "
                     @click="proj_info(index1, index2)"
                   >
-                    {{ proj_name }}
+                    {{ index1 }}
+                    <!-- index1: cart 的索引 -->
+                    {{ project.project_id }}
+                    <!-- project_id: 專案 ID -->
+                    {{ project.proj_name }}
+                    <!-- proj_name: 專案名稱 -->
                   </div>
                 </div>
               </div>
@@ -305,12 +309,8 @@
               </div>
             </div>
             <div v-for="(cart, index1) in ended_carts" :key="index1">
-              <div
-                class="cart"
-                :ref="'cart_' + index1"
-                :data-index="index1"
-                @contextmenu.prevent="showRightClickBox($event, index1)"
-              >
+              <div class="cart" :ref="'cart_' + index1" :data-index="index1">
+                <!-- @contextmenu.prevent="showRightClickBox($event, index1)" -->
                 <p class="cart_title" style="height: 0px">
                   {{ cart.title_word }}
                 </p>
@@ -373,15 +373,18 @@
                   @click="forever_delete_project"
                 />
                 <div class="box_container">
-                  <div
-                    class="box"
-                    v-for="(proj_name, index2) in trash_carts.proj_box"
-                    :key="index2"
-                  >
-                    {{ proj_name }}
+                  <div v-for="(cart, index1) in trash_carts" :key="index1">
+                    <div
+                      class="box"
+                      v-for="(proj_name, index2) in cart.proj_box"
+                      :key="index2"
+                    >
+                      {{ proj_name }}
+                    </div>
                   </div>
                 </div>
-                <div class="trash_box_container">
+
+                <!-- <div class="trash_box_container">
                   <div
                     class="trash_box"
                     v-for="(trash_box, index) in trash_boxes"
@@ -399,7 +402,7 @@
                       >{{ trash_box.text }}</label
                     >
                   </div>
-                </div>
+                </div> -->
               </div>
               <div class="last_one_year">
                 <p class="last_time">近一年</p>
@@ -567,6 +570,9 @@ export default {
   methods: {
     // 點擊上角新增專案
     add_btn() {
+      console.log("按下新增專案");
+      // let au = this.route.query.authorization;
+      console.log(this.$route.params.authorization);
       this.add_proj_show = this.add_proj_show === false ? true : false;
       this.showOverlay = !this.showOverlay;
       this.proj_type = "選擇專案類型";
@@ -850,25 +856,29 @@ export default {
     //     this.trash_boxes.push(trash_box);
     // },
 
-    showRightClickBox(event, cartIndex, projectIndex) {
-      console.log("karen");
+    showRightClickBox(event, cartIndex, projectIndex, project_id) {
       this.right_click_box_overview_show = true;
-      const cartElement = this.$refs["cart_" + cartIndex][0];
+      const cartElement = this.$refs["cart_" + cartIndex][projectIndex];
+      console.log("cartIndex", cartIndex);
+      console.log("projectIndex", projectIndex);
+      console.log("project_id", project_id);
 
       if (cartElement) {
-        const cartRect = cartElement.getBoundingClientRect(); // 获取 cart 元素的边界框信息
+        const cartRect = cartElement.getBoundingClientRect(); // cart 元素的邊界框
         console.log("Cart Rect:", cartRect);
 
-        this.mouseLeft = cartRect.right; // 右键菜单出现在 cart 元素的右侧
-        this.mouseTop = cartRect.top; // 右键菜单出现在 cart 元素的顶部
-        console.log("soifjdosjf", this.mouseTop); //可以顯示得出來 但是
+        this.mouseLeft = cartRect.left;
+        this.mouseTop = cartRect.top;
+        console.log("this.mousetop", this.mouseTop); //問題在這
 
         this.currentCartIndex = cartIndex;
         this.currentProjectIndex = projectIndex;
+        //找project_id
       }
-      this.mouseTop = event.clientY;
-      console.log("mouseTop:", this.mouseTop);
-      this.mouseLeft = event.clientX;
+      // this.mouseTop = event.clientY;
+      // this.mouseLeft = event.clientX;
+      // console.log("mouseTop:", this.mouseTop);
+      // console.log("mouseLeft:",this.mouseLeft);
     },
 
     rename() {
@@ -876,8 +886,8 @@ export default {
     },
     //刪除後的專案跑到垃圾桶
     delete_project_ing() {
-      console.log("[this.currentCartIndex", this.currentCartIndex);
-      console.log("this.currentProjectIndex", this.currentProjectIndex);
+      console.log("this.currentCartIndex", this.currentCartIndex); //第幾個cart
+      console.log("this.currentProjectIndex", this.currentProjectIndex); //cart的裡面第幾個projectp'
 
       this.right_click_box_overview_show = false;
       this.delete_confirm = false;
@@ -946,12 +956,12 @@ export default {
       this.showOverlay_trash = false;
     },
     // 專案總覽右鍵點擊專案
-    right_click_box(event) {
-      event.preventDefault();
-      this.right_click_box_overview_show = true;
-      this.mouseTop = event.clientY - 49;
-      this.mouseLeft = event.clientX - 368;
-    },
+    // right_click_box(event) {
+    //   event.preventDefault();
+    //   this.right_click_box_overview_show = true;
+    //   this.mouseTop = event.clientY - 49;
+    //   this.mouseLeft = event.clientX - 368;
+    // },
     // 當滑鼠點擊非指定區域時關閉彈窗
     handleClickOutside() {
       // 專案總覽右鍵彈窗
@@ -1044,6 +1054,32 @@ export default {
               };
               this.carts.push(new_cart);
               this.add_proj_type_options.push(new_cart.title_word);
+              console.log("this.cart", this.cart);
+            }
+
+            let existingCart = this.carts.find(
+              (cart) => cart.title_word === this.proj_type
+            );
+
+            if (existingCart) {
+              // 如果存在，則將新專案名稱和 ID 添加到現有的 project_box 中
+              existingCart.project_box.push({
+                proj_name: this.proj_name,
+                project_id: this.proj_id,
+              });
+            } else {
+              // 如果不存在，則創建新的 cart 並推入 carts 陣列
+              const new_cart = {
+                title_word: this.proj_type,
+                project_box: [
+                  {
+                    proj_name: this.proj_name,
+                    project_id: this.proj_id,
+                  },
+                ],
+              };
+              this.carts.push(new_cart);
+              this.add_proj_type_options.push(new_cart.title_word);
             }
           });
         }
@@ -1101,7 +1137,12 @@ export default {
               title_word: this.proj_type,
               proj_box: [this.proj_name],
             };
-            this.trash_carts.push(new_cart);
+            //搜尋已結束加正在進行
+            this.projectsAll.push(this.proj_name);
+            this.ended_carts.push(new_cart);
+            //  else {
+            //   // 這裡寫未分類
+            // }
           });
         }
       });
