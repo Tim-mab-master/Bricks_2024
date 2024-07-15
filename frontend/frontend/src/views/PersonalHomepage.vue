@@ -783,7 +783,7 @@ export default {
     //點擊進入專案
     proj_info(index1, index2) {
       this.project_info_show = true;
-      this.proj_info_title = this.carts[index1].project_box[index2];
+      this.proj_info_title = this.carts[index1].project_box[index2].proj_name;
       this.proj_info_type = "類型: " + this.carts[index1].title_word;
       console.log(this.proj_info_type);
       // this.$router.push({ name: "all" });
@@ -793,6 +793,9 @@ export default {
     enter_project_btn() {
       this.store.commit("records/setProjectID", this.project_id);
       this.router.push({ name: "all" });
+      //測試印出project/id
+      alert(this.store.getters["records/getProjectID"]);
+      alert(this.project_id);
     },
 
     close_proj_info() {
@@ -1032,10 +1035,6 @@ export default {
       })
       .then((res) => {
         if (res.data.status == "success") {
-          console.log("資料");
-          console.log(res);
-          console.log(store.getters.getAuth);
-
           const items = res.data.items;
           items.forEach((element) => {
             this.proj_type = element.project_type;
@@ -1054,7 +1053,7 @@ export default {
               };
               this.carts.push(new_cart);
               this.add_proj_type_options.push(new_cart.title_word);
-              console.log("this.cart", this.cart);
+              console.log("this.cart", this.carts);
             }
 
             let existingCart = this.carts.find(

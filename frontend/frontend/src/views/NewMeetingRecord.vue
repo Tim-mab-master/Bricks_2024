@@ -127,6 +127,7 @@ const showBtn = () => {
   top: 48px;
   height: 100vh;
   width: calc(100vw - 200px);
+  border: 2px solid black;
 }
 .info {
   position: relative;

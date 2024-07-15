@@ -19,6 +19,9 @@ const getters = {
   getCurrTextBoxes(state) {
     return state.currTextBoxes;
   },
+  getProjectID(state) {
+    return state.projectID;
+  },
 };
 const mutations = {
   setAllRecords(state, records) {

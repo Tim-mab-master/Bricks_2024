@@ -515,13 +515,14 @@ p {
 .form {
   width: 500px;
   position: absolute;
-  top: -40px;
+  top: -2%;
   left: 300px;
   z-index: 10;
   border: 1px solid #ccc;
   padding: 20px;
   border-radius: 4px;
   background-color: #ffffff;
+  border: 2px solid black;
 }
 .form .el-form-item {
   /* margin-bottom: 25px; */
