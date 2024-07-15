@@ -96,8 +96,15 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, nextTick, computed, defineEmits } from "vue";
-import { useEmit } from '@vueuse/core'
+import {
+  ref,
+  onMounted,
+  onUnmounted,
+  nextTick,
+  computed,
+  defineEmits,
+} from "vue";
+import { useEmit } from "@vueuse/core";
 import EditTextara from "./EditTextara.vue";
 import Unlock from "./Unlock.vue";
 
@@ -108,7 +115,7 @@ const props = defineProps({
   content: String,
 });
 
-const emit = defineEmits(["add_cart", 'deleteCart']);
+const emit = defineEmits(["add_cart", "deleteCart"]);
 
 const textValue = computed(() => props.content);
 const isUnlockShowed = ref(props.isUnlockShowed);
@@ -234,7 +241,6 @@ onUnmounted(() => {
 });
 </script>
 
-
 <style scoped>
 .show-enter-active,
 .show-leave-active {
@@ -312,6 +318,7 @@ onUnmounted(() => {
 .tag {
   margin: 2px;
   margin-right: 4px;
+  margin-bottom: 6px;
 }
 .ml-1 {
   width: 60px;
