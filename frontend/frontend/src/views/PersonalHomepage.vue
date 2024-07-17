@@ -20,7 +20,7 @@
               .slice(0, 6)"
             :key="index"
             class="add_history_search"
-            @click="his_search_choosen"
+            @click="his_search_choosen()"
           >
             {{ history }}
           </div>
@@ -32,6 +32,7 @@
             :class="autoComplete ? '' : 'd-none'"
           >
             <!--     控制按鈕事件的選取背景 -->
+            <!-- 搜尋專案點擊 -->
             <li
               class="searchHover p-2 w-100"
               v-for="(item, index) in filterProjects"
@@ -518,6 +519,10 @@ export default {
       add_proj_type_text: "",
       add_proj_name: "",
       add_search: "",
+
+      // 所有專案(用在搜尋專案)
+      all_proj: [],
+
       uncategorized_projs: [],
       //已結束專案的
       ended_projs: [],
@@ -607,8 +612,8 @@ export default {
         project_type: [this.proj_type],
         project_image: this.project_image,
         project_name: this.add_proj_name,
-        project_trashcan: true,
-        project_ended: true,
+        project_trashcan: false,
+        project_ended: false,
         project_isEdit: false,
         project_isVisible: false,
         project_isComment: false,
@@ -741,6 +746,7 @@ export default {
     },
     //搜尋點擊已有的專案
     his_search_choosen() {
+      alert("案到123131");
       console.log("koko");
       this.show_his_search_list = false;
       this.search_project = history.name;
@@ -780,13 +786,22 @@ export default {
       }
     },
 
-    //點擊進入專案
+    //點擊進入專案、觀看專案資訊
     proj_info(index1, index2) {
       this.project_info_show = true;
       this.proj_info_title = this.carts[index1].project_box[index2].proj_name;
       this.proj_info_type = "類型: " + this.carts[index1].title_word;
-      console.log(this.proj_info_type);
       // this.$router.push({ name: "all" });
+    },
+
+    //點擊搜尋專案的結果、透過搜尋專案開啟專案資訊
+    proj_info_through_searching(proj_num) {
+      alert(proj_num);
+      // this.project_info_show = true;
+
+      // this.proj_info_title = this.carts[index1].project_box[index2].proj_name;
+      // this.proj_info_type = "類型: " + this.carts[index1].title_word;
+      // console.log(this.proj_info_type);
     },
 
     //在proj_info裡面點擊進入專案
@@ -796,6 +811,7 @@ export default {
       //測試印出project/id
       alert(this.store.getters["records/getProjectID"]);
       alert(this.project_id);
+      console.log(this.all_proj);
     },
 
     close_proj_info() {
@@ -1040,7 +1056,8 @@ export default {
             this.proj_type = element.project_type;
             this.proj_name = element.project_name;
             this.project_id = parseInt(element.id);
-
+            this.all_proj.push(element);
+            // 7/15從這裡改，把projectsAll改成儲存專案，而非專案名稱
             if (this.projectsAll) {
               this.projectsAll.push(this.proj_name);
             }
@@ -1097,6 +1114,7 @@ export default {
           items.forEach((element) => {
             this.proj_type = element.project_type;
             this.proj_name = element.project_name;
+            this.all_proj.push(element);
 
             //分類跟未分類要分開
             if (this.proj_type !== "已結束") {
@@ -1128,7 +1146,7 @@ export default {
           items_in_month.forEach((element) => {
             this.proj_type = element.project_type;
             this.proj_name = element.project_name;
-
+            this.all_proj.push(element);
             if (this.projectsAll) {
               this.projectsAll.push(this.proj_name);
             }

@@ -49,7 +49,7 @@ const actions = {
     try {
       const body = {
         // project_id: state.projectID,
-        project_id: 96,
+        project_id: 94, //bricks
       };
       console.log("projID" + state.projectID);
 
@@ -59,8 +59,9 @@ const actions = {
         })
         .then((res) => {
           console.log(res);
+          console.log(JSON.parse(localStorage.getItem("auth"))); //確認auth是否正確
+          commit("setAllRecords", res.data.record); //以array紀錄會議名稱
         });
-      commit("setAllRecords", response.data.record);
     } catch (error) {
       console.log("出錯了");
     }

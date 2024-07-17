@@ -16,7 +16,6 @@
       <nav-bar class="navBar"></nav-bar>
       <empty-back class="content" @showAdd="show"></empty-back>
     </div>
-    
   </div>
 </template>
 
@@ -26,29 +25,28 @@ import EmptyBack from "../components/EmptyBack.vue";
 import NavBarAll from "../components/NavBarAll.vue";
 import SideBar from "../components/SideBar.vue";
 import MeetingCards from "../components/MeetingCards.vue";
-import { ref,computed, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 
-    const router = useRouter();
-    const store = useStore();
+const router = useRouter();
+const store = useStore();
 
-    onMounted(() => {
-      console.log("onMounted");
-      store.dispatch("records/fetchAllRecords");
-    });
+onMounted(() => {
+  console.log("onMounted");
+  store.dispatch("records/fetchAllRecords");
+});
 
-    const cards = computed(() => store.getters["record/getAllRecords"]);
-    const activeOption = ref(0);
-    const handleCardClick = (cardId) => {
-      // 根据卡片点击情况进行路由导航
-      router.push(`/all/cards/meetingRecord/${cardId}`);
-    };
+const cards = computed(() => store.getters["record/getAllRecords"]);
+const activeOption = ref(0);
+const handleCardClick = (cardId) => {
+  // 根据卡片点击情况进行路由导航
+  router.push(`/all/cards/meetingRecord/${cardId}`);
+};
 
-    const activeChange = () => {
-      activeOption.value = computed(() => store.state.activeIndex);
-    };
-
+const activeChange = () => {
+  activeOption.value = computed(() => store.state.activeIndex);
+};
 </script>
 
 <style scoped>
