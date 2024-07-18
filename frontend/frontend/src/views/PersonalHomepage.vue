@@ -175,11 +175,12 @@
               <div class="box_container">
                 <div
                   class="box"
-                  v-for="(proj_name, index) in uncategorized_projs"
+                  v-for="(element, index) in uncategorized_projs"
                   :key="index"
                   @contextmenu.prevent="right_click_box"
+                  @click="proj_info_uncatagorized(element)"
                 >
-                  {{ proj_name }}
+                  {{ element.project_name }}
                 </div>
               </div>
             </div>
@@ -299,13 +300,13 @@
               <div class="box_container">
                 <div
                   class="box"
-                  v-for="(proj_name, index) in ended_uncategorized_projs"
+                  v-for="(element, index) in ended_uncategorized_projs"
                   :key="index"
                   @contextmenu.prevent="
                     showRightClickBox($event, index1, index2)
                   "
                 >
-                  {{ proj_name }}
+                  {{ element.project_name }}
                 </div>
               </div>
             </div>
@@ -793,7 +794,6 @@ export default {
 
     //點擊進入專案、觀看專案資訊718
     proj_info(index1, index2) {
-      console.log(this.ended_carts);
       alert("點擊資訊");
       this.project_info_show = true;
       this.proj_info_title = this.carts[index1].project_box[index2].proj_name;
@@ -809,6 +809,16 @@ export default {
           }
         }
       });
+    },
+
+    //給未分類區塊內的proj寫的專案資訊點擊
+    proj_info_uncatagorized(element) {
+      console.log("ele");
+      console.log(element);
+      this.project_info_show = true;
+      this.proj_info_title = element.project_name;
+      this.proj_info_type = "類型: " + element.project_type;
+      this.proj_info_id = element.id;
     },
 
     //點擊搜尋專案的結果、透過搜尋專案開啟專案資訊
@@ -1072,14 +1082,16 @@ export default {
             this.proj_type = element.project_type;
             this.proj_name = element.project_name;
             this.project_id = parseInt(element.id);
-            console.log(element);
+            // console.log(element);
             this.all_proj.push(element);
             // 7/15從這裡改，把projectsAll改成儲存專案，而非專案名稱
             if (this.projectsAll) {
               this.projectsAll.push(this.proj_name);
             }
             if (this.proj_type === "未分類") {
-              this.uncategorized_projs.push(this.proj_name);
+              this.uncategorized_projs.push(element);
+              console.log("未分類");
+              console.log(element);
             }
             //沒有這個類別才顯示專案
             if (
@@ -1143,7 +1155,7 @@ export default {
             this.project_id = parseInt(element.id);
             this.all_proj.push(element);
             if (this.proj_type === "未分類") {
-              this.ended_uncategorized_projs.push(this.proj_name);
+              this.ended_uncategorized_projs.push(element);
             } else {
               const new_cart = {
                 title_word: this.proj_type,
