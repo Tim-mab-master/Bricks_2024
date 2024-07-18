@@ -685,7 +685,13 @@ export default {
         }
       }
       this.add_proj_type_text = "";
+      console.log("等等");
+      setTimeout(() => {
+        console.log("等一下");
+        this.$router.go(0);
+      }, 500);
     },
+
     // 左邊總攬、已結束、垃圾桶切換
     change(index) {
       if (index === 1) {
