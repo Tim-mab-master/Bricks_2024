@@ -568,6 +568,7 @@ export default {
       project_info_show: false,
       proj_info_title: "",
       proj_info_type: "",
+      proj_info_id: 0,
       router: useRouter(),
       store: useStore(),
     };
@@ -792,11 +793,23 @@ export default {
       }
     },
 
-    //點擊進入專案、觀看專案資訊
+    //點擊進入專案、觀看專案資訊718
     proj_info(index1, index2) {
       this.project_info_show = true;
       this.proj_info_title = this.carts[index1].project_box[index2].proj_name;
       this.proj_info_type = "類型: " + this.carts[index1].title_word;
+      this.all_proj.forEach((project) => {
+        if (this.carts[index1].title_word === project.project_type) {
+          if (
+            this.carts[index1].project_box[index2].proj_name ===
+            project.project_name
+          ) {
+            console.log(project.id);
+            this.proj_info_id = project.id;
+          }
+        }
+      });
+      // alert(this.carts[index1].project_box[index2].proj_id);
       // this.$router.push({ name: "all" });
     },
 
@@ -812,12 +825,11 @@ export default {
 
     //在proj_info裡面點擊進入專案
     enter_project_btn() {
-      this.store.commit("records/setProjectID", this.project_id);
+      this.store.commit("records/setProjectID", this.proj_info_id);
       this.router.push({ name: "all" });
       //測試印出project/id
       alert(this.store.getters["records/getProjectID"]);
-      alert(this.project_id);
-      console.log(this.all_proj);
+      alert(this.proj_info_id);
     },
 
     close_proj_info() {
@@ -1062,6 +1074,7 @@ export default {
             this.proj_type = element.project_type;
             this.proj_name = element.project_name;
             this.project_id = parseInt(element.id);
+            console.log(element);
             this.all_proj.push(element);
             // 7/15從這裡改，把projectsAll改成儲存專案，而非專案名稱
             if (this.projectsAll) {
