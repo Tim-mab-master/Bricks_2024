@@ -10,7 +10,6 @@
           v-model.trim="search_project"
           @keyup.enter="list_add_a_search"
           @keyup="keyboardEvent"
-          @blur="show_his_search_list = false"
         />
         <!-- show_his_search_list是壞分子，讓his_search_choosen -->
         <div class="his_search_list" v-show="show_his_search_list">
@@ -339,6 +338,31 @@
                 />
                 <div class="title_underline"></div>
                 <div class="box_container">
+                  <div v-for="(cart, index1) in ended_carts" :key="index1">
+                    <div
+                      class="box"
+                      v-for="(project, index2) in cart.project_box"
+                      :key="index2"
+                      @contextmenu.prevent="
+                        showRightClickBox(
+                          $event,
+                          index1,
+                          index2,
+                          project.project_id
+                        )
+                      "
+                      @click="proj_info(index1, index2)"
+                    >
+                      {{ index1 }}
+                      <!-- index1: cart 的索引 -->
+                      {{ project.project_id }}
+                      <!-- project_id: 專案 ID -->
+                      {{ project.proj_name }}
+                      <!-- proj_name: 專案名稱 -->
+                    </div>
+                  </div>
+                </div>
+                <!-- <div class="box_container">
                   <div
                     class="box"
                     v-for="(proj_name, index2) in ended_carts[index1]
@@ -350,8 +374,7 @@
                     @click="ended_proj_info(index1, index2)"
                   >
                     {{ proj_name }}
-                  </div>
-                </div>
+                  </div> -->
               </div>
             </div>
           </div>
@@ -788,8 +811,7 @@ export default {
     },
     //搜尋點擊已有的專案
     his_search_choosen() {
-      alert("案到123131");
-      console.log("koko");
+      console.log("搜尋點擊已有的專案");
       this.show_his_search_list = false;
       this.search_project = history.name;
       //還要做點到專案的功能
@@ -1229,6 +1251,7 @@ export default {
     // 垃圾桶
     const path_trash = "http://35.201.168.185:5000/project_index";
     const get_proj_trash = {
+      user_id: 44,
       project_status: "trashcan",
     };
     axios
