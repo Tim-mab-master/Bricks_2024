@@ -10,7 +10,6 @@
           v-model.trim="search_project"
           @keyup.enter="list_add_a_search"
           @keyup="keyboardEvent"
-          
         />
         <!-- show_his_search_list是壞分子，讓his_search_choosen -->
         <div class="his_search_list" v-show="show_his_search_list">
@@ -339,17 +338,27 @@
                 />
                 <div class="title_underline"></div>
                 <div class="box_container">
-                  <div 
-                    v-for="(cart, index1) in ended_carts" 
-                    :key="index1">
-                    <div class="box" 
-                      v-for="(project, index2) in cart.project_box" 
-                      :key="index2" 
-                      @contextmenu.prevent="showRightClickBox($event, index1, index2, project.project_id)" 
-                      @click="proj_info(index1, index2)">
-                      {{ index1 }} <!-- index1: cart 的索引 -->
-                      {{ project.project_id }} <!-- project_id: 專案 ID -->
-                      {{ project.proj_name }} <!-- proj_name: 專案名稱 -->
+                  <div v-for="(cart, index1) in ended_carts" :key="index1">
+                    <div
+                      class="box"
+                      v-for="(project, index2) in cart.project_box"
+                      :key="index2"
+                      @contextmenu.prevent="
+                        showRightClickBox(
+                          $event,
+                          index1,
+                          index2,
+                          project.project_id
+                        )
+                      "
+                      @click="proj_info(index1, index2)"
+                    >
+                      {{ index1 }}
+                      <!-- index1: cart 的索引 -->
+                      {{ project.project_id }}
+                      <!-- project_id: 專案 ID -->
+                      {{ project.proj_name }}
+                      <!-- proj_name: 專案名稱 -->
                     </div>
                   </div>
                 </div>
@@ -802,12 +811,7 @@ export default {
     },
     //搜尋點擊已有的專案
     his_search_choosen() {
-<<<<<<< HEAD
       console.log("搜尋點擊已有的專案");
-=======
-      alert("案到123131");
-      console.log("koko");
->>>>>>> fae0a45fd7401f21fc9cd86c77337e44b1bfcc64
       this.show_his_search_list = false;
       this.search_project = history.name;
       //還要做點到專案的功能
@@ -1146,30 +1150,6 @@ export default {
       //  let au = this.$route.params.authorization;
       project_status: "normal",
     };
-<<<<<<< HEAD
-    axios.post(path, get_proj).then((res) => {
-      if (res.data.status == "success") {
-        const items = res.data.items;
-        items.forEach((element) => {
-          this.proj_type = element.project_type;
-          this.proj_name = element.project_name;
-          this.proj_id = element.id;
-
-          if (this.projectsAll) {
-            this.projectsAll.push(this.proj_name);
-          }
-          //沒有這個類別才顯示顯示專案
-          if (this.add_proj_type_options.includes(this.proj_type) === false) {
-            const new_cart = {
-              title_word: this.proj_type,
-              project_box: [this.proj_name],
-              project_id: this.proj_id,
-            };
-            this.carts.push(new_cart);
-            this.add_proj_type_options.push(new_cart.title_word);
-          }
-
-=======
     axios
       .post(path, get_proj, {
         headers: { authorization: JSON.parse(localStorage.getItem("auth")) },
@@ -1184,7 +1164,6 @@ export default {
             // console.log(element);
             this.all_proj.push(element);
             // 7/15從這裡改，把projectsAll改成儲存專案，而非專案名稱
->>>>>>> fae0a45fd7401f21fc9cd86c77337e44b1bfcc64
             if (this.projectsAll) {
               console.log("名稱" + this.proj_name);
               this.projectsAll.push(this.proj_name);
@@ -1237,44 +1216,6 @@ export default {
     const get_proj_end = {
       project_status: "ended",
     };
-<<<<<<< HEAD
-    axios.post(path_end, get_proj_end).then((res) => {
-  if (res.data.status === "success") {
-    const items = res.data.items;
-    items.forEach((element) => {
-      const proj_type = element.project_type;
-      const proj_name = element.project_name;
-      const proj_id = element.id;
-
-      // 搜尋已結束加正在進行
-      this.projectsAll.push(proj_name);
-
-      // 查找是否已存在相同類型的 cart
-      let existingCart = this.ended_carts.find(ended_cart => ended_cart.title_word === proj_type);
-      if (existingCart) {
-        // 如果存在，則將新專案名稱和 ID 添加到現有的 project_box 中
-        existingCart.project_box.push({ proj_name: proj_name, project_id: proj_id });
-      } else {
-        // 如果不存在，則創建新的 cart 並推入 ended_carts 陣列
-        const new_cart = {
-          title_word: proj_type,
-          project_box: [{ proj_name: proj_name, project_id: proj_id }],
-        };
-        this.ended_carts.push(new_cart);
-      }
-    });
-
-    console.log("1039行：", JSON.stringify(this.ended_carts, null, 2));
-
-  } else {
-    console.error("API 調用失敗：", res.data.message);
-  }
-}).catch((error) => {
-  console.error("API 調用錯誤：", error);
-});
-
-    const path_trash = "http://34.81.219.139:5000/project_index";
-=======
     axios
       .post(path_end, get_proj_end, {
         headers: { authorization: JSON.parse(localStorage.getItem("auth")) },
@@ -1309,33 +1250,10 @@ export default {
 
     // 垃圾桶
     const path_trash = "http://35.201.168.185:5000/project_index";
->>>>>>> fae0a45fd7401f21fc9cd86c77337e44b1bfcc64
     const get_proj_trash = {
       user_id: 44,
       project_status: "trashcan",
     };
-<<<<<<< HEAD
-    axios.post(path_trash, get_proj_trash).then((res) => {
-      if (res.data.status == "success") {
-        const items_in_month = res.data.item.in_month;
-        console.log(items_in_month);
-        items_in_month.forEach((element) => {
-          this.proj_type = element.project_type;
-          this.proj_name = element.project_name;
-
-          if (this.projectsAll) {
-            this.projectsAll.push(this.proj_name);
-          }
-          const new_cart = {
-            title_word: this.proj_type,
-            proj_box: [this.proj_name],
-          };
-          this.trash_carts.push(new_cart);
-          console.log("1056",this.trash_carts.proj_box)
-        });
-      }
-    });
-=======
     axios
       .post(path_trash, get_proj_trash, {
         headers: { authorization: JSON.parse(localStorage.getItem("auth")) },
@@ -1364,7 +1282,6 @@ export default {
           });
         }
       });
->>>>>>> fae0a45fd7401f21fc9cd86c77337e44b1bfcc64
   },
   beforeUnmount() {
     window.removeEventListener("click", this.handleClickOutside);
