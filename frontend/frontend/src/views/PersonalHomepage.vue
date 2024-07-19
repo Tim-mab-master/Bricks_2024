@@ -1275,7 +1275,7 @@ export default {
             };
             //搜尋已結束加正在進行
             this.projectsAll.push(this.proj_name);
-            // this.ended_carts.push(new_cart);
+            this.trash_carts.push(new_cart);
             //  else {
             //   // 這裡寫未分類
             // }
