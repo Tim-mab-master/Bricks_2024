@@ -10,7 +10,7 @@
           v-model.trim="search_project"
           @keyup.enter="list_add_a_search"
           @keyup="keyboardEvent"
-          @blur="show_his_search_list = false"
+          
         />
         <div class="his_search_list" v-show="show_his_search_list">
           <div
@@ -729,7 +729,7 @@ export default {
     },
     //搜尋點擊已有的專案
     his_search_choosen() {
-      console.log("koko");
+      console.log("搜尋點擊已有的專案");
       this.show_his_search_list = false;
       this.search_project = history.name;
       //還要做點到專案的功能
