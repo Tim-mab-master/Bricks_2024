@@ -171,7 +171,7 @@ export default {
   top: 20px;
   margin-bottom: 20px;
   left: 10%;
-  width: calc(100vw - 200px);
+  width: calc(100vw - 200px - 15%);
   /* background-color: #F2F3F5; */
   /* width:200px;  */
   /* right:0; */

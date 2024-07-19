@@ -12,6 +12,7 @@
           @keyup="keyboardEvent"
           
         />
+        <!-- show_his_search_list是壞分子，讓his_search_choosen -->
         <div class="his_search_list" v-show="show_his_search_list">
           <div
             v-for="(history, index) in this.projects
@@ -20,7 +21,7 @@
               .slice(0, 6)"
             :key="index"
             class="add_history_search"
-            @click="his_search_choosen"
+            @click="his_search_choosen()"
           >
             {{ history }}
           </div>
@@ -32,6 +33,7 @@
             :class="autoComplete ? '' : 'd-none'"
           >
             <!--     控制按鈕事件的選取背景 -->
+            <!-- 搜尋專案點擊 -->
             <li
               class="searchHover p-2 w-100"
               v-for="(item, index) in filterProjects"
@@ -155,7 +157,12 @@
       <div class="proj_info_pic">
         <img src="../assets/add_proj_pic_plus.svg" class="proj_info_pic_plus" />
       </div>
-      <input type="text" class="proj_info_name" v-model="proj_info_title" />
+      <input
+        type="text"
+        class="proj_info_name"
+        v-model="proj_info_title"
+        disabled="disabled"
+      />
       <input type="text" class="proj_info_type" v-model="proj_info_type" />
       <!-- {{ proj_info_type }} -->
 
@@ -163,6 +170,15 @@
     </div>
     <div class="main_body">
       <div class="bg">
+        <div class="warning">
+          <Transition name="errorIn">
+            <el-alert
+              v-if="alertEnterName"
+              title="請輸入專案名稱"
+              type="error"
+              show-icon
+          /></Transition>
+        </div>
         <!-- 背景透明灰色 -->
         <div class="overlay" v-if="showOverlay"></div>
         <div class="middle">
@@ -174,11 +190,12 @@
               <div class="box_container">
                 <div
                   class="box"
-                  v-for="(proj_name, index) in uncategorized_projs"
+                  v-for="(element, index) in uncategorized_projs"
                   :key="index"
                   @contextmenu.prevent="right_click_box"
+                  @click="proj_info_uncatagorized(element)"
                 >
-                  {{ proj_name }}
+                  {{ element.project_name }}
                 </div>
               </div>
             </div>
@@ -298,13 +315,14 @@
               <div class="box_container">
                 <div
                   class="box"
-                  v-for="(proj_name, index) in uncategorized_projs"
+                  v-for="(element, index) in ended_uncategorized_projs"
                   :key="index"
                   @contextmenu.prevent="
                     showRightClickBox($event, index1, index2)
                   "
+                  @click="proj_info_uncatagorized(element)"
                 >
-                  {{ proj_name }}
+                  {{ element.project_name }}
                 </div>
               </div>
             </div>
@@ -344,6 +362,7 @@
                     @contextmenu.prevent="
                       showRightClickBox($event, index1, index2)
                     "
+                    @click="ended_proj_info(index1, index2)"
                   >
                     {{ proj_name }}
                   </div> -->
@@ -503,11 +522,7 @@ import store from "../store/store.js";
 
 export default {
   name: "Personal_homepage",
-  // props: {
-  //   authorization: {
-  //     type: String,
-  //   },
-  // },
+
   data() {
     return {
       middle_show_overview_page: true,
@@ -520,6 +535,8 @@ export default {
       carts: [],
       //已結束專案的cart
       ended_carts: [],
+      ended_types: [],
+
       cart_titles: "",
       cart_title_input: "",
       selectOption: "option1",
@@ -532,7 +549,16 @@ export default {
       add_proj_type_text: "",
       add_proj_name: "",
       add_search: "",
+
+      //新增專案時未輸入名稱警告
+      alertEnterName: false,
+
+      // 所有專案(用在搜尋專案)
+      all_proj: [],
+
       uncategorized_projs: [],
+      ended_uncategorized_projs: [],
+
       //已結束專案的
       ended_projs: [],
       cart_box_name_list: [],
@@ -577,6 +603,7 @@ export default {
       project_info_show: false,
       proj_info_title: "",
       proj_info_type: "",
+      proj_info_id: 0,
       router: useRouter(),
       store: useStore(),
     };
@@ -584,9 +611,9 @@ export default {
   methods: {
     // 點擊上角新增專案
     add_btn() {
-      console.log("按下新增專案");
+      // console.log("按下新增專案");
       // let au = this.route.query.authorization;
-      console.log(this.$route.params.authorization);
+      // console.log(this.$route.params.authorization);
       this.add_proj_show = this.add_proj_show === false ? true : false;
       this.showOverlay = !this.showOverlay;
       this.proj_type = "選擇專案類型";
@@ -606,95 +633,115 @@ export default {
       this.proj_type_color = "#b6aeae";
       this.add_proj_type_text = "";
     },
+
     // 新增專案彈窗裡點擊建立專案
     new_project_btn() {
-      this.add_proj_show = this.add_proj_show === false ? true : false;
-      this.showOverlay = false;
-      this.middle_show_overview_page = true;
-      this.middle_show_over_page = false;
-      this.middle_show_trash_page = false;
-      this.selectOption = "option1";
-      this.show_add_proj_type_list = false;
-      this.proj_type_color = "#b6aeae";
-      const path = "http://35.201.168.185:5000/add_project";
-      const add_new_project = {
-        project_type: [this.proj_type],
-        project_image: this.project_image,
-        project_name: this.add_proj_name,
-        project_trashcan: true,
-        project_ended: true,
-        project_isEdit: false,
-        project_isVisible: false,
-        project_isComment: false,
-      };
-      console.log("add_new_project:", add_new_project);
-
-      axios
-        .post(path, add_new_project, {
-          headers: { authorization: JSON.parse(localStorage.getItem("auth")) },
-          timeout: 5000,
-        })
-        .then((res) => {
-          console.log("Response Data:", res.data);
-          this.token = res.data;
-          this.decode_token_json.status = this.decodeToken(this.token);
-          if (this.decode_token_json.status == "success") {
-            console.log("成功新增專案");
-            const list = this.decode_token_json.items;
-            console.log(list.message);
-          }
-        })
-        .catch((error) => {
-          console.error("Error: ", error);
-        });
+      //確認新增專案的名稱不是空值
       if (this.add_proj_name !== "") {
-        if (this.proj_type === "選擇專案類型" || this.proj_type === "未分類") {
-          //歸類未分類
-          this.uncategorized_projs.push(this.add_proj_name);
-          this.add_proj_name = "";
-        } else if (
-          this.add_proj_type_options.includes(this.proj_type) === true
-        ) {
-          this.carts[
-            this.add_proj_type_options.indexOf(this.proj_type)
-          ].project_box.push(this.add_proj_name);
-          this.add_proj_name = "";
-        } else if (
-          this.add_proj_type_options.includes(this.proj_type) === false
-        ) {
-          const new_cart = {
-            title_word: this.proj_type,
-            project_box: [this.add_proj_name],
-          };
-          this.carts.push(new_cart);
-          this.add_proj_type_options.push(new_cart.title_word);
-
-          const path = "http://35.201.168.185:5000/add_type";
-          const add_type = {
-            project_ended: false,
-            project_type: "this.proj_type",
-          };
-          axios
-            .post(path, add_type, {
-              headers: {
-                authorization: JSON.parse(localStorage.getItem("auth")),
-              },
-            })
-            .then((res) => {
-              this.token = res.data;
-              this.decode_token_json = this.decodeToken(this.token);
-
-              if (this.decode_token_json.status == "success") {
-                console.log("新增類型成功");
-                if (this.user_id === this.decode_token_json.user_id) {
-                  console.log(this.decode_token_json.proj_name);
-                }
-              }
-            });
+        if (this.proj_type === "選擇專案類型") {
+          this.proj_type = "未分類";
         }
+        this.add_proj_show = this.add_proj_show === false ? true : false;
+        this.showOverlay = false;
+        this.middle_show_overview_page = true;
+        this.middle_show_over_page = false;
+        this.middle_show_trash_page = false;
+        this.selectOption = "option1";
+        this.show_add_proj_type_list = false;
+        this.proj_type_color = "#b6aeae";
+        const path = "http://35.201.168.185:5000/add_project";
+        const add_new_project = {
+          project_type: this.proj_type,
+          project_image: this.project_image,
+          project_name: this.add_proj_name,
+          project_trashcan: false,
+          project_ended: false,
+          project_isEdit: false,
+          project_isVisible: false,
+          project_isComment: false,
+        };
+
+        axios
+          .post(path, add_new_project, {
+            headers: {
+              authorization: JSON.parse(localStorage.getItem("auth")),
+            },
+            timeout: 5000,
+          })
+          .then((res) => {
+            this.token = res.data;
+            this.decode_token_json.status = this.decodeToken(this.token);
+            if (this.decode_token_json.status == "success") {
+              const list = this.decode_token_json.items;
+              console.log(list.message);
+            }
+          })
+          .catch((error) => {
+            console.error("Error: ", error);
+          });
+        if (this.add_proj_name !== "") {
+          if (
+            this.proj_type === "選擇專案類型" ||
+            this.proj_type === "未分類"
+          ) {
+            //歸類未分類
+            this.uncategorized_projs.push(this.add_proj_name);
+            this.add_proj_name = "";
+          } else if (
+            this.add_proj_type_options.includes(this.proj_type) === true
+          ) {
+            this.carts[
+              this.add_proj_type_options.indexOf(this.proj_type)
+            ].project_box.push(this.add_proj_name);
+            this.add_proj_name = "";
+          } else if (
+            this.add_proj_type_options.includes(this.proj_type) === false
+          ) {
+            const new_cart = {
+              title_word: this.proj_type,
+              project_box: [this.add_proj_name],
+            };
+            this.carts.push(new_cart);
+            this.add_proj_type_options.push(new_cart.title_word);
+
+            const path = "http://35.201.168.185:5000/add_type";
+            const add_type = {
+              project_ended: false,
+              project_type: "this.proj_type",
+            };
+            axios
+              .post(path, add_type, {
+                headers: {
+                  authorization: JSON.parse(localStorage.getItem("auth")),
+                },
+              })
+              .then((res) => {
+                this.token = res.data;
+                this.decode_token_json = this.decodeToken(this.token);
+
+                if (this.decode_token_json.status == "success") {
+                  console.log("新增類型成功");
+                  if (this.user_id === this.decode_token_json.user_id) {
+                    console.log(this.decode_token_json.proj_name);
+                  }
+                }
+              });
+          }
+        }
+        this.add_proj_type_text = "";
+        setTimeout(() => {
+          this.$router.go(0);
+        }, 500);
+      } else {
+        this.add_proj_show = false;
+        this.showOverlay = !this.showOverlay;
+        this.alertEnterName = true;
+        setTimeout(() => {
+          this.alertEnterName = false;
+        }, 1500);
       }
-      this.add_proj_type_text = "";
     },
+
     // 左邊總攬、已結束、垃圾桶切換
     change(index) {
       if (index === 1) {
@@ -755,7 +802,12 @@ export default {
     },
     //搜尋點擊已有的專案
     his_search_choosen() {
+<<<<<<< HEAD
       console.log("搜尋點擊已有的專案");
+=======
+      alert("案到123131");
+      console.log("koko");
+>>>>>>> fae0a45fd7401f21fc9cd86c77337e44b1bfcc64
       this.show_his_search_list = false;
       this.search_project = history.name;
       //還要做點到專案的功能
@@ -794,19 +846,72 @@ export default {
       }
     },
 
-    //點擊進入專案
+    //點擊進入專案、觀看專案資訊718
     proj_info(index1, index2) {
       this.project_info_show = true;
-      this.proj_info_title = this.carts[index1].project_box[index2];
+      this.proj_info_title = this.carts[index1].project_box[index2].proj_name;
       this.proj_info_type = "類型: " + this.carts[index1].title_word;
-      console.log(this.proj_info_type);
-      // this.$router.push({ name: "all" });
+      this.all_proj.forEach((project) => {
+        if (this.carts[index1].title_word === project.project_type) {
+          if (
+            this.carts[index1].project_box[index2].proj_name ===
+            project.project_name
+          ) {
+            console.log(project.id);
+            this.proj_info_id = project.id;
+            this.proj_info_title = project.project_name;
+            // this.proj_info_title = project.project_type;
+          }
+        }
+      });
+    },
+
+    //點擊進入專案、觀看專案資訊718/719
+    ended_proj_info(index1, index2) {
+      this.project_info_show = true;
+      this.proj_info_type = "類型: " + this.ended_carts[index1].title_word;
+      this.all_proj.forEach((project) => {
+        if (this.ended_carts[index1].title_word === project.project_type) {
+          this.proj_info_title = this.ended_carts[index1].project_box[index2];
+
+          console.log(this.ended_carts[index1].project_box[index2]);
+          if (
+            this.ended_carts[index1].project_box[index2] ===
+            project.project_name
+          ) {
+            this.proj_info_id = project.id;
+            // this.proj_info_title = project.project_name;
+            // this.proj_info_type = project.project_type;
+          }
+        }
+      });
+    },
+
+    //給未分類區塊內的proj寫的專案資訊點擊
+    proj_info_uncatagorized(element) {
+      this.project_info_show = true;
+      this.proj_info_title = element.project_name;
+      this.proj_info_type = "類型: " + element.project_type;
+      this.proj_info_id = element.id;
+    },
+
+    //點擊搜尋專案的結果、透過搜尋專案開啟專案資訊
+    proj_info_through_searching(proj_num) {
+      alert(proj_num);
+      // this.project_info_show = true;
+
+      // this.proj_info_title = this.carts[index1].project_box[index2].proj_name;
+      // this.proj_info_type = "類型: " + this.carts[index1].title_word;
+      // console.log(this.proj_info_type);
     },
 
     //在proj_info裡面點擊進入專案
     enter_project_btn() {
-      this.store.commit("records/setProjectID", this.project_id);
+      this.store.commit("records/setProjectID", this.proj_info_id);
       this.router.push({ name: "all" });
+      //測試印出project/id
+      alert(this.store.getters["records/getProjectID"]);
+      alert(this.proj_info_id);
     },
 
     close_proj_info() {
@@ -870,6 +975,7 @@ export default {
     //     this.trash_boxes.push(trash_box);
     // },
 
+    //刪除專案、已結束專案
     showRightClickBox(event, cartIndex, projectIndex, project_id) {
       this.right_click_box_overview_show = true;
       const cartElement = this.$refs["cart_" + cartIndex][projectIndex];
@@ -1040,6 +1146,7 @@ export default {
       //  let au = this.$route.params.authorization;
       project_status: "normal",
     };
+<<<<<<< HEAD
     axios.post(path, get_proj).then((res) => {
       if (res.data.status == "success") {
         const items = res.data.items;
@@ -1062,11 +1169,34 @@ export default {
             this.add_proj_type_options.push(new_cart.title_word);
           }
 
+=======
+    axios
+      .post(path, get_proj, {
+        headers: { authorization: JSON.parse(localStorage.getItem("auth")) },
+      })
+      .then((res) => {
+        if (res.data.status == "success") {
+          const items = res.data.items;
+          items.forEach((element) => {
+            this.proj_type = element.project_type;
+            this.proj_name = element.project_name;
+            this.project_id = parseInt(element.id);
+            // console.log(element);
+            this.all_proj.push(element);
+            // 7/15從這裡改，把projectsAll改成儲存專案，而非專案名稱
+>>>>>>> fae0a45fd7401f21fc9cd86c77337e44b1bfcc64
             if (this.projectsAll) {
+              console.log("名稱" + this.proj_name);
               this.projectsAll.push(this.proj_name);
             }
-            //沒有這個類別才顯示顯示專案
-            if (this.add_proj_type_options.includes(this.proj_type) === false) {
+            if (this.proj_type === "未分類") {
+              this.uncategorized_projs.push(element);
+            }
+            //沒有這個類別才顯示專案
+            if (
+              this.add_proj_type_options.includes(this.proj_type) === false &&
+              this.proj_type !== "未分類"
+            ) {
               const new_cart = {
                 title_word: this.proj_type,
                 project_box: [this.proj_name],
@@ -1074,7 +1204,6 @@ export default {
               };
               this.carts.push(new_cart);
               this.add_proj_type_options.push(new_cart.title_word);
-              console.log("this.cart", this.cart);
             }
 
             let existingCart = this.carts.find(
@@ -1087,7 +1216,7 @@ export default {
                 proj_name: this.proj_name,
                 project_id: this.proj_id,
               });
-            } else {
+            } else if (this.proj_type !== "未分類") {
               // 如果不存在，則創建新的 cart 並推入 carts 陣列
               const new_cart = {
                 title_word: this.proj_type,
@@ -1108,6 +1237,7 @@ export default {
     const get_proj_end = {
       project_status: "ended",
     };
+<<<<<<< HEAD
     axios.post(path_end, get_proj_end).then((res) => {
   if (res.data.status === "success") {
     const items = res.data.items;
@@ -1144,10 +1274,47 @@ export default {
 });
 
     const path_trash = "http://34.81.219.139:5000/project_index";
+=======
+    axios
+      .post(path_end, get_proj_end, {
+        headers: { authorization: JSON.parse(localStorage.getItem("auth")) },
+      })
+      .then((res) => {
+        this.ended_carts = [];
+        console.log("ended pr");
+        if (res.data.status == "success") {
+          const items = res.data.items;
+          items.forEach((element) => {
+            this.proj_type = element.project_type;
+            this.proj_name = element.project_name;
+            this.project_id = parseInt(element.id);
+            this.all_proj.push(element);
+            this.ended_types.push(this.proj_type);
+            if (this.proj_type === "未分類") {
+              this.ended_uncategorized_projs.push(element);
+            } else {
+              const new_cart = {
+                title_word: this.proj_type,
+                project_box: [this.proj_name],
+              };
+              //搜尋已結束加正在進行
+              this.projectsAll.push(this.proj_name);
+              this.ended_carts.push(new_cart);
+            }
+          });
+        }
+      });
+    console.log("類型");
+    console.log(this.ended_types);
+
+    // 垃圾桶
+    const path_trash = "http://35.201.168.185:5000/project_index";
+>>>>>>> fae0a45fd7401f21fc9cd86c77337e44b1bfcc64
     const get_proj_trash = {
       user_id: 44,
       project_status: "trashcan",
     };
+<<<<<<< HEAD
     axios.post(path_trash, get_proj_trash).then((res) => {
       if (res.data.status == "success") {
         const items_in_month = res.data.item.in_month;
@@ -1168,6 +1335,36 @@ export default {
         });
       }
     });
+=======
+    axios
+      .post(path_trash, get_proj_trash, {
+        headers: { authorization: JSON.parse(localStorage.getItem("auth")) },
+      })
+      .then((res) => {
+        if (res.data.status == "success") {
+          const items_in_month = res.data.item.in_month;
+          console.log(items_in_month);
+          items_in_month.forEach((element) => {
+            this.proj_type = element.project_type;
+            this.proj_name = element.project_name;
+            this.all_proj.push(element);
+            if (this.projectsAll) {
+              this.projectsAll.push(this.proj_name);
+            }
+            const new_cart = {
+              title_word: this.proj_type,
+              proj_box: [this.proj_name],
+            };
+            //搜尋已結束加正在進行
+            this.projectsAll.push(this.proj_name);
+            // this.ended_carts.push(new_cart);
+            //  else {
+            //   // 這裡寫未分類
+            // }
+          });
+        }
+      });
+>>>>>>> fae0a45fd7401f21fc9cd86c77337e44b1bfcc64
   },
   beforeUnmount() {
     window.removeEventListener("click", this.handleClickOutside);
@@ -1908,6 +2105,41 @@ export default {
   background-image: url(../assets/bricks_bg_small.svg);
   overflow-x: auto;
   overflow-y: hidden;
+}
+
+.warning {
+  /* border: 2px solid black; */
+  width: 400px;
+  height: auto;
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  bottom: 58px;
+  right: 10px;
+  font-family: "Noto Sans TC";
+  z-index: 999;
+}
+.warning .el-alert {
+  border-radius: 10px;
+  margin: 14px 0 0;
+  height: 60px;
+  padding-left: 10px;
+  width: 100%;
+}
+
+.el-icon {
+  width: 50px;
+}
+
+:deep(.el-alert__title) {
+  font-size: 18px;
+}
+
+.errorIn-enter-active {
+  transition: opacity 0.5s ease;
+}
+.errorIn-enter-from {
+  opacity: 0;
 }
 
 .middle {

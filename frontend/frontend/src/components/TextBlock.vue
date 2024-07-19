@@ -19,6 +19,7 @@
             v-model="textValue"
             :disabled="isCartDisabled"
           ></resize-textarea>
+          <!-- 顯示鎖定、刪除文字區塊按鈕 -->
           <el-button class="edit_textButton" @click="show"
             ><el-icon><MoreFilled /></el-icon
           ></el-button>
@@ -78,7 +79,7 @@
       id="rightClick"
       ref="rightClick"
       @click="unShow()"
-      @blur="unShow"
+      @blur="unshowEditing()"
     >
       <EditTextara @locked="isLocked" @delete="deleteCart" />
     </div>
@@ -86,8 +87,8 @@
       v-if="isUnlockShowed"
       id="rightClick"
       ref="rightClick"
-      @click="unShow()"
-      @blur="unShow"
+      @click="show()"
+      @blur="unshowEditing()"
     >
       <Unlock @unlocked="unlocked" />
     </div>
@@ -96,8 +97,15 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, nextTick, computed, defineEmits } from "vue";
-import { useEmit } from '@vueuse/core'
+import {
+  ref,
+  onMounted,
+  onUnmounted,
+  nextTick,
+  computed,
+  defineEmits,
+} from "vue";
+import { useEmit } from "@vueuse/core";
 import EditTextara from "./EditTextara.vue";
 import Unlock from "./Unlock.vue";
 
@@ -108,7 +116,7 @@ const props = defineProps({
   content: String,
 });
 
-const emit = defineEmits(["add_cart", 'deleteCart']);
+const emit = defineEmits(["add_cart", "deleteCart"]);
 
 const textValue = computed(() => props.content);
 const isUnlockShowed = ref(props.isUnlockShowed);
@@ -187,17 +195,17 @@ const handleInputConfirm = () => {
 };
 
 const edit_textArea = () => {};
+
 const show = () => {
-  if (isCartDisabled) {
-    isShowed.value = true;
-  } else {
-    isUnlockShowed.value = true;
-  }
+  isShowed.value = true;
+  isUnlockShowed.value = false;
+  isCartDisabled.value = false;
 };
 
 const unShow = () => {
-  isUnlockShowed.value = false;
+  isUnlockShowed.value = true;
   isShowed.value = false;
+  isCartDisabled.value = true;
 };
 
 const isLocked = () => {
@@ -206,6 +214,13 @@ const isLocked = () => {
 
 const unlocked = () => {
   isCartDisabled.value = false;
+};
+
+// 點擊其他位置，不顯示鎖定編輯以及刪除文字區塊
+const unshowEditing = () => {
+  alert("按下其他地方");
+  isUnlockShowed = false;
+  isShowed = false;
 };
 
 const handleClickOutside = (event) => {
@@ -233,7 +248,6 @@ onUnmounted(() => {
   document.removeEventListener("click", handleClickOutside);
 });
 </script>
-
 
 <style scoped>
 .show-enter-active,
@@ -312,6 +326,7 @@ onUnmounted(() => {
 .tag {
   margin: 2px;
   margin-right: 4px;
+  margin-bottom: 6px;
 }
 .ml-1 {
   width: 60px;
