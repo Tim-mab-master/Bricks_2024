@@ -12,6 +12,7 @@
           @keyup="keyboardEvent"
           @blur="show_his_search_list = false"
         />
+        <!-- show_his_search_list是壞分子，讓his_search_choosen -->
         <div class="his_search_list" v-show="show_his_search_list">
           <div
             v-for="(history, index) in this.projects
@@ -319,6 +320,7 @@
                   @contextmenu.prevent="
                     showRightClickBox($event, index1, index2)
                   "
+                  @click="proj_info_uncatagorized(element)"
                 >
                   {{ element.project_name }}
                 </div>
@@ -345,6 +347,7 @@
                     @contextmenu.prevent="
                       showRightClickBox($event, index1, index2)
                     "
+                    @click="ended_proj_info(index1, index2)"
                   >
                     {{ proj_name }}
                   </div>
@@ -518,6 +521,8 @@ export default {
       carts: [],
       //已結束專案的cart
       ended_carts: [],
+      ended_types: [],
+
       cart_titles: "",
       cart_title_input: "",
       selectOption: "option1",
@@ -592,9 +597,9 @@ export default {
   methods: {
     // 點擊上角新增專案
     add_btn() {
-      console.log("按下新增專案");
+      // console.log("按下新增專案");
       // let au = this.route.query.authorization;
-      console.log(this.$route.params.authorization);
+      // console.log(this.$route.params.authorization);
       this.add_proj_show = this.add_proj_show === false ? true : false;
       this.showOverlay = !this.showOverlay;
       this.proj_type = "選擇專案類型";
@@ -620,7 +625,6 @@ export default {
       //確認新增專案的名稱不是空值
       if (this.add_proj_name !== "") {
         if (this.proj_type === "選擇專案類型") {
-          console.log("選擇");
           this.proj_type = "未分類";
         }
         this.add_proj_show = this.add_proj_show === false ? true : false;
@@ -642,7 +646,6 @@ export default {
           project_isVisible: false,
           project_isComment: false,
         };
-        console.log("add_new_project:", add_new_project);
 
         axios
           .post(path, add_new_project, {
@@ -652,11 +655,9 @@ export default {
             timeout: 5000,
           })
           .then((res) => {
-            console.log("Response Data:", res.data);
             this.token = res.data;
             this.decode_token_json.status = this.decodeToken(this.token);
             if (this.decode_token_json.status == "success") {
-              console.log("成功新增專案");
               const list = this.decode_token_json.items;
               console.log(list.message);
             }
@@ -714,9 +715,7 @@ export default {
           }
         }
         this.add_proj_type_text = "";
-        console.log("等等");
         setTimeout(() => {
-          console.log("等一下");
           this.$router.go(0);
         }, 500);
       } else {
@@ -831,7 +830,6 @@ export default {
 
     //點擊進入專案、觀看專案資訊718
     proj_info(index1, index2) {
-      alert("點擊資訊");
       this.project_info_show = true;
       this.proj_info_title = this.carts[index1].project_box[index2].proj_name;
       this.proj_info_type = "類型: " + this.carts[index1].title_word;
@@ -843,6 +841,29 @@ export default {
           ) {
             console.log(project.id);
             this.proj_info_id = project.id;
+            this.proj_info_title = project.project_name;
+            // this.proj_info_title = project.project_type;
+          }
+        }
+      });
+    },
+
+    //點擊進入專案、觀看專案資訊718/719
+    ended_proj_info(index1, index2) {
+      this.project_info_show = true;
+      this.proj_info_type = "類型: " + this.ended_carts[index1].title_word;
+      this.all_proj.forEach((project) => {
+        if (this.ended_carts[index1].title_word === project.project_type) {
+          this.proj_info_title = this.ended_carts[index1].project_box[index2];
+
+          console.log(this.ended_carts[index1].project_box[index2]);
+          if (
+            this.ended_carts[index1].project_box[index2] ===
+            project.project_name
+          ) {
+            this.proj_info_id = project.id;
+            // this.proj_info_title = project.project_name;
+            // this.proj_info_type = project.project_type;
           }
         }
       });
@@ -850,8 +871,6 @@ export default {
 
     //給未分類區塊內的proj寫的專案資訊點擊
     proj_info_uncatagorized(element) {
-      console.log("ele");
-      console.log(element);
       this.project_info_show = true;
       this.proj_info_title = element.project_name;
       this.proj_info_type = "類型: " + element.project_type;
@@ -938,6 +957,7 @@ export default {
     //     this.trash_boxes.push(trash_box);
     // },
 
+    //刪除專案、已結束專案
     showRightClickBox(event, cartIndex, projectIndex, project_id) {
       this.right_click_box_overview_show = true;
       const cartElement = this.$refs["cart_" + cartIndex][projectIndex];
@@ -1119,17 +1139,15 @@ export default {
             this.proj_type = element.project_type;
             this.proj_name = element.project_name;
             this.project_id = parseInt(element.id);
-            console.log(element);
             // console.log(element);
             this.all_proj.push(element);
             // 7/15從這裡改，把projectsAll改成儲存專案，而非專案名稱
             if (this.projectsAll) {
+              console.log("名稱" + this.proj_name);
               this.projectsAll.push(this.proj_name);
             }
             if (this.proj_type === "未分類") {
               this.uncategorized_projs.push(element);
-              console.log("未分類");
-              console.log(element);
             }
             //沒有這個類別才顯示專案
             if (
@@ -1143,7 +1161,6 @@ export default {
               };
               this.carts.push(new_cart);
               this.add_proj_type_options.push(new_cart.title_word);
-              console.log("this.cart", this.carts);
             }
 
             let existingCart = this.carts.find(
@@ -1184,7 +1201,6 @@ export default {
       .then((res) => {
         this.ended_carts = [];
         console.log("ended pr");
-        console.log(res);
         if (res.data.status == "success") {
           const items = res.data.items;
           items.forEach((element) => {
@@ -1192,6 +1208,7 @@ export default {
             this.proj_name = element.project_name;
             this.project_id = parseInt(element.id);
             this.all_proj.push(element);
+            this.ended_types.push(this.proj_type);
             if (this.proj_type === "未分類") {
               this.ended_uncategorized_projs.push(element);
             } else {
@@ -1202,11 +1219,14 @@ export default {
               //搜尋已結束加正在進行
               this.projectsAll.push(this.proj_name);
               this.ended_carts.push(new_cart);
-              console.log("new cart");
             }
           });
         }
       });
+    console.log("類型");
+    console.log(this.ended_types);
+
+    // 垃圾桶
     const path_trash = "http://35.201.168.185:5000/project_index";
     const get_proj_trash = {
       project_status: "trashcan",
