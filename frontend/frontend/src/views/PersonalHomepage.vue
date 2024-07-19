@@ -96,7 +96,11 @@
     <div class="add_proj_box" v-show="add_proj_show">
       <div
         class="close_add_proj_box"
-        @click="add_btn();close_add_proj();"></div>
+        @click="
+          add_btn();
+          close_add_proj();
+        "
+      ></div>
       <p class="add_proj_title">新增專案</p>
       <div class="add_proj_pic">
         <img src="../assets/add_proj_pic_plus.svg" class="add_proj_pic_plus" />
@@ -179,11 +183,7 @@
               </div>
             </div>
             <div v-for="(cart, index1) in carts" :key="index1">
-              <div
-                class="cart"
-                :ref="'cart_' + index1"
-                :data-index="index1"
-                >
+              <div class="cart" :ref="'cart_' + index1" :data-index="index1">
                 <!-- @contextmenu.prevent="showRightClickBox($event, index1)" -->
                 <p class="cart_title" style="height: 0px">
                   {{ cart.title_word }}
@@ -195,15 +195,27 @@
                 />
                 <div class="title_underline"></div>
                 <div class="box_container">
-                  <div class="box" 
-                    v-for="(project, index2) in cart.project_box" 
-                    :key="index2" 
-                    @contextmenu.prevent="showRightClickBox($event, index1, index2, project.project_id)" 
-                    @click="proj_info(index1, index2)">
-                  {{ index1 }} <!-- index1: cart 的索引 -->
-                  {{ project.project_id }} <!-- project_id: 專案 ID -->
-                  {{ project.proj_name }} <!-- proj_name: 專案名稱 -->
-                </div>
+                  <div
+                    class="box"
+                    v-for="(project, index2) in cart.project_box"
+                    :key="index2"
+                    @contextmenu.prevent="
+                      showRightClickBox(
+                        $event,
+                        index1,
+                        index2,
+                        project.project_id
+                      )
+                    "
+                    @click="proj_info(index1, index2)"
+                  >
+                    {{ index1 }}
+                    <!-- index1: cart 的索引 -->
+                    {{ project.project_id }}
+                    <!-- project_id: 專案 ID -->
+                    {{ project.proj_name }}
+                    <!-- proj_name: 專案名稱 -->
+                  </div>
                 </div>
               </div>
             </div>
@@ -297,11 +309,7 @@
               </div>
             </div>
             <div v-for="(cart, index1) in ended_carts" :key="index1">
-              <div
-                class="cart"
-                :ref="'cart_' + index1"
-                :data-index="index1"
-                >
+              <div class="cart" :ref="'cart_' + index1" :data-index="index1">
                 <!-- @contextmenu.prevent="showRightClickBox($event, index1)" -->
                 <p class="cart_title" style="height: 0px">
                   {{ cart.title_word }}
@@ -333,7 +341,9 @@
                     v-for="(proj_name, index2) in ended_carts[index1]
                       .project_box"
                     :key="index2"
-                    @contextmenu.prevent="showRightClickBox($event, index1, index2)"
+                    @contextmenu.prevent="
+                      showRightClickBox($event, index1, index2)
+                    "
                   >
                     {{ proj_name }}
                   </div> -->
@@ -484,12 +494,20 @@
 </template>
 
 <script>
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
 import axios from "axios";
 import { Base64 } from "js-base64";
-// import { useRoute } from "vue-router";
+import { useRoute } from "vue-router";
+import store from "../store/store.js";
+
 export default {
   name: "Personal_homepage",
-
+  // props: {
+  //   authorization: {
+  //     type: String,
+  //   },
+  // },
   data() {
     return {
       middle_show_overview_page: true,
@@ -559,11 +577,12 @@ export default {
       project_info_show: false,
       proj_info_title: "",
       proj_info_type: "",
+      router: useRouter(),
+      store: useStore(),
     };
   },
   methods: {
     // 點擊上角新增專案
-
     add_btn() {
       console.log("按下新增專案");
       // let au = this.route.query.authorization;
@@ -597,7 +616,7 @@ export default {
       this.selectOption = "option1";
       this.show_add_proj_type_list = false;
       this.proj_type_color = "#b6aeae";
-      const path = "http://34.81.219.139:5000/add_project";
+      const path = "http://35.201.168.185:5000/add_project";
       const add_new_project = {
         project_type: [this.proj_type],
         project_image: this.project_image,
@@ -607,12 +626,14 @@ export default {
         project_isEdit: false,
         project_isVisible: false,
         project_isComment: false,
-        user_id: this.user_id,
       };
       console.log("add_new_project:", add_new_project);
 
       axios
-        .post(path, add_new_project, { timeout: 5000 })
+        .post(path, add_new_project, {
+          headers: { authorization: JSON.parse(localStorage.getItem("auth")) },
+          timeout: 5000,
+        })
         .then((res) => {
           console.log("Response Data:", res.data);
           this.token = res.data;
@@ -648,23 +669,28 @@ export default {
           this.carts.push(new_cart);
           this.add_proj_type_options.push(new_cart.title_word);
 
-          const path = "http://34.81.186.58:5000/add_type";
+          const path = "http://35.201.168.185:5000/add_type";
           const add_type = {
-            user_id: this.user_id,
             project_ended: false,
             project_type: "this.proj_type",
           };
-          axios.post(path, add_type).then((res) => {
-            this.token = res.data;
-            this.decode_token_json = this.decodeToken(this.token);
+          axios
+            .post(path, add_type, {
+              headers: {
+                authorization: JSON.parse(localStorage.getItem("auth")),
+              },
+            })
+            .then((res) => {
+              this.token = res.data;
+              this.decode_token_json = this.decodeToken(this.token);
 
-            if (this.decode_token_json.status == "success") {
-              console.log("新增類型成功");
-              if (this.user_id === this.decode_token_json.user_id) {
-                console.log(this.decode_token_json.proj_name);
+              if (this.decode_token_json.status == "success") {
+                console.log("新增類型成功");
+                if (this.user_id === this.decode_token_json.user_id) {
+                  console.log(this.decode_token_json.proj_name);
+                }
               }
-            }
-          });
+            });
         }
       }
       this.add_proj_type_text = "";
@@ -751,15 +777,20 @@ export default {
         this.proj_type_color = "black";
         this.add_proj_type_text = "";
 
-        const path = "http://34.81.219.139:5000/add_type";
+        const path = "http://35.201.168.185:5000/add_type";
         const insert_type = {
-          user_id: 1,
           project_ended: false,
           project_type: "課業＿高中",
         };
-        axios.post(path, insert_type).then((res) => {
-          console.log(res);
-        });
+        axios
+          .post(path, insert_type, {
+            headers: {
+              authorization: JSON.parse(localStorage.getItem("auth")),
+            },
+          })
+          .then((res) => {
+            console.log(res);
+          });
       }
     },
 
@@ -774,7 +805,8 @@ export default {
 
     //在proj_info裡面點擊進入專案
     enter_project_btn() {
-      // this.$router.push({ name: "all" });
+      this.store.commit("records/setProjectID", this.project_id);
+      this.router.push({ name: "all" });
     },
 
     close_proj_info() {
@@ -813,18 +845,22 @@ export default {
       this.search_project = "";
     },
     search_bar() {
-      const path = "http://34.81.219.139:5000/search_history";
-      const search_bar = {
-        user_id: this.user_id,
-      };
-      axios.post(path, search_bar).then((res) => {
-        this.token = res.data;
-        this.decode_token_json.status = this.decodeToken(this.token);
-        if (this.decode_token_json.status == "success") {
-          const list = this.decode_token_json.items;
-          this.his_search_list = list.search_content;
-        }
-      });
+      const path = "http://35.201.168.185:5000/search_history";
+      // const search_bar = {
+      //   user_id: this.user_id,
+      // };
+      axios
+        .post(path, {
+          headers: { authorization: JSON.parse(localStorage.getItem("auth")) },
+        })
+        .then((res) => {
+          this.token = res.data;
+          this.decode_token_json.status = this.decodeToken(this.token);
+          if (this.decode_token_json.status == "success") {
+            const list = this.decode_token_json.items;
+            this.his_search_list = list.search_content;
+          }
+        });
     },
     // 實驗用，點擊bricks logo後垃圾桶跑一個專案
     // test_btn(){
@@ -837,22 +873,21 @@ export default {
     showRightClickBox(event, cartIndex, projectIndex, project_id) {
       this.right_click_box_overview_show = true;
       const cartElement = this.$refs["cart_" + cartIndex][projectIndex];
-      console.log("cartIndex", cartIndex)
-      console.log("projectIndex", projectIndex)
-      console.log("project_id",project_id)
+      console.log("cartIndex", cartIndex);
+      console.log("projectIndex", projectIndex);
+      console.log("project_id", project_id);
 
       if (cartElement) {
         const cartRect = cartElement.getBoundingClientRect(); // cart 元素的邊界框
         console.log("Cart Rect:", cartRect);
 
-        this.mouseLeft = cartRect.left; 
-        this.mouseTop = cartRect.top; 
+        this.mouseLeft = cartRect.left;
+        this.mouseTop = cartRect.top;
         console.log("this.mousetop", this.mouseTop); //問題在這
 
         this.currentCartIndex = cartIndex;
         this.currentProjectIndex = projectIndex;
         //找project_id
-
       }
       // this.mouseTop = event.clientY;
       // this.mouseLeft = event.clientX;
@@ -865,9 +900,8 @@ export default {
     },
     //刪除後的專案跑到垃圾桶
     delete_project_ing() {
-      console.log("this.currentCartIndex", this.currentCartIndex);//第幾個cart
-      console.log("this.currentProjectIndex", this.currentProjectIndex);//cart的裡面第幾個projectp'
-      
+      console.log("this.currentCartIndex", this.currentCartIndex); //第幾個cart
+      console.log("this.currentProjectIndex", this.currentProjectIndex); //cart的裡面第幾個projectp'
 
       this.right_click_box_overview_show = false;
       this.delete_confirm = false;
@@ -877,16 +911,20 @@ export default {
         this.carts[this.currentCartIndex].project_box[this.currentProjectIndex]
           .project_id;
 
-      const path = "http://34.81.219.139:5000/to_trashcan";
+      const path = "http://35.201.168.185:5000/to_trashcan";
       const to_trash = {
         project_id: projectId,
       };
-      axios.post(path, to_trash).then((res) => {
-        if (res.data.status == "success") {
+      axios
+        .post(path, to_trash, {
+          headers: { authorization: JSON.parse(localStorage.getItem("auth")) },
+        })
+        .then((res) => {
           console.log("有連到了");
-          console.log("hello", res.data.message);
-        }
-      });
+          if (res.data.status == "success") {
+            console.log("hello", res.data.message);
+          }
+        });
 
       // // 获取要删除的项目名称
       // const deletedProject = this.carts[cartIndex].project_box[projIndex];
@@ -997,9 +1035,9 @@ export default {
   },
   mounted() {
     window.addEventListener("click", this.handleClickOutside);
-    const path = "http://34.81.219.139:5000/project_index";
+    const path = "http://35.201.168.185:5000/project_index";
     const get_proj = {
-      user_id: 44,
+      //  let au = this.$route.params.authorization;
       project_status: "normal",
     };
     axios.post(path, get_proj).then((res) => {
@@ -1024,33 +1062,50 @@ export default {
             this.add_proj_type_options.push(new_cart.title_word);
           }
 
-          let existingCart = this.carts.find(cart => cart.title_word === this.proj_type);
+            if (this.projectsAll) {
+              this.projectsAll.push(this.proj_name);
+            }
+            //沒有這個類別才顯示顯示專案
+            if (this.add_proj_type_options.includes(this.proj_type) === false) {
+              const new_cart = {
+                title_word: this.proj_type,
+                project_box: [this.proj_name],
+                project_id: this.project_id,
+              };
+              this.carts.push(new_cart);
+              this.add_proj_type_options.push(new_cart.title_word);
+              console.log("this.cart", this.cart);
+            }
 
-          if (existingCart) {
-            // 如果存在，則將新專案名稱和 ID 添加到現有的 project_box 中
-            existingCart.project_box.push({
-              proj_name: this.proj_name,
-              project_id: this.proj_id,
-            });
-          } else {
-            // 如果不存在，則創建新的 cart 並推入 carts 陣列
-            const new_cart = {
-              title_word: this.proj_type,
-              project_box: [{
+            let existingCart = this.carts.find(
+              (cart) => cart.title_word === this.proj_type
+            );
+
+            if (existingCart) {
+              // 如果存在，則將新專案名稱和 ID 添加到現有的 project_box 中
+              existingCart.project_box.push({
                 proj_name: this.proj_name,
                 project_id: this.proj_id,
-              }],
-            };
-            this.carts.push(new_cart);
-            this.add_proj_type_options.push(new_cart.title_word);
-          }
-
-        });
-      }
-    });
-    const path_end = "http://34.81.219.139:5000/project_index";
+              });
+            } else {
+              // 如果不存在，則創建新的 cart 並推入 carts 陣列
+              const new_cart = {
+                title_word: this.proj_type,
+                project_box: [
+                  {
+                    proj_name: this.proj_name,
+                    project_id: this.proj_id,
+                  },
+                ],
+              };
+              this.carts.push(new_cart);
+              this.add_proj_type_options.push(new_cart.title_word);
+            }
+          });
+        }
+      });
+    const path_end = "http://35.201.168.185:5000/project_index";
     const get_proj_end = {
-      user_id: 44,
       project_status: "ended",
     };
     axios.post(path_end, get_proj_end).then((res) => {

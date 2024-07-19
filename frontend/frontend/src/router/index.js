@@ -1,7 +1,9 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
+import { componentsPlugin } from "bootstrap-vue";
 // import Searching from "../views/Searching.vue";
 // import MeetingRecord from "../views/MeetingRecord.vue";
+import PersonalHomepage from "../views/PersonalHomepage.vue";
 
 const routes = [
   {
@@ -111,6 +113,32 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
+});
+
+router.beforeEach((to) => {
+  console.log("beforeEach");
+  // 登入頁（首頁）不用驗證
+  if (to.fullPath === "/homepage") return;
+  if (to.fullPath === "/login") return;
+  if (to.fullPath === "/register") return;
+  if (to.fullPath === "/questionnaire") return;
+
+  if (
+    JSON.parse(
+      localStorage.getItem("auth") === "no_login_yet" ||
+        localStorage.getItem("auth") === null
+    )
+  ) {
+    console.log("don't have auth");
+    return "/homepage";
+  } else {
+    console.log("have auth");
+    console.log(localStorage.getItem("auth"));
+    // return "/homepage";
+  }
+
+  // 驗證成功，可以放行
+  return true;
 });
 
 export default router;
