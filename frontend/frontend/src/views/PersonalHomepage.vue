@@ -365,15 +365,14 @@
                 <div class="box_container">
                   <div
                     class="box"
-                    v-for="(proj_name, index2) in ended_carts[index1]
-                      .project_box"
+                    v-for="(project, index2) in ended_carts[index1].project_box"
                     :key="index2"
                     @contextmenu.prevent="
                       showRightClickBox($event, index1, index2)
                     "
                     @click="ended_proj_info(index1, index2)"
                   >
-                    {{ proj_name }}
+                    {{ project.proj_name }}
                   </div>
                 </div>
               </div>
@@ -877,14 +876,13 @@ export default {
       this.proj_info_type = "類型: " + this.ended_carts[index1].title_word;
       this.all_proj.forEach((project) => {
         if (this.ended_carts[index1].title_word === project.project_type) {
-          this.proj_info_title = this.ended_carts[index1].project_box[index2];
-
-          console.log(this.ended_carts[index1].project_box[index2]);
+          console.log(project.project_type);
           if (
-            this.ended_carts[index1].project_box[index2] ===
+            this.ended_carts[index1].project_box[index2].proj_name ===
             project.project_name
           ) {
             this.proj_info_id = project.id;
+            this.proj_info_title = project.project_name;
             // this.proj_info_title = project.project_name;
             // this.proj_info_type = project.project_type;
           }
@@ -898,7 +896,6 @@ export default {
       this.proj_info_title = element.project_name;
       this.proj_info_type = "類型: " + element.project_type;
       this.proj_info_id = element.id;
-      console.log(element);
     },
 
     //點擊搜尋專案的結果、透過搜尋專案開啟專案資訊
@@ -1165,9 +1162,7 @@ export default {
             this.project_id = parseInt(element.id);
             // console.log(element);
             this.all_proj.push(element);
-            // 7/15從這裡改，把projectsAll改成儲存專案，而非專案名稱
             if (this.projectsAll) {
-              console.log("名稱" + this.proj_name);
               this.projectsAll.push(this.proj_name);
             }
             if (this.proj_type === "未分類") {
@@ -1214,8 +1209,6 @@ export default {
           });
         }
       });
-    console.log("carts");
-    console.log(this.carts);
 
     //已結束專案
     const path_end = "http://35.201.168.185:5000/project_index";
@@ -1234,17 +1227,35 @@ export default {
             this.proj_type = element.project_type;
             this.proj_name = element.project_name;
             this.project_id = parseInt(element.id);
+
+            //把所有專案蒐集起來的東西，跟這裡的顯示無關
             this.all_proj.push(element);
             this.ended_types.push(this.proj_type);
             if (this.proj_type === "未分類") {
               this.ended_uncategorized_projs.push(element);
-            } else {
+            }
+
+            //判斷這個類型的cart是否存在
+            let existingCart = this.ended_carts.find(
+              (cart) => cart.title_word === this.proj_type
+            );
+
+            //如果存在這個類型的cart
+            if (existingCart) {
+              existingCart.project_box.push({
+                proj_name: this.proj_name,
+                project_id: this.proj_id,
+              });
+            }
+            //如果不存在就開一個新的分類(cart)
+            else if (this.proj_type !== "未分類") {
               const new_cart = {
                 title_word: this.proj_type,
-                project_box: [this.proj_name],
+                project_box: [
+                  { proj_name: this.proj_name, project_id: this.proj_id },
+                ],
               };
-              console.log("名稱");
-              console.log(this.proj_name);
+
               //搜尋已結束加正在進行
               this.projectsAll.push(this.proj_name);
               this.ended_carts.push(new_cart);
