@@ -20,7 +20,7 @@
               .slice(0, 6)"
             :key="index"
             class="add_history_search"
-            @click="his_search_choosen()"
+            @click="his_search_choosen(history)"
           >
             {{ history }}
           </div>
@@ -716,7 +716,7 @@ export default {
             const path = "http://35.201.168.185:5000/add_type";
             const add_type = {
               project_ended: false,
-              project_type: "this.proj_type",
+              project_type: this.proj_type,
             };
             axios
               .post(path, add_type, {
@@ -810,12 +810,13 @@ export default {
       this.add_proj_type_text = "";
     },
     //搜尋點擊已有的專案
-    his_search_choosen() {
+    his_search_choosen(history) {
       console.log("搜尋點擊已有的專案");
       this.show_his_search_list = false;
       this.search_project = history.name;
       //還要做點到專案的功能
-      // 將被點擊的歷史內容設定為輸入框的值
+      // 透過專案名稱呼叫這個method，查詢專案id
+      this.proj_info_through_searching(history);
     },
 
     // 新增專案彈窗裡的選擇專案類型沒有選擇其中一個已有專案
@@ -899,13 +900,15 @@ export default {
     },
 
     //點擊搜尋專案的結果、透過搜尋專案開啟專案資訊
-    proj_info_through_searching(proj_num) {
-      alert(proj_num);
-      // this.project_info_show = true;
-
-      // this.proj_info_title = this.carts[index1].project_box[index2].proj_name;
-      // this.proj_info_type = "類型: " + this.carts[index1].title_word;
-      // console.log(this.proj_info_type);
+    proj_info_through_searching(history) {
+      this.project_info_show = true;
+      this.all_proj.forEach((project) => {
+        if (history === project.project_name) {
+          this.proj_info_title = project.project_name;
+          this.proj_info_type = "類型: " + project.project_type;
+          this.proj_info_id = project.id;
+        }
+      });
     },
 
     //在proj_info裡面點擊進入專案
