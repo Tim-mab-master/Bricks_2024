@@ -337,9 +337,9 @@
                   class="cart_drag_icon"
                 />
                 <div class="title_underline"></div>
-                <div class="box_container">
-                  <div v-for="(cart, index1) in ended_carts" :key="index1">
-                    <div
+                <!-- <div class="box_container">
+                  <div v-for="(cart, index1) in ended_carts" :key="index1"> -->
+                <!-- <div
                       class="box"
                       v-for="(project, index2) in cart.project_box"
                       :key="index2"
@@ -352,17 +352,17 @@
                         )
                       "
                       @click="proj_info(index1, index2)"
-                    >
-                      {{ index1 }}
-                      <!-- index1: cart 的索引 -->
-                      {{ project.project_id }}
-                      <!-- project_id: 專案 ID -->
-                      {{ project.proj_name }}
-                      <!-- proj_name: 專案名稱 -->
-                    </div>
+                    > -->
+                <!-- {{ index1 }} -->
+                <!-- index1: cart 的索引 -->
+                <!-- {{ project.project_id }} -->
+                <!-- project_id: 專案 ID -->
+                <!-- {{ project.proj_name }} -->
+                <!-- proj_name: 專案名稱 -->
+                <!-- </div>
                   </div>
-                </div>
-                <!-- <div class="box_container">
+                </div> -->
+                <div class="box_container">
                   <div
                     class="box"
                     v-for="(proj_name, index2) in ended_carts[index1]
@@ -374,7 +374,8 @@
                     @click="ended_proj_info(index1, index2)"
                   >
                     {{ proj_name }}
-                  </div> -->
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -897,6 +898,7 @@ export default {
       this.proj_info_title = element.project_name;
       this.proj_info_type = "類型: " + element.project_type;
       this.proj_info_id = element.id;
+      console.log(element);
     },
 
     //點擊搜尋專案的結果、透過搜尋專案開啟專案資訊
@@ -1222,7 +1224,6 @@ export default {
       })
       .then((res) => {
         this.ended_carts = [];
-        console.log("ended pr");
         if (res.data.status == "success") {
           const items = res.data.items;
           items.forEach((element) => {
@@ -1238,6 +1239,8 @@ export default {
                 title_word: this.proj_type,
                 project_box: [this.proj_name],
               };
+              console.log("名稱");
+              console.log(this.proj_name);
               //搜尋已結束加正在進行
               this.projectsAll.push(this.proj_name);
               this.ended_carts.push(new_cart);
@@ -1245,8 +1248,6 @@ export default {
           });
         }
       });
-    console.log("類型");
-    console.log(this.ended_types);
 
     // 垃圾桶
     const path_trash = "http://35.201.168.185:5000/project_index";
