@@ -225,9 +225,9 @@
                     "
                     @click="proj_info(index1, index2)"
                   >
-                    {{ index1 }}
+                    <!-- {{ index1 }} -->
                     <!-- index1: cart 的索引 -->
-                    {{ project.project_id }}
+                    <!-- {{ project.project_id }} -->
                     <!-- project_id: 專案 ID -->
                     {{ project.proj_name }}
                     <!-- proj_name: 專案名稱 -->
@@ -1174,18 +1174,18 @@ export default {
               this.uncategorized_projs.push(element);
             }
             //沒有這個類別才顯示專案
-            if (
-              this.add_proj_type_options.includes(this.proj_type) === false &&
-              this.proj_type !== "未分類"
-            ) {
-              const new_cart = {
-                title_word: this.proj_type,
-                project_box: [this.proj_name],
-                project_id: this.project_id,
-              };
-              this.carts.push(new_cart);
-              this.add_proj_type_options.push(new_cart.title_word);
-            }
+            // if (
+            //   this.add_proj_type_options.includes(this.proj_type) === false &&
+            //   this.proj_type !== "未分類"
+            // ) {
+            //   const new_cart = {
+            //     title_word: this.proj_type,
+            //     project_box: [this.proj_name],
+            //     project_id: this.project_id,
+            //   };
+            //   this.carts.push(new_cart);
+            //   this.add_proj_type_options.push(new_cart.title_word);
+            // }
 
             let existingCart = this.carts.find(
               (cart) => cart.title_word === this.proj_type
@@ -1214,6 +1214,10 @@ export default {
           });
         }
       });
+    console.log("carts");
+    console.log(this.carts);
+
+    //已結束專案
     const path_end = "http://35.201.168.185:5000/project_index";
     const get_proj_end = {
       project_status: "ended",
