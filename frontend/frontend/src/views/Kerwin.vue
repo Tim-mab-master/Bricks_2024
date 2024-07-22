@@ -19,11 +19,25 @@
 <script>
 import { ref } from "vue";
 import { useRoute } from "vue-router";
-import store from "../store/store.js";
+import { useStore } from "vuex";
+
+import store from "../store/modules/records.js";
+import { computed, onMounted } from "vue";
+
 export default {
   name: "Kerwin",
   setup() {
+    const store = useStore();
+
     const route = useRoute();
+
+    const cards = () => {
+      store.getters.getAllRecords;
+    };
+
+    const info = () => {
+      console.log(store.state.allRecords);
+    };
 
     let id = route.params.authorization;
     const data = ref();
@@ -42,6 +56,8 @@ export default {
       id,
       route,
       showid,
+      cards,
+      info,
     };
   },
 };

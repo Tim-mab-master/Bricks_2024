@@ -1,9 +1,12 @@
 <template>
   <div>
     <side-bar class="side" @update="activeChange"></side-bar>
-    <div v-if="cards" class="navAndCont" id="cards">
+    <div v-if="true" class="navAndCont" id="cards">
       <nav-bar-all class="navBar"></nav-bar-all>
       <div class="cards">
+        <h1>123</h1>
+        <h1>123</h1>
+        <button @click="showinfo"></button>
         <meeting-cards
           v-for="card in cards"
           :key="card.id"
@@ -16,7 +19,6 @@
       <nav-bar class="navBar"></nav-bar>
       <empty-back class="content" @showAdd="show"></empty-back>
     </div>
-    
   </div>
 </template>
 
@@ -26,29 +28,34 @@ import EmptyBack from "../components/EmptyBack.vue";
 import NavBarAll from "../components/NavBarAll.vue";
 import SideBar from "../components/SideBar.vue";
 import MeetingCards from "../components/MeetingCards.vue";
-import { ref,computed, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
+import store_js from "../store/modules/records.js";
 
-    const router = useRouter();
-    const store = useStore();
+const router = useRouter();
+const store = useStore();
 
-    onMounted(() => {
-      console.log("onMounted");
-      store.dispatch("records/fetchAllRecords");
-    });
+onMounted(() => {
+  console.log("onMounted");
+  store.dispatch("records/fetchAllRecords");
+});
 
-    const cards = computed(() => store.getters["record/getAllRecords"]);
-    const activeOption = ref(0);
-    const handleCardClick = (cardId) => {
-      // 根据卡片点击情况进行路由导航
-      router.push(`/all/cards/meetingRecord/${cardId}`);
-    };
+const showinfo = () => {
+  alert("拿到");
+  console.log(cards);
+  console.log("所有records", store_js.getters.getAllRecords());
+};
+const cards = computed(() => store.getters["record/getAllRecords"]);
+const activeOption = ref(0);
+const handleCardClick = (cardId) => {
+  // 根据卡片点击情况进行路由导航
+  router.push(`/all/cards/meetingRecord/${cardId}`);
+};
 
-    const activeChange = () => {
-      activeOption.value = computed(() => store.state.activeIndex);
-    };
-
+const activeChange = () => {
+  activeOption.value = computed(() => store.state.activeIndex);
+};
 </script>
 
 <style scoped>

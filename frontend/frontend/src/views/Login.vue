@@ -284,6 +284,7 @@ export default {
                 name: "personalHomepage",
               });
               setAuth(authorization.value);
+
               // router.push({
               //   name: "kerwin",
               // params: { authorization: authorization.value },
@@ -309,6 +310,7 @@ export default {
 
     const setAuth = (authorization) => {
       store.commit("setAuth", authorization);
+      alert(authorization);
     };
 
     //保持登入 => 紀錄cookie
