@@ -270,9 +270,9 @@
                   border-top-left-radius: 5px;
                   border-top-right-radius: 5px;
                 "
-                @click="rename"
+                @click="terminate_project"
               >
-                重新命名
+                結束專案
               </div>
               <div class="add_proj_type_list_line"></div>
               <div
@@ -1109,12 +1109,13 @@ export default {
     // 已結束專案點擊右鍵
     ended_showRightClickBox(event, cartIndex, projectIndex, project_id) {
       this.right_click_box_overview_show = true;
-      const cartElement = this.$refs["ended_cart_" + cartIndex][1];
+      const cartElement = this.$refs["ended_cart_" + cartIndex];
       // console.log("cartIndex", cartIndex);
       // console.log("projectIndex", projectIndex);
       console.log(cartElement);
       // ended_carts[index1].project_box;
-
+      this.currentCartIndex = cartIndex;
+      this.currentProjectIndex = projectIndex;
       // if (cartElement) {
       //   const cartRect = cartElement.getBoundingClientRect(); // cart 元素的邊界框
       //   console.log("Cart Rect:", cartRect);
@@ -1125,9 +1126,9 @@ export default {
       console.log("mouseLeft:", this.mouseLeft);
     },
 
-    rename() {
-      this.right_click_box_overview_show = false;
-    },
+    // 結束專案
+    terminate_project() {},
+
     //刪除後的專案跑到垃圾桶
     delete_project_ing() {
       console.log("this.currentCartIndex", this.currentCartIndex); //第幾個cart
@@ -1136,10 +1137,20 @@ export default {
       this.right_click_box_overview_show = false;
       this.delete_confirm = false;
       this.showOverlay_delete = false;
+      let projectId = 0;
       // 除的项目的 project_id
-      const projectId =
-        this.carts[this.currentCartIndex].project_box[this.currentProjectIndex]
-          .project_id;
+      this.all_proj.forEach((project) => {
+        if (
+          project.project_name ===
+          this.carts[this.currentCartIndex].project_box[
+            this.currentProjectIndex
+          ].proj_name
+        ) {
+          projectId = project.id;
+        }
+      });
+
+      console.log("prid", projectId);
 
       const path = "http://35.201.168.185:5000/to_trashcan";
       const to_trash = {
@@ -1150,9 +1161,11 @@ export default {
           headers: { authorization: JSON.parse(localStorage.getItem("auth")) },
         })
         .then((res) => {
-          console.log("有連到了");
           if (res.data.status == "success") {
             console.log("hello", res.data.message);
+            setTimeout(() => {
+              this.$router.go(0);
+            }, 500);
           }
         });
 
@@ -1167,6 +1180,59 @@ export default {
       // 从原数组中删除项目
       // this.$set(this.carts[cartIndex].project_box, projIndex, null); // 使用 $set 删除并保持响应式
     },
+
+    // 已結束專案刪除
+    delete_project_ing() {
+      console.log("this.currentCartIndex", this.currentCartIndex); //第幾個cart
+      console.log("this.currentProjectIndex", this.currentProjectIndex); //cart的裡面第幾個projectp'
+
+      this.right_click_box_overview_show = false;
+      this.delete_confirm = false;
+      this.showOverlay_delete = false;
+      let projectId = 0;
+      // 除的项目的 project_id
+      this.all_proj.forEach((project) => {
+        if (
+          project.project_name ===
+          this.ended_carts[this.currentCartIndex].project_box[
+            this.currentProjectIndex
+          ].proj_name
+        ) {
+          projectId = project.id;
+        }
+      });
+
+      console.log("prid", projectId);
+
+      const path = "http://35.201.168.185:5000/to_trashcan";
+      const to_trash = {
+        project_id: projectId,
+      };
+      axios
+        .post(path, to_trash, {
+          headers: { authorization: JSON.parse(localStorage.getItem("auth")) },
+        })
+        .then((res) => {
+          if (res.data.status == "success") {
+            console.log("hello", res.data.message);
+            setTimeout(() => {
+              this.$router.go(0);
+            }, 500);
+          }
+        });
+
+      // // 获取要删除的项目名称
+      // const deletedProject = this.carts[cartIndex].project_box[projIndex];
+      // // 将项目名称添加到垃圾桶
+      // const trash_box = {
+      //   text: deletedProject
+      // };
+      // this.trash_boxes.push(trash_box);
+
+      // 从原数组中删除项目
+      // this.$set(this.carts[cartIndex].project_box, projIndex, null); // 使用 $set 删除并保持响应式
+    },
+
     // 點擊垃圾桶裡的專案後又上兩個按鈕變色
     selected_trash_box(index) {
       const allFalse = this.checked_trash_box.every(function (element) {
