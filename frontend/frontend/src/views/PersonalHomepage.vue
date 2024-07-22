@@ -392,7 +392,7 @@
             </div>
             <div
               class="right_click_box_overview"
-              :style="{ top: mouseTop + 'px', left: mouseLeft - 100 + 'px' }"
+              :style="{ top: mouseTop + 'px', left: mouseLeft + 200 + 'px' }"
               v-show="right_click_box_overview_show"
               ref="right_click_box_overview"
             >
@@ -404,7 +404,7 @@
                 "
                 @click="rename"
               >
-                重新命名
+                恢復至正在進行專案
               </div>
               <div class="add_proj_type_list_line"></div>
               <div
@@ -1100,33 +1100,27 @@ export default {
         this.currentProjectIndex = projectIndex;
         //找project_id
       }
-      // this.mouseTop = event.clientY;
-      // this.mouseLeft = event.clientX;
-      // console.log("mouseTop:", this.mouseTop);
-      // console.log("mouseLeft:",this.mouseLeft);
+      this.mouseTop = event.clientY;
+      this.mouseLeft = event.clientX;
+      console.log("mouseTop:", this.mouseTop);
+      console.log("mouseLeft:", this.mouseLeft);
     },
 
     // 已結束專案點擊右鍵
     ended_showRightClickBox(event, cartIndex, projectIndex, project_id) {
       this.right_click_box_overview_show = true;
-      // const cartElement = this.$refs["cart_" + cartIndex][projectIndex];
+      const cartElement = this.$refs["ended_cart_" + cartIndex][1];
       // console.log("cartIndex", cartIndex);
       // console.log("projectIndex", projectIndex);
-      // console.log(cartElement);
+      console.log(cartElement);
+      // ended_carts[index1].project_box;
 
       // if (cartElement) {
       //   const cartRect = cartElement.getBoundingClientRect(); // cart 元素的邊界框
       //   console.log("Cart Rect:", cartRect);
       // }
-      this.mouseTop = event.pageY + document.documentElement.scrollTop;
+      this.mouseTop = event.pageY;
       this.mouseLeft = event.pageX;
-      console.log(
-        "doc",
-        document.documentElement.scrollTop,
-        document.body.scrollTop,
-        window.pageYOffset,
-        window.scrollY
-      );
       console.log("mouseTop:", this.mouseTop);
       console.log("mouseLeft:", this.mouseLeft);
     },
@@ -2315,8 +2309,8 @@ export default {
   background-color: white;
   padding-top: 8px;
   padding-bottom: 8px;
-  position: absolute;
-  z-index: 1000;
+  position: fixed;
+  z-index: 100;
 }
 .right_click_box_overview_option {
   width: 100%;

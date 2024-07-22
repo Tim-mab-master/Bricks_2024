@@ -6,7 +6,7 @@
     <documentArea />
     <div style="margin: 20px"></div>
     <documentAreaWithInfo /> -->
-    <button @click="info"></button>
+    <button @click="showid"></button>
     <div>
       <GoogleLogin :callback="callback" />
       <p>
