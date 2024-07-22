@@ -198,7 +198,7 @@
                   class="box"
                   v-for="(element, index) in uncategorized_projs"
                   :key="index"
-                  @contextmenu.prevent="right_click_box"
+                  @contextmenu.prevent="uncated_showRightClickBox(element)"
                   @click="proj_info_uncatagorized(element)"
                 >
                   {{ element.project_name }}
@@ -402,7 +402,7 @@
                   border-top-left-radius: 5px;
                   border-top-right-radius: 5px;
                 "
-                @click="rename"
+                @click="un_terminate_project"
               >
                 恢復至正在進行專案
               </div>
@@ -440,7 +440,7 @@
                 </button>
                 <button
                   class="forever_delete_confirm_btn forever_delete_confirm_btn_delete"
-                  @click="delete_project_ing()"
+                  @click="delete_ended_project_ing()"
                 >
                   刪除
                 </button>
@@ -654,6 +654,7 @@ export default {
       right_click_box_overview_show: false,
       currentCartIndex: null,
       currentProjectIndex: null,
+      currentProjectId: 0,
       delete_confirm: false,
       showOverlay_delete: false,
       right_click_box_trash_show: false,
@@ -1079,6 +1080,27 @@ export default {
     //     this.trash_boxes.push(trash_box);
     // },
 
+    // 未分類右鍵
+    uncated_showRightClickBox(element) {
+      this.right_click_box_overview_show = true;
+      console.log(element);
+      // if (cartElement) {
+      //   const cartRect = cartElement.getBoundingClientRect(); // cart 元素的邊界框
+      //   console.log("Cart Rect:", cartRect);
+
+      //   this.mouseLeft = cartRect.left;
+      //   this.mouseTop = cartRect.top;
+      //   console.log("this.mousetop", this.mouseTop); //問題在這
+
+      this.currentProjectId = element.id;
+      //找project_id
+      // }
+      this.mouseTop = event.clientY;
+      this.mouseLeft = event.clientX;
+      console.log("mouseTop:", this.mouseTop);
+      console.log("mouseLeft:", this.mouseLeft);
+    },
+
     //刪除專案、已結束專案
     showRightClickBox(event, cartIndex, projectIndex, project_id) {
       this.right_click_box_overview_show = true;
@@ -1126,8 +1148,101 @@ export default {
       console.log("mouseLeft:", this.mouseLeft);
     },
 
+    un_terminate_project() {
+      let projectId = 0;
+      this.all_proj.forEach((project) => {
+        if (
+          project.project_name ===
+          this.carts[this.currentCartIndex].project_box[
+            this.currentProjectIndex
+          ].proj_name
+        ) {
+          projectId = project.id;
+        }
+      });
+
+      console.log("prid恢復", projectId);
+
+      const path = "http://35.201.168.185:5000/set_project_end";
+      const to_end = {
+        project_id: projectId,
+        state: "open",
+      };
+      axios
+        .post(path, to_end, {
+          headers: { authorization: JSON.parse(localStorage.getItem("auth")) },
+        })
+        .then((res) => {
+          console.log(res.data.message);
+          if (res.data.status == "success") {
+            // console.log("hello", res.data.message);
+            setTimeout(() => {
+              // this.$router.go(0);
+            }, 500);
+          }
+        });
+    },
+
+    // 結束未分類專案
+    terminate_uncated_project() {
+      const path = "http://35.201.168.185:5000/set_project_end";
+      const to_end = {
+        project_id: this.currentProjectId,
+        state: "end",
+      };
+      axios
+        .post(path, to_end, {
+          headers: { authorization: JSON.parse(localStorage.getItem("auth")) },
+        })
+        .then((res) => {
+          if (res.data.status == "success") {
+            // console.log("hello", res.data.message);
+            setTimeout(() => {
+              this.$router.go(0);
+            }, 500);
+          }
+        });
+    },
+
     // 結束專案
-    terminate_project() {},
+    terminate_project() {
+      let projectId = 0;
+
+      if (this.currentProjectId == 0) {
+        this.all_proj.forEach((project) => {
+          if (
+            project.project_name ===
+            this.carts[this.currentCartIndex].project_box[
+              this.currentProjectIndex
+            ].proj_name
+          ) {
+            projectId = project.id;
+          }
+        });
+      } else {
+        projectId = this.currentProjectId;
+      }
+
+      console.log("prid", projectId);
+
+      const path = "http://35.201.168.185:5000/set_project_end";
+      const to_end = {
+        project_id: projectId,
+        state: "end",
+      };
+      axios
+        .post(path, to_end, {
+          headers: { authorization: JSON.parse(localStorage.getItem("auth")) },
+        })
+        .then((res) => {
+          if (res.data.status == "success") {
+            // console.log("hello", res.data.message);
+            setTimeout(() => {
+              this.$router.go(0);
+            }, 500);
+          }
+        });
+    },
 
     //刪除後的專案跑到垃圾桶
     delete_project_ing() {
@@ -1182,7 +1297,7 @@ export default {
     },
 
     // 已結束專案刪除
-    delete_project_ing() {
+    delete_ended_project_ing() {
       console.log("this.currentCartIndex", this.currentCartIndex); //第幾個cart
       console.log("this.currentProjectIndex", this.currentProjectIndex); //cart的裡面第幾個projectp'
 
