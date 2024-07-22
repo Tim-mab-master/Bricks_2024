@@ -1117,13 +1117,15 @@ export default {
     // 已結束專案點擊右鍵
     ended_showRightClickBox(event, cartIndex, projectIndex, project_id) {
       this.right_click_box_overview_show = true;
-      const cartElement = this.$refs["ended_cart_" + cartIndex];
+      // const cartElement = this.$refs["ended_cart_" + cartIndex];
       // console.log("cartIndex", cartIndex);
       // console.log("projectIndex", projectIndex);
-      console.log(cartElement);
+      // console.log(cartElement);
       // ended_carts[index1].project_box;
       this.currentCartIndex = cartIndex;
       this.currentProjectIndex = projectIndex;
+      console.log("inde", this.currentCartIndex);
+      console.log("pind", this.currentProjectIndex);
       // if (cartElement) {
       //   const cartRect = cartElement.getBoundingClientRect(); // cart 元素的邊界框
       //   console.log("Cart Rect:", cartRect);
@@ -1134,12 +1136,13 @@ export default {
       console.log("mouseLeft:", this.mouseLeft);
     },
 
+    //恢復到進行中的專案
     un_terminate_project() {
       let projectId = 0;
       this.all_proj.forEach((project) => {
         if (
           project.project_name ===
-          this.carts[this.currentCartIndex].project_box[
+          this.ended_carts[this.currentCartIndex].project_box[
             this.currentProjectIndex
           ].proj_name
         ) {
@@ -1150,12 +1153,12 @@ export default {
       console.log("prid恢復", projectId);
 
       const path = "http://35.201.168.185:5000/set_project_end";
-      const to_end = {
+      const to_open = {
         project_id: projectId,
         state: "open",
       };
       axios
-        .post(path, to_end, {
+        .post(path, to_open, {
           headers: { authorization: JSON.parse(localStorage.getItem("auth")) },
         })
         .then((res) => {
@@ -1163,7 +1166,7 @@ export default {
           if (res.data.status == "success") {
             // console.log("hello", res.data.message);
             setTimeout(() => {
-              // this.$router.go(0);
+              this.$router.go(0);
             }, 500);
           }
         });
