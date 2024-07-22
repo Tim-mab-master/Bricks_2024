@@ -41,6 +41,7 @@ export default createStore({
     },
   },
   plugins: [localStoragePlugin],
+  // modules: { records },
 });
 
 // export default store;
