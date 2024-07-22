@@ -218,6 +218,7 @@
                 />
                 <div class="title_underline"></div>
                 <div class="box_container">
+                  <!-- 右擊刪除專案、結束專案 -->
                   <div
                     class="box"
                     v-for="(project, index2) in cart.project_box"
@@ -324,7 +325,12 @@
                   v-for="(element, index) in ended_uncategorized_projs"
                   :key="index"
                   @contextmenu.prevent="
-                    showRightClickBox($event, index1, index2)
+                    ended_showRightClickBox(
+                      $event,
+                      index1,
+                      index2,
+                      element.project_id
+                    )
                   "
                   @click="proj_info_uncatagorized(element)"
                 >
@@ -375,13 +381,69 @@
                     v-for="(project, index2) in ended_carts[index1].project_box"
                     :key="index2"
                     @contextmenu.prevent="
-                      showRightClickBox($event, index1, index2)
+                      ended_showRightClickBox($event, index1, index2)
                     "
                     @click="ended_proj_info(index1, index2)"
                   >
                     {{ project.proj_name }}
                   </div>
                 </div>
+              </div>
+            </div>
+            <div
+              class="right_click_box_overview"
+              :style="{ top: mouseTop + 'px', left: mouseLeft - 100 + 'px' }"
+              v-show="right_click_box_overview_show"
+              ref="right_click_box_overview"
+            >
+              <div
+                class="right_click_box_overview_option"
+                style="
+                  border-top-left-radius: 5px;
+                  border-top-right-radius: 5px;
+                "
+                @click="rename"
+              >
+                重新命名
+              </div>
+              <div class="add_proj_type_list_line"></div>
+              <div
+                class="right_click_box_overview_option"
+                style="
+                  border-bottom-left-radius: 5px;
+                  border-bottom-right-radius: 5px;
+                "
+                @click="delete_project"
+              >
+                刪除專案
+              </div>
+            </div>
+
+            <!-- 刪除確認 -->
+            <div class="delete_confirm" v-show="delete_confirm">
+              <div
+                class="close_delete_confirm"
+                @click="close_delete_confirm"
+              ></div>
+              <p class="delete_confirm_first_text">刪除專案</p>
+              <img src="../assets/delete_icon.svg" alt="" />
+              <p class="delete_confirm_second_text">確定刪除專案？</p>
+              <p class="delete_confirm_third_text">
+                刪除後若需還原，請至「垃圾桶」查看
+              </p>
+              <div class="delete_confirm_btn_container">
+                <button
+                  class="forever_delete_confirm_btn forever_delete_confirm_btn_cancel"
+                  @click="close_delete_confirm()"
+                >
+                  取消
+                </button>
+                <button
+                  class="forever_delete_confirm_btn forever_delete_confirm_btn_delete"
+                  @click="delete_project_ing()"
+                >
+                  刪除
+                </button>
               </div>
             </div>
           </div>
@@ -1024,6 +1086,7 @@ export default {
       console.log("cartIndex", cartIndex);
       console.log("projectIndex", projectIndex);
       console.log("project_id", project_id);
+      console.log(cartElement);
 
       if (cartElement) {
         const cartRect = cartElement.getBoundingClientRect(); // cart 元素的邊界框
@@ -1041,6 +1104,31 @@ export default {
       // this.mouseLeft = event.clientX;
       // console.log("mouseTop:", this.mouseTop);
       // console.log("mouseLeft:",this.mouseLeft);
+    },
+
+    // 已結束專案點擊右鍵
+    ended_showRightClickBox(event, cartIndex, projectIndex, project_id) {
+      this.right_click_box_overview_show = true;
+      // const cartElement = this.$refs["cart_" + cartIndex][projectIndex];
+      // console.log("cartIndex", cartIndex);
+      // console.log("projectIndex", projectIndex);
+      // console.log(cartElement);
+
+      // if (cartElement) {
+      //   const cartRect = cartElement.getBoundingClientRect(); // cart 元素的邊界框
+      //   console.log("Cart Rect:", cartRect);
+      // }
+      this.mouseTop = event.pageY + document.documentElement.scrollTop;
+      this.mouseLeft = event.pageX;
+      console.log(
+        "doc",
+        document.documentElement.scrollTop,
+        document.body.scrollTop,
+        window.pageYOffset,
+        window.scrollY
+      );
+      console.log("mouseTop:", this.mouseTop);
+      console.log("mouseLeft:", this.mouseLeft);
     },
 
     rename() {
@@ -2228,6 +2316,7 @@ export default {
   padding-top: 8px;
   padding-bottom: 8px;
   position: absolute;
+  z-index: 1000;
 }
 .right_click_box_overview_option {
   width: 100%;
