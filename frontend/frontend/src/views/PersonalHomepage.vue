@@ -1008,8 +1008,6 @@ export default {
       this.store.commit("records/setProjectID", this.proj_info_id);
       this.router.push({ name: "all" });
       //測試印出project/id
-      alert(this.store.getters["records/getProjectID"]);
-      alert(this.proj_info_id);
     },
 
     close_proj_info() {

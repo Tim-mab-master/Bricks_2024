@@ -5,7 +5,7 @@ const state = {
   userID: 44,
   allRecords: [],
   currRecord: {},
-  projectID: 86,
+  projectID: 0,
   recordID: 3,
   currTextBoxes: [],
   blockNow: {},
@@ -51,8 +51,8 @@ const actions = {
   async fetchAllRecords({ state, commit }) {
     try {
       const body = {
-        // project_id: state.projectID,
-        project_id: 94, //bricks
+        project_id: state.projectID,
+        // project_id: 94, //bricks
       };
       console.log("projID" + state.projectID);
 
