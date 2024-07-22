@@ -324,14 +324,7 @@
                   class="box"
                   v-for="(element, index) in ended_uncategorized_projs"
                   :key="index"
-                  @contextmenu.prevent="
-                    ended_showRightClickBox(
-                      $event,
-                      index1,
-                      index2,
-                      element.project_id
-                    )
-                  "
+                  @contextmenu.prevent="uncated_showRightClickBox(element)"
                   @click="proj_info_uncatagorized(element)"
                 >
                   {{ element.project_name }}
@@ -1084,17 +1077,8 @@ export default {
     uncated_showRightClickBox(element) {
       this.right_click_box_overview_show = true;
       console.log(element);
-      // if (cartElement) {
-      //   const cartRect = cartElement.getBoundingClientRect(); // cart 元素的邊界框
-      //   console.log("Cart Rect:", cartRect);
-
-      //   this.mouseLeft = cartRect.left;
-      //   this.mouseTop = cartRect.top;
-      //   console.log("this.mousetop", this.mouseTop); //問題在這
 
       this.currentProjectId = element.id;
-      //找project_id
-      // }
       this.mouseTop = event.clientY;
       this.mouseLeft = event.clientX;
       console.log("mouseTop:", this.mouseTop);
@@ -1253,17 +1237,22 @@ export default {
       this.delete_confirm = false;
       this.showOverlay_delete = false;
       let projectId = 0;
+
+      if (this.currentProjectId == 0) {
+        this.all_proj.forEach((project) => {
+          if (
+            project.project_name ===
+            this.carts[this.currentCartIndex].project_box[
+              this.currentProjectIndex
+            ].proj_name
+          ) {
+            projectId = project.id;
+          }
+        });
+      } else {
+        projectId = this.currentProjectId;
+      }
       // 除的项目的 project_id
-      this.all_proj.forEach((project) => {
-        if (
-          project.project_name ===
-          this.carts[this.currentCartIndex].project_box[
-            this.currentProjectIndex
-          ].proj_name
-        ) {
-          projectId = project.id;
-        }
-      });
 
       console.log("prid", projectId);
 
@@ -1305,17 +1294,22 @@ export default {
       this.delete_confirm = false;
       this.showOverlay_delete = false;
       let projectId = 0;
-      // 除的项目的 project_id
-      this.all_proj.forEach((project) => {
-        if (
-          project.project_name ===
-          this.ended_carts[this.currentCartIndex].project_box[
-            this.currentProjectIndex
-          ].proj_name
-        ) {
-          projectId = project.id;
-        }
-      });
+
+      if (this.currentProjectId == 0) {
+        // 除的项目的 project_id
+        this.all_proj.forEach((project) => {
+          if (
+            project.project_name ===
+            this.ended_carts[this.currentCartIndex].project_box[
+              this.currentProjectIndex
+            ].proj_name
+          ) {
+            projectId = project.id;
+          }
+        });
+      } else {
+        projectId = this.currentProjectId;
+      }
 
       console.log("prid", projectId);
 
