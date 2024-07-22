@@ -4,9 +4,7 @@
     <div v-if="true" class="navAndCont" id="cards">
       <nav-bar-all class="navBar"></nav-bar-all>
       <div class="cards">
-        <h1>123</h1>
-        <h1>123</h1>
-        <button @click="showinfo"></button>
+        <!-- <button @click="showinfo"></button> -->
         <meeting-cards
           v-for="card in cards"
           :key="card.id"
@@ -36,17 +34,18 @@ import store_js from "../store/modules/records.js";
 const router = useRouter();
 const store = useStore();
 
-onMounted(() => {
+onMounted(async () => {
   console.log("onMounted");
-  store.dispatch("records/fetchAllRecords");
+  await store.dispatch("records/fetchAllRecords");
 });
 
 const showinfo = () => {
   alert("拿到");
   console.log(cards);
-  console.log("所有records", store_js.getters.getAllRecords());
+  // 先用直接拿的方法拿到allRecords，之後要用getter
+  console.log("所有records", store_js.state.allRecords);
 };
-const cards = computed(() => store.getters["record/getAllRecords"]);
+const cards = computed(() => store_js.state.allRecords);
 const activeOption = ref(0);
 const handleCardClick = (cardId) => {
   // 根据卡片点击情况进行路由导航
