@@ -1079,6 +1079,7 @@ export default {
       console.log(element);
 
       this.currentProjectId = element.id;
+      alert(element.id);
       this.mouseTop = event.clientY;
       this.mouseLeft = event.clientX;
       console.log("mouseTop:", this.mouseTop);
@@ -1088,24 +1089,25 @@ export default {
     //刪除專案、已結束專案
     showRightClickBox(event, cartIndex, projectIndex, project_id) {
       this.right_click_box_overview_show = true;
-      const cartElement = this.$refs["cart_" + cartIndex][projectIndex];
+      // const cartElement = this.$refs["cart_" + cartIndex][projectIndex];
       console.log("cartIndex", cartIndex);
       console.log("projectIndex", projectIndex);
-      console.log("project_id", project_id);
-      console.log(cartElement);
+      // console.log("project_id", project_id);
+      // console.log(cartElement);
 
-      if (cartElement) {
-        const cartRect = cartElement.getBoundingClientRect(); // cart 元素的邊界框
-        console.log("Cart Rect:", cartRect);
+      // if (cartElement) {
+      // const cartRect = cartElement.getBoundingClientRect(); // cart 元素的邊界框
+      // console.log("Cart Rect:", cartRect);
 
-        this.mouseLeft = cartRect.left;
-        this.mouseTop = cartRect.top;
-        console.log("this.mousetop", this.mouseTop); //問題在這
+      // this.mouseLeft = cartRect.left;
+      // this.mouseTop = cartRect.top;
+      // console.log("this.mousetop", this.mouseTop); //問題在這
 
-        this.currentCartIndex = cartIndex;
-        this.currentProjectIndex = projectIndex;
-        //找project_id
-      }
+      this.currentCartIndex = cartIndex;
+      this.currentProjectIndex = projectIndex;
+      // console.log("carindex", this.currentCartIndex);
+      //找project_id
+      // }
       this.mouseTop = event.clientY;
       this.mouseLeft = event.clientX;
       console.log("mouseTop:", this.mouseTop);
@@ -1268,7 +1270,7 @@ export default {
           if (res.data.status == "success") {
             console.log("hello", res.data.message);
             setTimeout(() => {
-              this.$router.go(0);
+              // this.$router.go(0);
             }, 500);
           }
         });
