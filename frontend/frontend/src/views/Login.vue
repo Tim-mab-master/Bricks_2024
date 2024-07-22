@@ -36,6 +36,13 @@
             type="error"
             show-icon
         /></Transition>
+        <Transition name="errorIn">
+          <el-alert
+            v-if="alertForgetPass"
+            title="如果登入時遇到困難，可點擊「忘記密碼」"
+            type="error"
+            show-icon
+        /></Transition>
       </div>
 
       <div class="middle">
@@ -129,7 +136,7 @@
         </div>
         <div class="other_resource">
           <a href="">
-            <div id="Google_login_btn">
+            <div id="Google_login_btn" @click="googleLogin">
               <img src="../assets/Google_login.svg" alt="" />
               <p>Google 登入</p>
             </div>
@@ -179,7 +186,6 @@ export default {
 
   setup() {
     const router = useRouter();
-
     const account = ref("");
     const password = ref("");
     const showpassword = ref(false);
@@ -194,6 +200,7 @@ export default {
     const loggedIn = ref(false);
     const alertWrongPassword = ref(false);
     const alertBlankInput = ref(false);
+    const alertForgetPass = ref(false);
 
     const eyebtn = () => {
       showpassword.value = !showpassword.value;
@@ -266,6 +273,9 @@ export default {
       alertWrongPassword.value = false;
       if (password == "" || account == "") {
         alertBlankInput.value = true;
+        setTimeout(() => {
+          alertBlankInput.value = false;
+        }, 2000);
       } else {
         axios
           .post("http://34.81.219.139:5000/bricks_login", {
@@ -277,7 +287,18 @@ export default {
             // 確認用戶是否存在資料庫
             if (res.data.status === "failure") {
               alertWrongPassword.value = true;
+              setTimeout(() => {
+                alertWrongPassword.value = false;
+              }, 2000);
+              errorTime.value++;
+              if (errorTime.value >= 3) {
+                alertForgetPass.value = true;
+                setTimeout(() => {
+                  alertForgetPass.value = false;
+                }, 2000);
+              }
             } else if (res.data.status === "success") {
+              errorTime = 0;
               authorization.value = res.headers.authorization;
               console.log(authorization.value);
               router.push({
@@ -367,6 +388,15 @@ export default {
       }
     };
 
+    const googleLogin = () => {
+      // alert("callgoogle");
+      axios
+        .get("http://34.81.219.139:5000/frontend/google_login")
+        .then((res) => {
+          console.log(res);
+        });
+    };
+
     onMounted(() => {
       checkCookie();
     });
@@ -385,6 +415,7 @@ export default {
       loggedIn,
       alertWrongPassword,
       alertBlankInput,
+      alertForgetPass,
       getCookie,
       checkCookie,
       decodeToken,
@@ -394,6 +425,7 @@ export default {
       check_btn,
       login,
       deleteCookie,
+      googleLogin,
     };
   },
   created() {},
