@@ -11,6 +11,8 @@ const state = {
 };
 const getters = {
   getAllRecords(state) {
+    console.log("值");
+    console.log(state.allRecords);
     return state.allRecords;
   },
   getCurrRecord(state) {
@@ -58,9 +60,16 @@ const actions = {
           headers: { authorization: JSON.parse(localStorage.getItem("auth")) },
         })
         .then((res) => {
-          console.log(res);
-          console.log(JSON.parse(localStorage.getItem("auth"))); //確認auth是否正確
+          // console.log("data", res);
+          // console.log(JSON.parse(localStorage.getItem("auth"))); //確認auth是否正確
           commit("setAllRecords", res.data.record); //以array紀錄會議名稱
+          // let da = commit("getAllRecords");
+          // console.log(
+          //   "資料",
+          //   da
+          //   // state.allRecords
+          //   // state.getters.getAllRecords
+          // );
         });
     } catch (error) {
       console.log("出錯了");
