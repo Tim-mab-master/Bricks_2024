@@ -3,13 +3,16 @@
     <side-bar class="side" @update="activeChange"></side-bar>
     <div v-if="true" class="navAndCont" id="cards">
       <nav-bar-all class="navBar"></nav-bar-all>
+
       <div class="cards">
-        <!-- <button @click="showinfo"></button> -->
+        <h1>564654564</h1>
+        <button @click="showinfo"></button>
         <meeting-cards
           v-for="card in cards"
           :key="card.id"
           :recordName="card.record_name"
-        ></meeting-cards>
+          >card</meeting-cards
+        >
       </div>
       <router-view></router-view>
     </div>
@@ -41,7 +44,7 @@ onMounted(async () => {
 
 const showinfo = () => {
   alert("拿到");
-  console.log(cards);
+  console.log("cards", cards);
   // 先用直接拿的方法拿到allRecords，之後要用getter
   console.log("所有records", store_js.state.allRecords);
 };

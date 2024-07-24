@@ -64,6 +64,7 @@ const actions = {
           // console.log("data", res);
           // console.log(JSON.parse(localStorage.getItem("auth"))); //確認auth是否正確
           commit("setAllRecords", res.data.record); //以array紀錄會議名稱
+          console.log("回復", res);
           // let da = commit("getAllRecords");
           // console.log(
           //   "資料",

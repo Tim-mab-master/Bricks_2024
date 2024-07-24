@@ -10,6 +10,7 @@
           v-model.trim="search_project"
           @keyup.enter="list_add_a_search"
           @keyup="keyboardEvent"
+          @blur="clear_search_bar"
         />
         <!-- show_his_search_list是壞分子，讓his_search_choosen -->
         <div class="his_search_list" v-show="show_his_search_list">
@@ -439,6 +440,7 @@
                 </button>
               </div>
             </div>
+            <div class="overlay" v-if="showOverlay_delete"></div>
           </div>
           <!-- 垃圾桶 -->
           <div class="trash_page" v-show="middle_show_trash_page">
@@ -590,6 +592,7 @@ import axios from "axios";
 import { Base64 } from "js-base64";
 import { useRoute } from "vue-router";
 import store from "../store/store.js";
+// import { fa } from "element-plus/es/locale/index.js";
 
 export default {
   name: "Personal_homepage",
@@ -849,16 +852,28 @@ export default {
         this.middle_show_overview_page = true;
         this.middle_show_over_page = false;
         this.middle_show_trash_page = false;
+
+        // 關掉確認刪除專案
+        this.delete_confirm = false;
+        this.showOverlay_delete = false;
       }
       if (index === 2) {
         this.middle_show_over_page = true;
         this.middle_show_overview_page = false;
         this.middle_show_trash_page = false;
+
+        // 關掉確認刪除專案
+        this.delete_confirm = false;
+        this.showOverlay_delete = false;
       }
       if (index === 3) {
         this.middle_show_trash_page = true;
         this.middle_show_overview_page = false;
         this.middle_show_over_page = false;
+
+        // 關掉確認刪除專案
+        this.delete_confirm = false;
+        this.showOverlay_delete = false;
       }
     },
     // 我忘了
@@ -1043,7 +1058,9 @@ export default {
       console.log("iij");
     },
     clear_search_bar() {
-      this.search_project = "";
+      setTimeout(() => {
+        this.search_project = "";
+      }, 150);
     },
     search_bar() {
       const path = "http://35.201.168.185:5000/search_history";
@@ -1074,14 +1091,11 @@ export default {
     // 未分類右鍵
     uncated_showRightClickBox(element) {
       this.right_click_box_overview_show = true;
-      console.log(element);
-
       this.currentProjectId = element.id;
-      alert(element.id);
       this.mouseTop = event.clientY;
       this.mouseLeft = event.clientX;
-      console.log("mouseTop:", this.mouseTop);
-      console.log("mouseLeft:", this.mouseLeft);
+      // console.log("mouseTop:", this.mouseTop);
+      // console.log("mouseLeft:", this.mouseLeft);
     },
 
     //刪除專案、已結束專案
@@ -1271,7 +1285,7 @@ export default {
           if (res.data.status == "success") {
             console.log("hello", res.data.message);
             setTimeout(() => {
-              // this.$router.go(0);
+              this.$router.go(0);
             }, 500);
           }
         });
@@ -1415,6 +1429,7 @@ export default {
     delete_project() {
       this.delete_confirm = true;
       this.showOverlay_delete = true;
+      this.right_click_box_overview_show = false;
     },
     // 關閉刪除按鈕彈窗
     close_delete_confirm() {
@@ -2510,7 +2525,7 @@ export default {
   height: 372px;
   position: absolute;
   top: 20%;
-  left: 520px;
+  left: 25%;
   background-color: white;
   border: 1.5px solid #c7c2c2;
   box-shadow: 0px 0px 5px 1px rgba(65, 65, 65, 0.25);

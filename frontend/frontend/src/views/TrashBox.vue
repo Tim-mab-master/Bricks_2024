@@ -64,6 +64,5 @@ export default {
 }
 
 @media screen and (max-width: 1440px) and (min-width: 1024px) {
-  
 }
 </style>
