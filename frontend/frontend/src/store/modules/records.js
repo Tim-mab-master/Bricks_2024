@@ -5,7 +5,7 @@ const state = {
   userID: 44,
   allRecords: [],
   currRecord: {},
-  projectID: 86,
+  projectID: 0,
   recordID: 3,
   currTextBoxes: [],
   blockNow: {},
@@ -51,8 +51,8 @@ const actions = {
   async fetchAllRecords({ state, commit }) {
     try {
       const body = {
-        // project_id: state.projectID,
-        project_id: 94, //bricks
+        project_id: state.projectID,
+        // project_id: 94, //bricks
       };
       console.log("projID" + state.projectID);
 
@@ -64,6 +64,7 @@ const actions = {
           // console.log("data", res);
           // console.log(JSON.parse(localStorage.getItem("auth"))); //確認auth是否正確
           commit("setAllRecords", res.data.record); //以array紀錄會議名稱
+          console.log("回復", res);
           // let da = commit("getAllRecords");
           // console.log(
           //   "資料",
