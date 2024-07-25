@@ -1,9 +1,9 @@
 <template>
   <div>
     <side-bar class="side" @update="activeChange"></side-bar>
-    <div v-if="true" class="navAndCont" id="cards">
-      <nav-bar-all class="navBar"></nav-bar-all>
+    <nav-bar-all class="navBar"></nav-bar-all>
 
+    <div v-if="true" class="navAndCont" id="cards">
       <div class="cards">
         <h1>564654564</h1>
         <button @click="showinfo"></button>
@@ -14,10 +14,14 @@
           >card</meeting-cards
         >
       </div>
+      <div v-if="false" class="cover">
+        <div></div>
+      </div>
+
       <router-view></router-view>
     </div>
+
     <div v-else class="navAndCont" id="empty">
-      <nav-bar class="navBar"></nav-bar>
       <empty-back class="content" @showAdd="show"></empty-back>
     </div>
   </div>
@@ -87,28 +91,39 @@ const activeChange = () => {
   margin: 28px 10vw 28px 28px;
 
   position: absolute;
-  top: 48px;
+  /* top: 48px; */
   /* border: 1px; */
 }
 .navAndCont {
   background-color: #dcdfe6;
   position: absolute;
+  border: 2px solid yellow;
   left: 200px;
-  width: auto;
-  top: 0;
+  width: calc(100vw - 210px);
+  height: calc(100vh - 55px);
+  top: 50px;
   right: 0;
 }
+
+.cover {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  color: black;
+  background-color: rgba(59, 56, 56, 0.5);
+}
+
 .content {
-  position: relative;
-  margin: 0 auto;
-  left: 45%;
-  top: 30vh;
-  bottom: 0;
+  position: absolute;
+  top: 20%;
+  left: 40%;
+  /* margin: 0 auto; */
 }
 
 @media screen and (max-width: 1440px) and (min-width: 1024px) {
-  .navAndCont {
+  /* .navAndCont {
     left: 180px;
-  }
+  } */
 }
 </style>
