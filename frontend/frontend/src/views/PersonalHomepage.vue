@@ -121,6 +121,7 @@
       >
         {{ proj_type }}
       </div>
+      <!-- 選擇專案視窗 -->
       <div
         class="add_proj_type_list"
         v-show="show_add_proj_type_list"
@@ -163,8 +164,43 @@
         v-model="proj_info_title"
         disabled="disabled"
       />
-      <input type="text" class="proj_info_type" v-model="proj_info_type" />
-      <!-- {{ proj_info_type }} -->
+      <input
+        type="text"
+        class="proj_info_type"
+        v-model="proj_info_type"
+        @click="add_proj_type_btn"
+        :style="{ background: add_proj_type_arrow }"
+        ref="add_proj_type"
+      />
+      <div
+        class="add_proj_type_list"
+        v-show="show_add_proj_type_list"
+        ref="add_proj_type_list"
+      >
+        <!-- 資料訊息 -->
+        <div class="add_proj_type_option_container">
+          <div class="add_proj_type_option" @click="change_type_not_choose">
+            未分類
+          </div>
+          <div
+            v-for="(option, index) in add_proj_type_options"
+            :key="index"
+            class="add_proj_type_option"
+            @click="change_type_choosen(option)"
+          >
+            {{ option }}
+          </div>
+        </div>
+        <div class="add_proj_type_list_line"></div>
+        <input
+          type="text"
+          class="add_proj_type_text"
+          placeholder="新增類別"
+          v-model="add_proj_type_text"
+          @keyup.enter="list_add_a_cart"
+        />
+        <div class="add_proj_type_text_plus" @click="list_add_a_cart"></div>
+      </div>
 
       <div class="proj_info_enter" @click="enter_project_btn">進入專案</div>
     </div>
@@ -690,6 +726,7 @@ export default {
       // console.log("按下新增專案");
       // let au = this.route.query.authorization;
       // console.log(this.$route.params.authorization);
+      this.project_info_show = false;
       this.add_proj_show = this.add_proj_show === false ? true : false;
       this.showOverlay = !this.showOverlay;
       this.proj_type = "選擇專案類型";
@@ -899,6 +936,16 @@ export default {
         this.carts.push(new_cart);
         this.add_proj_type_options.push(this.cart_title_input);
         this.cart_title_input = "";
+        const path = "http://35.201.168.185:5000/add_type";
+        const insert_type = {
+          project_ended: false,
+          project_type: "課業＿高中",
+        };
+        axios.post(path, insert_type, {
+          headers: {
+            authorization: JSON.parse(localStorage.getItem("auth")),
+          },
+        });
       }
     },
     // 新增專案彈窗裡點擊選擇專案類型
@@ -909,7 +956,7 @@ export default {
         "url(../assets/dropdown_arrow/dropdown_arrow_down.svg) no-repeat center right;";
     },
 
-    // 新增專案彈窗裡的選擇專案類型選擇其中一個已有專案
+    // 新增專案彈窗裡的選擇專案類型選擇其中一個已有專案002
     type_choosen(option) {
       this.show_add_proj_type_list = false;
       this.proj_type = option;
@@ -933,6 +980,23 @@ export default {
       this.proj_type_color = "black";
       this.add_proj_type_text = "";
     },
+
+    // 修改專案 - 把專案類別修改到未分類
+    change_type_not_choose() {
+      this.show_add_proj_type_list = false;
+      this.proj_type = "未分類";
+      this.proj_type_color = "black";
+      this.add_proj_type_text = "";
+    },
+
+    // 修改專案 - 把專案類別修改到選取的類別
+    change_type_choosen(option) {
+      this.show_add_proj_type_list = false;
+      this.proj_type = option;
+      this.proj_type_color = "black";
+      this.add_proj_type_text = "";
+    },
+
     // 新增專案彈窗裡的選擇專案類型直接打字輸入新的專案
     list_add_a_cart() {
       if (this.add_proj_type_text !== "") {
