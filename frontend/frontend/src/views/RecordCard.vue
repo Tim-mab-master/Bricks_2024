@@ -66,6 +66,7 @@ const activeChange = () => {
   top: 0;
   left: 200px;
   right: 0;
+
   /* grid-area: navBar; */
 }
 .side {
@@ -77,6 +78,8 @@ const activeChange = () => {
 }
 
 .cards {
+  border: 2px solid black;
+
   display: grid;
   grid-column-gap: 16px;
   grid-row-gap: 20px;

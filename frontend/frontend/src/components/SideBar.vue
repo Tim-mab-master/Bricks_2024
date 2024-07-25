@@ -63,6 +63,10 @@
         </el-row>
       </div>
     </div>
+    <div id="blank">
+      <button class="buttons" @click="terminate_project">結束專案</button>
+      <button class="buttons" @click="delete_project">刪除專案</button>
+    </div>
   </div>
 </template>
 
@@ -133,6 +137,14 @@ export default {
       menuClass.value = "selected";
     };
 
+    const terminate_project = () => {
+      console.log("terminate");
+    };
+
+    const delete_project = () => {
+      console.log("delete");
+    };
+
     return {
       project_name,
       incolor,
@@ -147,6 +159,8 @@ export default {
       // setActiveIndex,
       activeIndex,
       selected,
+      terminate_project,
+      delete_project,
     };
   },
 };
@@ -170,6 +184,7 @@ export default {
   background: #fff;
   box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.12);
 }
+
 #container {
   width: 100%;
 }
@@ -266,5 +281,38 @@ export default {
 .menuText {
   text-decoration: none;
   color: black;
+}
+
+#blank {
+  width: 200px;
+  /* border: 2px solid black; */
+  position: absolute;
+  display: flex;
+  bottom: 38px;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+
+.buttons {
+  height: 34px;
+  margin-top: 13px;
+
+  display: flex;
+  width: 90%;
+  justify-content: center;
+  align-items: center;
+  border: 0px black solid;
+  cursor: pointer;
+
+  border-radius: 999px;
+  color: #fff;
+  background: #8b8b8bad;
+  top: 0;
+
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 32px;
 }
 </style>
