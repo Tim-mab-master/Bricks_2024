@@ -303,8 +303,8 @@ onUnmounted(() => {
   /* display: inline-block; */
   height: 40px;
   width: 50px;
-  position: relative;
-  /* left: -65px; */
+  position: absolute;
+  left: -65px;
   margin-right: 15px;
   background-color: white;
   border: 1px solid #ccc;
