@@ -598,8 +598,6 @@ import axios from "axios";
 import { Base64 } from "js-base64";
 import { useRoute } from "vue-router";
 import store from "../store/store.js";
-// import { fa } from "element-plus/es/locale/index.js";
-
 export default {
   name: "Personal_homepage",
 
@@ -688,7 +686,8 @@ export default {
       proj_info_type: "",
       proj_info_id: 0,
       router: useRouter(),
-      store: useStore(),
+      // store: useStore(),
+      store: store,
     };
   },
   methods: {
@@ -1055,7 +1054,8 @@ export default {
 
     //在proj_info裡面點擊進入專案
     enter_project_btn() {
-      this.store.commit("records/setProjectID", this.proj_info_id);
+      this.store.commit("setProjectID", this.proj_info_id);
+      console.log(this.store.getters.getProjectID);
       this.router.push({ name: "all" });
       //測試印出project/id
     },

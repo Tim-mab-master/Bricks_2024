@@ -3,7 +3,7 @@
     <side-bar class="side" @update="activeChange"></side-bar>
     <nav-bar-all class="navBar"></nav-bar-all>
 
-    <div v-if="minuteExist" class="navAndCont" id="cards">
+    <div v-if="true" class="navAndCont" id="cards">
       <div class="cards">
         <h1>564654564</h1>
         <button @click="showinfo"></button>
@@ -33,34 +33,36 @@ import EmptyBack from "../components/EmptyBack.vue";
 import NavBarAll from "../components/NavBarAll.vue";
 import SideBar from "../components/SideBar.vue";
 import MeetingCards from "../components/MeetingCards.vue";
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, onBeforeMount } from "vue";
 import { useRouter } from "vue-router";
-import { useStore } from "vuex";
-import store_js from "../store/modules/records.js";
+// import { useStore } from "vuex";
+import store from "../store/store.js";
 
 const router = useRouter();
-const store = useStore();
+// const store = useStore();
 let minuteExist = false;
 
-onMounted(async () => {
+onBeforeMount(async () => {
   console.log("onMounted");
-  await store.dispatch("records/fetchAllRecords");
-  if (store_js.state.allRecords != null) {
-    console.log("true");
-    minuteExist = true;
-  }
-  console.log("allRecords", store_js.state.allRecords);
+  await store.dispatch("fetchAllRecords");
+  console.log("allRecords", store.getters.getAllRecords);
+  // if (store.state.allRecords.length != 0) {
+  //   minuteExist = true;
+  // }
   console.log(minuteExist);
 });
+onBeforeMount(() => {});
 
 const showinfo = () => {
-  alert("拿到");
-  console.log("cards", cards);
+  // alert("拿到");
+  // console.log("cards", cards);
   // 先用直接拿的方法拿到allRecords，之後要用getter
-  console.log("所有records", store_js.state.allRecords);
+  // console.log("所有records", store_js.state.allRecords);
+
+  console.log(minuteExist);
 };
 
-const cards = computed(() => store_js.state.allRecords);
+const cards = computed(() => store.state.allRecords);
 const activeOption = ref(0);
 const handleCardClick = (cardId) => {
   // 根据卡片点击情况进行路由导航
@@ -107,7 +109,7 @@ const activeChange = () => {
   position: absolute;
   border: 2px solid yellow;
   left: 200px;
-  width: calc(100vw - 210px);
+  /* width: calc(100vw - 220px); */
   height: calc(100vh - 55px);
   top: 50px;
   right: 0;
