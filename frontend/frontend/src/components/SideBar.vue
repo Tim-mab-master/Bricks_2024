@@ -119,15 +119,15 @@ export default {
 
       const body = {
         // "user_id": "0",
-        project_id: store.state.records.projectID,
-        record_name: "",
+
+        project_id: JSON.parse(localStorage.getItem("projectID")),
         record_date: formattedDate,
-        record_department: "",
-        record_attendances: 0,
-        record_host_name: "",
-        record_place: "",
       };
-      axios.post("http://34.81.219.139:5000/add_record", body);
+      axios.post("http://35.201.168.185:5000/add_record", body, {
+        headers: {
+          authorization: JSON.parse(localStorage.getItem("auth")),
+        },
+      });
       value = true;
       // emit('showAdd',value);
       router.push({ name: "newRecord" });
