@@ -1314,8 +1314,6 @@ export default {
       } else {
         projectId = this.currentProjectId;
       }
-      // 除的项目的 project_id
-
       console.log("prid", projectId);
 
       const path = "http://35.201.168.185:5000/to_trashcan";

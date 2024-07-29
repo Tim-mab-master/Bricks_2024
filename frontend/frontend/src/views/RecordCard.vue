@@ -9,6 +9,7 @@
           v-for="card in cards"
           :key="card.id"
           :recordName="card.record_name"
+          :tags="card.tags"
           >card</meeting-cards
         >
       </div>
@@ -64,7 +65,7 @@ const minuteExistMethod = () => {
   return minuteExist;
 };
 
-const cards = computed(() => store.state.allRecords);
+const cards = computed(() => store.getters.getAllRecords);
 const activeOption = ref(0);
 const handleCardClick = (cardId) => {
   // 根据卡片点击情况进行路由导航
@@ -94,8 +95,7 @@ const activeChange = () => {
 }
 
 .cards {
-  border: 2px solid black;
-
+  /* border: 2px solid black; */
   display: grid;
   grid-column-gap: 16px;
   grid-row-gap: 20px;
@@ -109,7 +109,7 @@ const activeChange = () => {
 .navAndCont {
   background-color: #dcdfe6;
   position: absolute;
-  border: 2px solid yellow;
+  /* border: 2px solid yellow; */
   left: 200px;
   /* width: calc(100vw - 220px); */
   height: calc(100vh - 55px);

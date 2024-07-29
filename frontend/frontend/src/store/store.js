@@ -21,6 +21,7 @@ export default createStore({
     auth: "no_login_yet",
     userID: 44,
     allRecords: [],
+    trashRecords: [],
     currRecord: {},
     projectID: 0,
     recordID: 3,
@@ -44,6 +45,9 @@ export default createStore({
     },
     setAllRecords(state, records) {
       state.allRecords = records;
+    },
+    setTrashRecords(state, records) {
+      state.trashRecords = records;
     },
     setCurrRecord(state, payload) {
       state.currRecord = payload.record;
@@ -72,6 +76,13 @@ export default createStore({
       console.log(state.allRecords);
       return state.allRecords;
     },
+
+    getTrashRecords(state) {
+      console.log("值");
+      console.log(state.allRecords);
+      return state.allRecords;
+    },
+
     getCurrRecord(state) {
       return state.currRecord;
     },
@@ -107,6 +118,30 @@ export default createStore({
         console.log(error);
       }
     },
+
+    async fetchTrashRecords({ state, commit }) {
+      try {
+        const body = {
+          project_id: JSON.parse(localStorage.getItem("projectID")),
+          // project_id: 94, //bricks
+        };
+        await axios
+          .post("http://35.201.168.185:5000/trashcan_record", body, {
+            headers: {
+              authorization: JSON.parse(localStorage.getItem("auth")),
+            },
+          })
+
+          .then((res) => {
+            // console.log(JSON.parse(localStorage.getItem("auth"))); //確認auth是否正確
+            commit("setTrashRecords", res.data.record); //以array紀錄會議名稱
+            console.log("回復", res);
+          });
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
     async fetchOneRecord({ state, commit }) {
       try {
         const body = {
