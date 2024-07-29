@@ -74,7 +74,8 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
-import { useStore } from "vuex";
+import store from "../store/store.js";
+import PersonalHomepageVue from "../views/PersonalHomepage.vue";
 
 export default {
   components: {},
@@ -92,7 +93,6 @@ export default {
     const router = useRouter();
     const activeIndex = ref(props.activeIndex);
     const menuClass = ref("menu");
-    const store = useStore();
 
     // 按下後字體改變顏色
     const menu_clicked = () => {
@@ -138,11 +138,31 @@ export default {
     };
 
     const terminate_project = () => {
-      console.log("terminate");
+      const body = { project_id: store.getters.getProjectID, state: "end" };
+      axios
+        .post("http://35.201.168.185:5000/set_project_end", body, {
+          headers: {
+            authorization: JSON.parse(localStorage.getItem("auth")),
+          },
+        })
+        .then((res) => {
+          console.log(res);
+        });
+      router.push("../personalHomepage");
     };
 
     const delete_project = () => {
-      console.log("delete");
+      const body = { project_id: store.getters.getProjectID };
+      axios
+        .post("http://35.201.168.185:5000/to_trashcan", body, {
+          headers: {
+            authorization: JSON.parse(localStorage.getItem("auth")),
+          },
+        })
+        .then((res) => {
+          console.log(res);
+        });
+      router.push("../personalHomepage");
     };
 
     return {

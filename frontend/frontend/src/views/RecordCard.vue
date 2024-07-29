@@ -3,10 +3,8 @@
     <side-bar class="side" @update="activeChange"></side-bar>
     <nav-bar-all class="navBar"></nav-bar-all>
 
-    <div v-if="true" class="navAndCont" id="cards">
+    <div v-if="minuteExistMethod" class="navAndCont" id="cards">
       <div class="cards">
-        <h1>564654564</h1>
-        <button @click="showinfo"></button>
         <meeting-cards
           v-for="card in cards"
           :key="card.id"
@@ -40,17 +38,11 @@ import store from "../store/store.js";
 
 const router = useRouter();
 // const store = useStore();
-let minuteExist = false;
 
 onMounted(async () => {
   console.log("onMounted");
   await store.dispatch("fetchAllRecords");
-  console.log("idididid", store.getters.getProjectID);
-  console.log("allRecords", store.getters.getAllRecords);
-  // if (store.state.allRecords.length != 0) {
-  //   minuteExist = true;
-  // }
-  console.log(minuteExist);
+  console.log("allRecords", store.getters.getAllRecords.length);
 });
 onBeforeMount(() => {});
 
@@ -61,6 +53,15 @@ const showinfo = () => {
   // console.log("所有records", store_js.state.allRecords);
 
   console.log(minuteExist);
+};
+
+const minuteExistMethod = () => {
+  let minuteExist = false;
+  if (store.state.allRecords.length != 0) {
+    minuteExist = true;
+  }
+  console.log("tor", minuteExist);
+  return minuteExist;
 };
 
 const cards = computed(() => store.state.allRecords);
