@@ -270,12 +270,7 @@
                     "
                     @click="proj_info(index1, index2)"
                   >
-                    <!-- {{ index1 }} -->
-                    <!-- index1: cart 的索引 -->
-                    <!-- {{ project.project_id }} -->
-                    <!-- project_id: 專案 ID -->
                     {{ project.proj_name }}
-                    <!-- proj_name: 專案名稱 -->
                   </div>
                 </div>
               </div>
@@ -380,31 +375,6 @@
                   class="cart_drag_icon"
                 />
                 <div class="title_underline"></div>
-                <!-- <div class="box_container">
-                  <div v-for="(cart, index1) in ended_carts" :key="index1"> -->
-                <!-- <div
-                      class="box"
-                      v-for="(project, index2) in cart.project_box"
-                      :key="index2"
-                      @contextmenu.prevent="
-                        showRightClickBox(
-                          $event,
-                          index1,
-                          index2,
-                          project.project_id
-                        )
-                      "
-                      @click="proj_info(index1, index2)"
-                    > -->
-                <!-- {{ index1 }} -->
-                <!-- index1: cart 的索引 -->
-                <!-- {{ project.project_id }} -->
-                <!-- project_id: 專案 ID -->
-                <!-- {{ project.proj_name }} -->
-                <!-- proj_name: 專案名稱 -->
-                <!-- </div>
-                  </div>
-                </div> -->
                 <div class="box_container">
                   <div
                     class="box"
@@ -505,6 +475,8 @@
                   src="../assets/trash_page/trashcan_default.svg"
                   alt=""
                   class="forever_delete_trash_pic"
+                  style="cursor: pointer"
+                  @click="forever_delete_project"
                 />
                 <img
                   v-else
@@ -515,41 +487,33 @@
                   @click="forever_delete_project"
                 />
                 <div class="box_container">
-                  <div v-for="(cart, index1) in trash_carts" :key="index1">
+                  <div v-for="(cart, index1) in trash_carts_in_month" :key="index1">
                     <div
                       class="box"
-                      v-for="(proj_name, index2) in cart.proj_box"
+                      v-for="(proj, index2) in cart.proj_box"
                       :key="index2"
+                      @click="click_trash_project(index2, index1)"
                     >
-                      {{ proj_name }}
+                      {{ proj.proj_name }}
                     </div>
                   </div>
                 </div>
-
-                <!-- <div class="trash_box_container">
-                  <div
-                    class="trash_box"
-                    v-for="(trash_box, index) in trash_boxes"
-                    :key="index"
-                  >
-                    <input
-                      type="checkbox"
-                      :id="'trash_box-' + index"
-                      v-model="checked_trash_box[index]"
-                      @change="selected_trash_box(index)"
-                    />
-                    <label
-                      :for="'trash_box-' + index"
-                      @contextmenu.prevent="right_click_box_trash"
-                      >{{ trash_box.text }}</label
-                    >
-                  </div>
-                </div> -->
               </div>
               <div class="last_one_year">
                 <p class="last_time">近一年</p>
                 <div class="time_subline"></div>
-                <div class="trash_box_container"></div>
+                <div class="box_container">
+                  <div v-for="(cart, index1) in trash_carts_not_in_month" :key="index1">
+                    <div
+                      class="box"
+                      v-for="(proj, index2) in cart.proj_box"
+                      :key="index2"
+                      @click="click_trash_project(index2, index1)"
+                    >
+                      {{ proj.proj_name }}
+                    </div>
+                  </div>
+                </div>
               </div>
               <div class="recovered" v-show="recovered">
                 <img src="../assets/recovered_icon.svg" alt="" />
@@ -578,7 +542,7 @@
                   </button>
                   <button
                     class="forever_delete_confirm_btn forever_delete_confirm_btn_delete"
-                    @click="close_forever_delete_confirm()"
+                    @click="forever_delete()"
                   >
                     刪除
                   </button>
@@ -674,7 +638,8 @@ export default {
       ended_projs: [],
       cart_box_name_list: [],
       //垃圾桶
-      trash_carts: [],
+      trash_carts_in_month: [],
+      trash_carts_not_in_month: [],
       checked_trash_box: [],
       recover: true,
       trashcan: true,
@@ -1191,7 +1156,7 @@ export default {
     },
 
     // 已結束專案點擊右鍵
-    ended_showRightClickBox(event, cartIndex, projectIndex, project_id) {
+    ended_showRightClickBox(event, cartIndex, projectIndex) {
       this.right_click_box_overview_show = true;
       // const cartElement = this.$refs["ended_cart_" + cartIndex];
       // console.log("cartIndex", cartIndex);
@@ -1211,6 +1176,7 @@ export default {
       console.log("mouseTop:", this.mouseTop);
       console.log("mouseLeft:", this.mouseLeft);
     },
+    
 
     //恢復到進行中的專案
     un_terminate_project() {
@@ -1309,6 +1275,13 @@ export default {
         });
     },
 
+    click_trash_project( projectIndex,cartIndex) {
+      this.currentCartIndex = cartIndex;
+      this.currentProjectIndex = projectIndex;
+      console.log("currentCartIndex", this.currentCartIndex);
+      console.log("urrentProjectIndex", this.currentProjectIndex);
+      
+    },
     //刪除後的專案跑到垃圾桶
     delete_project_ing() {
       console.log("this.currentCartIndex", this.currentCartIndex); //第幾個cart
@@ -1411,16 +1384,6 @@ export default {
           }
         });
 
-      // // 获取要删除的项目名称
-      // const deletedProject = this.carts[cartIndex].project_box[projIndex];
-      // // 将项目名称添加到垃圾桶
-      // const trash_box = {
-      //   text: deletedProject
-      // };
-      // this.trash_boxes.push(trash_box);
-
-      // 从原数组中删除项目
-      // this.$set(this.carts[cartIndex].project_box, projIndex, null); // 使用 $set 删除并保持响应式
     },
 
     // 點擊垃圾桶裡的專案後又上兩個按鈕變色
@@ -1444,25 +1407,85 @@ export default {
       }, 1000);
       this.recover = true;
       this.trashcan = true;
+
+      let projectId = 0;
+      this.all_proj.forEach((project) => {
+        if (
+          project.project_name ===
+          this.trash_carts_in_month[this.currentCartIndex].proj_box[
+            this.currentProjectIndex
+          ].proj_name
+        ) {
+          projectId = project.id;
+        }
+      });
+
+      const path = "http://35.201.168.185:5000/trashcan_recover";
+      const trashcan_recover = {
+        project_id: projectId,
+      };
+      axios
+        .post(path, trashcan_recover, {
+          headers: { authorization: JSON.parse(localStorage.getItem("auth")) },
+        })
+        .then((res) => {
+          if (res.data.status == "success") {
+            setTimeout(() => {
+              this.$router.go(0);
+            }, 500);
+          }else{
+
+          }
+        });
     },
     // 垃圾桶點選永久刪除
     forever_delete_project() {
       this.forever_delete_confirm = true;
       this.showOverlay_trash = true;
+      
     },
     // 關閉永久刪除彈窗
     close_forever_delete_confirm() {
       this.forever_delete_confirm = false;
       this.showOverlay_trash = false;
     },
-    // 專案總覽右鍵點擊專案
-    // right_click_box(event) {
-    //   event.preventDefault();
-    //   this.right_click_box_overview_show = true;
-    //   this.mouseTop = event.clientY - 49;
-    //   this.mouseLeft = event.clientX - 368;
-    // },
-    // 當滑鼠點擊非指定區域時關閉彈窗
+    //永久刪除專案了
+    forever_delete(){
+      this.forever_delete_confirm = false;
+      this.showOverlay_trash = false;
+      let projectId = 0;
+      this.all_proj.forEach((project) => {
+        if (
+          project.project_name ===
+          this.trash_carts_in_month[this.currentCartIndex].proj_box[
+            this.currentProjectIndex
+          ].proj_name
+        ) {
+          projectId = project.id;
+        }
+      });
+      //這裡寫從垃圾桶永久刪除api
+
+      // const path = "http://35.201.168.185:5000/delete_record_permanent";
+      // const delete_record_permanent = {
+      //   project_id: projectId,
+      // };
+      // axios
+      //   .post(path, delete_record_permanent, {
+      //     headers: { authorization: JSON.parse(localStorage.getItem("auth")) },
+      //   })
+      //   .then((res) => {
+      //     if (res.data.status == "success") {
+      //       console.log("lll")
+      //       setTimeout(() => {
+      //         this.$router.go(0);
+      //       }, 500);
+      //     }else{
+
+      //     }
+      //   });
+
+    },
     handleClickOutside() {
       // 專案總覽右鍵彈窗
       if (
@@ -1630,7 +1653,8 @@ export default {
               const new_cart = {
                 title_word: this.proj_type,
                 project_box: [
-                  { proj_name: this.proj_name, project_id: this.proj_id },
+                  { proj_name: this.proj_name, 
+                    project_id: this.proj_id },
                 ],
               };
 
@@ -1665,14 +1689,32 @@ export default {
             }
             const new_cart = {
               title_word: this.proj_type,
-              proj_box: [this.proj_name],
+              proj_box: [
+                { proj_name: this.proj_name, 
+                  project_id: this.proj_id },
+              ],
             };
-            //搜尋已結束加正在進行
             this.projectsAll.push(this.proj_name);
-            this.trash_carts.push(new_cart);
-            //  else {
-            //   // 這裡寫未分類
-            // }
+            this.trash_carts_in_month.push(new_cart);
+          })
+          const items_not_in_month = res.data.item.not_int_month;
+          console.log(items_not_in_month);
+          items_not_in_month.forEach((element) => {
+            this.proj_type = element.project_type;
+            this.proj_name = element.project_name;
+            this.all_proj.push(element);
+            if (this.projectsAll) {
+              this.projectsAll.push(this.proj_name);
+            }
+            const new_cart = {
+              title_word: this.proj_type,
+              proj_box: [
+                { proj_name: this.proj_name, 
+                  project_id: this.proj_id },
+              ],
+            };
+            this.projectsAll.push(this.proj_name);
+            this.trash_carts_not_in_month.push(new_cart);
           });
         }
       });
@@ -2544,6 +2586,9 @@ export default {
   background-color: #e1dcdc;
   border-color: #c7c2c2;
 }
+.box.selected {
+  background-color: #e1dcdc;
+}
 .cart_title_input {
   font-size: 16px;
   font-weight: 400;
@@ -2704,7 +2749,7 @@ export default {
 /* 垃圾桶的部分 起點 */
 .trash_page_middle {
   width: 98%;
-  height: 85vh;
+  height: 100vh;
   border: 1px solid #e1dcdc;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
   border-radius: 14px;
@@ -2932,16 +2977,13 @@ export default {
 }
 .recover_trash_pic {
   position: absolute;
-  /* margin-left: auto; */
-  margin-top: 7px;
+  margin-top: -120px;
   left: 87%;
 }
 .forever_delete_trash_pic {
   position: absolute;
-  /* margin-left: auto; */
-  margin-top: 7px;
+  margin-top: -120px;
   left: 92%;
-  /* margin-left: 1100px; */
 }
 
 router-link {
