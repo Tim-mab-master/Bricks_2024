@@ -2,7 +2,24 @@
   <div>
     <side-bar class="side" @update="activeChange"></side-bar>
     <nav-bar-all class="navBar"></nav-bar-all>
-
+    <div class="terminate_delete_confirm" v-if="false">
+      <div
+        class="close_terminate_delete_confirm"
+        @click="close_delete_confirm"
+      ></div>
+      <h4 class="confirm_title">結束專案</h4>
+      <p class="confirm_content">
+        確認結束此專案？執行後請至「已結束專案」查看
+      </p>
+      <div class="confirm_button_container">
+        <div class="confirm_button cb_cancle" @click="close_delete_confirm">
+          取消
+        </div>
+        <div class="confirm_button cb_confirm" @click="confirm_button">
+          確定
+        </div>
+      </div>
+    </div>
     <div v-if="minuteExistMethod" class="navAndCont" id="cards">
       <div class="cards">
         <meeting-cards
@@ -72,6 +89,17 @@ const handleCardClick = (cardId) => {
   router.push(`/all/cards/meetingRecord/${cardId}`);
 };
 
+// 確認刪除視窗，之後要改成接收sidebar的點擊
+let close_delete = ref(false);
+
+const open_delete_confirm = () => {
+  close_delete.value = true;
+};
+
+const close_delete_confirm = () => {
+  close_delete.value = false;
+};
+
 const activeChange = () => {
   activeOption.value = computed(() => store.state.activeIndex);
 };
@@ -94,6 +122,106 @@ const activeChange = () => {
   bottom: 0;
 }
 
+/* 確認刪除、結束專案跳出視窗 */
+.terminate_delete_confirm {
+  width: 344px;
+  height: 160px;
+  position: fixed;
+  border-radius: 14px;
+  background-color: white;
+  box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.4);
+  z-index: 6;
+  left: calc((100vw - 344px + 234px) / 2);
+  top: 35%;
+}
+
+.close_terminate_delete_confirm {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  top: 10px;
+  left: 307px;
+}
+
+.close_terminate_delete_confirm::before,
+.close_terminate_delete_confirm::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 2px;
+  height: 17px;
+  background-color: black;
+}
+.close_terminate_delete_confirm::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.close_terminate_delete_confirm::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.confirm_title {
+  font-size: 22px;
+  font-weight: 950;
+  position: relative;
+  top: -30px;
+  text-align: center;
+  user-select: none;
+}
+
+.confirm_content {
+  font-size: 13px;
+  font-weight: 600;
+  position: relative;
+  top: -44px;
+  text-align: center;
+  user-select: none;
+}
+
+.confirm_button_container {
+  width: 280px;
+  height: 36px;
+  /* border: 2px solid black; */
+  top: -38px;
+  left: 50%;
+  transform: translate(-50%);
+
+  display: flex;
+  position: relative;
+  justify-content: space-around;
+
+  text-align: center;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 40px;
+  letter-spacing: 1.25px;
+}
+
+.confirm_button {
+  width: 120px;
+  height: 38px;
+  border-radius: 12px;
+
+  text-align: center;
+
+  cursor: pointer;
+  user-select: none;
+}
+
+.cb_cancle {
+  background-color: #fff;
+  color: black;
+  font-weight: 950;
+}
+
+.cb_confirm {
+  background-color: #b82c30;
+  color: white;
+  font-weight: 700;
+}
+
 .cards {
   /* border: 2px solid black; */
   display: grid;
@@ -108,6 +236,7 @@ const activeChange = () => {
 }
 .navAndCont {
   background-color: #dcdfe6;
+  /* border: 2px solid black; */
   position: absolute;
   /* border: 2px solid yellow; */
   left: 200px;
