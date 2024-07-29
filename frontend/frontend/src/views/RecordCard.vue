@@ -3,7 +3,7 @@
     <side-bar class="side" @update="activeChange"></side-bar>
     <nav-bar-all class="navBar"></nav-bar-all>
 
-    <div v-if="true" class="navAndCont" id="cards">
+    <div v-if="minuteExist" class="navAndCont" id="cards">
       <div class="cards">
         <h1>564654564</h1>
         <button @click="showinfo"></button>
@@ -40,10 +40,17 @@ import store_js from "../store/modules/records.js";
 
 const router = useRouter();
 const store = useStore();
+let minuteExist = false;
 
 onMounted(async () => {
   console.log("onMounted");
   await store.dispatch("records/fetchAllRecords");
+  if (store_js.state.allRecords != null) {
+    console.log("true");
+    minuteExist = true;
+  }
+  console.log("allRecords", store_js.state.allRecords);
+  console.log(minuteExist);
 });
 
 const showinfo = () => {
@@ -52,6 +59,7 @@ const showinfo = () => {
   // 先用直接拿的方法拿到allRecords，之後要用getter
   console.log("所有records", store_js.state.allRecords);
 };
+
 const cards = computed(() => store_js.state.allRecords);
 const activeOption = ref(0);
 const handleCardClick = (cardId) => {
