@@ -1056,7 +1056,14 @@ export default {
     enter_project_btn() {
       this.store.commit("setProjectID", this.proj_info_id);
       console.log(this.store.getters.getProjectID);
-      this.router.push({ name: "all" });
+
+      //在跳轉時先拿取該專案的會議紀錄、垃圾桶會議記錄
+      store.dispatch("fetchAllRecords");
+      store.dispatch("fetchTrashRecords");
+
+      setTimeout(() => {
+        this.router.push({ name: "all" });
+      }, 150);
       //測試印出project/id
     },
 

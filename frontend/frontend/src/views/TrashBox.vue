@@ -29,7 +29,6 @@ export default {
       const cards = computed(store.getters.getAllRecords);
       onMounted(async () => {
         console.log("onMounted");
-        await store.dispatch("fetchTrashRecords");
         console.log("allRecords", store.getters.getTrashRecords);
       });
     }

@@ -40,32 +40,32 @@ import store from "../store/store.js";
 const router = useRouter();
 // const store = useStore();
 
+const minuteExistMethod = () => {
+  if (store.state.allRecords.length != 0) {
+    minuteExist = true;
+  }
+  console.log("min", minuteExist, "結束");
+  return minuteExist;
+};
+
 onMounted(async () => {
   console.log("onMounted");
-  await store.dispatch("fetchAllRecords");
+
+  // console.log("存在", minuteExist);
   console.log("allRecords", store.getters.getAllRecords.length);
+  //檢驗是否有會議記錄存在
+  let minuteExist = false;
 });
-onBeforeMount(() => {});
+
+const cards = computed(() => store.getters.getAllRecords);
 
 const showinfo = () => {
   // alert("拿到");
   // console.log("cards", cards);
   // 先用直接拿的方法拿到allRecords，之後要用getter
   // console.log("所有records", store_js.state.allRecords);
-
-  console.log(minuteExist);
 };
 
-const minuteExistMethod = () => {
-  let minuteExist = false;
-  if (store.state.allRecords.length != 0) {
-    minuteExist = true;
-  }
-  console.log("tor", minuteExist);
-  return minuteExist;
-};
-
-const cards = computed(() => store.getters.getAllRecords);
 const activeOption = ref(0);
 const handleCardClick = (cardId) => {
   // 根据卡片点击情况进行路由导航
