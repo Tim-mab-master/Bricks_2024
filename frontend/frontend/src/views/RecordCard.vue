@@ -33,7 +33,7 @@ import EmptyBack from "../components/EmptyBack.vue";
 import NavBarAll from "../components/NavBarAll.vue";
 import SideBar from "../components/SideBar.vue";
 import MeetingCards from "../components/MeetingCards.vue";
-import { ref, computed, onMounted, onBeforeMount } from "vue";
+import { ref, computed, onMounted, onBeforeMount, onBeforeUnmount } from "vue";
 import { useRouter } from "vue-router";
 // import { useStore } from "vuex";
 import store from "../store/store.js";
@@ -42,9 +42,10 @@ const router = useRouter();
 // const store = useStore();
 let minuteExist = false;
 
-onBeforeMount(async () => {
+onMounted(async () => {
   console.log("onMounted");
   await store.dispatch("fetchAllRecords");
+  console.log("idididid", store.getters.getProjectID);
   console.log("allRecords", store.getters.getAllRecords);
   // if (store.state.allRecords.length != 0) {
   //   minuteExist = true;

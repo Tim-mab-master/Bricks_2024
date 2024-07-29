@@ -54,6 +54,7 @@ export default createStore({
     },
     setProjectID(state, ID) {
       state.projectID = ID;
+      window.localStorage.setItem("projectID", ID);
     },
     setRecordID(state, ID) {
       state.recordID = ID;
@@ -86,10 +87,10 @@ export default createStore({
       console.log("fetchAllrecords");
       try {
         const body = {
-          project_id: state.projectID,
+          project_id: JSON.parse(localStorage.getItem("projectID")),
           // project_id: 94, //bricks
         };
-        console.log("projID" + state.projectID);
+        console.log("projID" + JSON.parse(localStorage.getItem("projectID")));
         await axios
           .post("http://35.201.168.185:5000/get_record_index", body, {
             headers: {
@@ -98,7 +99,7 @@ export default createStore({
           })
 
           .then((res) => {
-            console.log(JSON.parse(localStorage.getItem("auth"))); //確認auth是否正確
+            // console.log(JSON.parse(localStorage.getItem("auth"))); //確認auth是否正確
             commit("setAllRecords", res.data.record); //以array紀錄會議名稱
             console.log("回復", res);
           });
