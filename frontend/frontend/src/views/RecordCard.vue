@@ -77,10 +77,9 @@ import {
   watch,
 } from "vue";
 import { useRouter } from "vue-router";
-// import { useStore } from "vuex";
 import store from "../store/store.js";
 import { mapGetters } from "vuex";
-// import { fa } from "element-plus/es/locale";
+import axios from "axios";
 
 const router = useRouter();
 // const store = useStore();
@@ -140,6 +139,34 @@ const close_delete_confirm = () => {
   close_delete.value = false;
   //把deleteConfirm改回false
   store.commit("setDeleteConfirm");
+};
+
+const confirm_terminate_button = () => {
+  const body = { project_id: store.getters.getProjectID, state: "end" };
+  axios
+    .post("http://35.201.168.185:5000/set_project_end", body, {
+      headers: {
+        authorization: JSON.parse(localStorage.getItem("auth")),
+      },
+    })
+    .then((res) => {
+      console.log(res);
+    });
+  router.push("../personalHomepage");
+};
+
+const confirm_delete_button = () => {
+  const body = { project_id: store.getters.getProjectID };
+  axios
+    .post("http://35.201.168.185:5000/to_trashcan", body, {
+      headers: {
+        authorization: JSON.parse(localStorage.getItem("auth")),
+      },
+    })
+    .then((res) => {
+      console.log(res);
+    });
+  router.push("../personalHomepage");
 };
 
 const activeChange = () => {
