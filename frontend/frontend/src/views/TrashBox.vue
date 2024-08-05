@@ -14,6 +14,9 @@
 import SideBar from "../components/SideBar.vue";
 import TrashBar from "../components/TrashBar.vue";
 import TrashCards from "../components/TrashCards.vue";
+import { ref, computed, onMounted, onBeforeMount, onBeforeUnmount } from "vue";
+import store from "../store/store.js";
+
 export default {
   name: "trashBox",
   components: {
@@ -22,7 +25,13 @@ export default {
     SideBar,
   },
   setup() {
-    return {};
+    {
+      const cards = computed(store.getters.getAllRecords);
+      onMounted(async () => {
+        console.log("onMounted");
+        console.log("allRecords", store.getters.getTrashRecords);
+      });
+    }
   },
 };
 </script>

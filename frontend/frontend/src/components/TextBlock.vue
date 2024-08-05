@@ -25,13 +25,14 @@
           ></el-button>
         </div>
         <div class="split-line" style="width: 100%"></div>
-        <div class="tags">
+        <div class="tags" :disabled="isCartDisabled">
           <el-tag
             v-for="(tag, index) in visibleTags"
             :key="index"
             class="tag"
             closable
             :disable-transitions="false"
+            :disabled="isCartDisabled"
             @close="handleClose(tag)"
           >
             {{ tag }}
@@ -55,7 +56,7 @@
           />
           <el-button
             v-if="!inputVisible"
-            class="button-new-tag ml-1"
+            class="button-new-tag ml-1 addTags"
             size="small"
             @click="showInput"
             :disabled="isCartDisabled"
@@ -64,7 +65,7 @@
           >
           <el-button
             v-if="!inputVisible"
-            class="button-new-tag ml-1"
+            class="button-new-tag ml-1 addTags"
             size="small"
             @click="showInput"
             :disabled="isCartDisabled"
@@ -169,11 +170,13 @@ const calculateVisibleTags = () => {
 };
 
 const handleClose = (tag) => {
-  const index = dynamicTags.value.indexOf(tag);
-  if (index !== -1) {
-    dynamicTags.value.splice(index, 1);
+  if (isCartDisabled.value == false) {
+    const index = dynamicTags.value.indexOf(tag);
+    if (index !== -1) {
+      dynamicTags.value.splice(index, 1);
+    }
+    calculateVisibleTags();
   }
-  calculateVisibleTags();
 };
 
 const showInput = () => {
@@ -197,7 +200,7 @@ const handleInputConfirm = () => {
 const edit_textArea = () => {};
 
 const show = () => {
-  isShowed.value = true;
+  isShowed.value = !isShowed.value;
   isUnlockShowed.value = false;
   isCartDisabled.value = false;
 };
@@ -331,6 +334,12 @@ onUnmounted(() => {
 .ml-1 {
   width: 60px;
 }
+.button-new-tag {
+  margin-top: 2px;
+  margin-left: 1px;
+  margin-right: 5px;
+}
+
 .editCPN {
   position: absolute;
   top: 20px;
