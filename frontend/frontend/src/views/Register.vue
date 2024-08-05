@@ -354,17 +354,17 @@ export default {
           this.errorMessage6
         )
       ) {
-        const path = "http://35.201.168.185:5000/register";
+        const path = "http://34.81.219.139:5000/register";
         const user = {
           user_email: this.email,
           user_password: this.password1,
           user_name: this.account,
         };
         // console.log(user);
-        this.email = "";
-        this.password1 = "";
-        this.password2 = "";
-        this.account = "";
+        // this.email = "";
+        // this.password1 = "";
+        // this.password2 = "";
+        // this.account = "";
         axios
           .post(path, user)
           .then((res) => {
@@ -374,7 +374,6 @@ export default {
 
               this.$router.push({
                 path: "/questionnaire",
-                // params: { user_id: this.userId },
               });
             } else {
               // this.$refs.account.style = "border-color : #e03939";

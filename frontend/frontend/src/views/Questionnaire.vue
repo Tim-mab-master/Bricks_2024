@@ -234,7 +234,6 @@ export default {
       is_3_5_Checked: false,
       is_3_6_Checked: false,
       otherTool: [],
-      userId: this.$route.params.user_id,
       user_email: "",
       warningPurpose: false,
       warningIdentity: false,
@@ -290,7 +289,6 @@ export default {
       this.question_1_checked();
       this.question_3_checked();
       const user_survey = {
-        user_id: this.userId,
         user_purpose: this.purpose,
         user_identity: this.identity,
         user_otherTool: this.otherTool,
@@ -299,7 +297,9 @@ export default {
       console.log(user_survey);
     },
     complete_btn() {
-      const path = "http://104.199.143.218:5000/bricks_login";
+      console.log("nana", JSON.parse(localStorage.getItem("auth")));
+
+      const path = "http://35.201.168.185:5000/register/survey";
       this.question_1_checked();
       this.question_3_checked();
       if (this.purpose.length == 0) {
@@ -316,30 +316,24 @@ export default {
         this.identity !== ""
       ) {
         const user_survey = {
-          user_id: this.userId,
           user_purpose: this.purpose,
           user_identity: this.identity,
           user_otherTool: this.otherTool,
         };
-        // console.log(user);
-        console.log(user_survey);
 
-        // 不確定要不要清空
-        // this.userId = "";
-        // this.purpose = [];
-        // this.identity = "";
-        // this.otherTool = [];
         axios
-          .post(path, user_survey)
+          .post(path, user_survey, {
+            headers: {
+              authorization: JSON.parse(localStorage.getItem("auth")),
+            },
+          })
           .then((res) => {
             console.log("有成功post", res);
             if (res.data.status == "success") {
               this.user_email = res.data.user_email;
               console.log("email ", res.data.user_email);
-              // console.log(user_survey);
               this.$router.push({
-                name: "Personal_homepage",
-                params: { user_email: this.user_email },
+                path: "/login",
               });
             } else {
               console.log(res.data.user_email);
@@ -349,6 +343,10 @@ export default {
           .catch((error) => {
             console.log(error);
           });
+        this.userId = "";
+        this.purpose = [];
+        this.identity = "";
+        this.otherTool = [];
       }
     },
   },
