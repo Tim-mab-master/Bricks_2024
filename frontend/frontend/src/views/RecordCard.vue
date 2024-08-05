@@ -229,16 +229,13 @@ const activeChange = () => {
 
 .cards {
   /* border: 2px solid black; */
-  display: grid;
+  display: flex;
+  flex-wrap: wrap;
   grid-column-gap: 16px;
   grid-row-gap: 20px;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  margin: 28px 10vw 28px 28px;
-
-  position: absolute;
-  /* top: 48px; */
-  /* border: 1px; */
+  margin: 28px 1.5vw 28px 28px;
 }
+
 .navAndCont {
   background-color: #dcdfe6;
   /* border: 2px solid black; */
@@ -246,7 +243,7 @@ const activeChange = () => {
   /* border: 2px solid yellow; */
   left: 200px;
   /* width: calc(100vw - 220px); */
-  height: calc(100vh - 55px);
+  height: auto;
   top: 50px;
   right: 0;
 }
