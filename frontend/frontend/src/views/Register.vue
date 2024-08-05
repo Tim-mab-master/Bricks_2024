@@ -259,6 +259,7 @@
 <script>
 import Register from "./Register.vue";
 import axios from "axios";
+import store from "../store/store.js";
 export default {
   name: "Reigster",
 
@@ -353,7 +354,7 @@ export default {
           this.errorMessage6
         )
       ) {
-        const path = "http://34.81.219.139:5000/register";
+        const path = "http://35.201.168.185:5000/register";
         const user = {
           user_email: this.email,
           user_password: this.password1,
@@ -369,6 +370,8 @@ export default {
           .then((res) => {
             if (res.data.status == "success") {
               this.userId = res.data.user_id;
+              this.setAuth(res.headers.authorization);
+
               this.$router.push({
                 path: "/questionnaire",
                 // params: { user_id: this.userId },
@@ -390,6 +393,9 @@ export default {
         console.log("failure");
       }
       // href="./Register_second"
+    },
+    setAuth(authorization) {
+      store.commit("setAuth", authorization);
     },
   },
   watch: {
