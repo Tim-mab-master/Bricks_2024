@@ -95,7 +95,6 @@ const minuteExistMethod = () => {
 onMounted(async () => {
   console.log("onMounted");
 
-  // console.log("存在", minuteExist);
   console.log("allRecords", store.getters.getAllRecords.length);
   //檢驗是否有會議記錄存在
   store.dispatch("fetchAllRecords");
@@ -328,12 +327,10 @@ store.subscribe((mutation, state) => {
 }
 
 .navAndCont {
-  background-color: #dcdfe6;
   /* border: 2px solid black; */
+  background-color: #dcdfe6;
   position: absolute;
-  /* border: 2px solid yellow; */
   left: 200px;
-  /* width: calc(100vw - 220px); */
   height: auto;
   top: 50px;
   right: 0;
