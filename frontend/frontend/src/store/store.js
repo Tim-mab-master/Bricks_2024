@@ -28,6 +28,7 @@ export default createStore({
     currTextBoxes: [],
     blockNow: {},
     delete_confirm: false,
+    terminate_confirm: false,
   },
   // actions: {
   //   setAuth(authorization) {
@@ -70,6 +71,9 @@ export default createStore({
     setDeleteConfirm(state) {
       state.delete_confirm = !state.delete_confirm;
     },
+    setTerminateConfirm(state) {
+      state.terminate_confirm = !state.terminate_confirm;
+    },
   },
   getters: {
     getAuth(state) {
@@ -98,6 +102,9 @@ export default createStore({
     },
     getDeleteConfirm(state) {
       return state.delete_confirm;
+    },
+    getTerminateConfirm(state) {
+      return state.terminate_confirm;
     },
   },
   actions: {

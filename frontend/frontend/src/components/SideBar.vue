@@ -138,33 +138,36 @@ export default {
     };
 
     const terminate_project = () => {
-      // store.commit("setDeleteConfirm");
+      store.commit("setTerminateConfirm");
+
       // alert(store.getters.getDeleteConfirm);
-      const body = { project_id: store.getters.getProjectID, state: "end" };
-      axios
-        .post("http://35.201.168.185:5000/set_project_end", body, {
-          headers: {
-            authorization: JSON.parse(localStorage.getItem("auth")),
-          },
-        })
-        .then((res) => {
-          console.log(res);
-        });
-      router.push("../personalHomepage");
+      // const body = { project_id: store.getters.getProjectID, state: "end" };
+      // axios
+      //   .post("http://35.201.168.185:5000/set_project_end", body, {
+      //     headers: {
+      //       authorization: JSON.parse(localStorage.getItem("auth")),
+      //     },
+      //   })
+      //   .then((res) => {
+      //     console.log(res);
+      //   });
+      // router.push("../personalHomepage");
     };
 
     const delete_project = () => {
-      const body = { project_id: store.getters.getProjectID };
-      axios
-        .post("http://35.201.168.185:5000/to_trashcan", body, {
-          headers: {
-            authorization: JSON.parse(localStorage.getItem("auth")),
-          },
-        })
-        .then((res) => {
-          console.log(res);
-        });
-      router.push("../personalHomepage");
+      store.commit("setDeleteConfirm");
+
+      // const body = { project_id: store.getters.getProjectID };
+      // axios
+      //   .post("http://35.201.168.185:5000/to_trashcan", body, {
+      //     headers: {
+      //       authorization: JSON.parse(localStorage.getItem("auth")),
+      //     },
+      //   })
+      //   .then((res) => {
+      //     console.log(res);
+      //   });
+      // router.push("../personalHomepage");
     };
 
     return {
