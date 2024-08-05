@@ -138,6 +138,8 @@ export default {
     };
 
     const terminate_project = () => {
+      // store.commit("setDeleteConfirm");
+      // alert(store.getters.getDeleteConfirm);
       const body = { project_id: store.getters.getProjectID, state: "end" };
       axios
         .post("http://35.201.168.185:5000/set_project_end", body, {

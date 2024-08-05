@@ -1769,6 +1769,7 @@ export default {
       }
     },
   },
+
   computed: {
     filterProducts() {
       const str = this.search_project.toLowerCase();

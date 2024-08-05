@@ -27,6 +27,7 @@ export default createStore({
     recordID: 3,
     currTextBoxes: [],
     blockNow: {},
+    delete_confirm: false,
   },
   // actions: {
   //   setAuth(authorization) {
@@ -66,6 +67,9 @@ export default createStore({
     setUserID(state, ID) {
       state.userID = ID;
     },
+    setDeleteConfirm(state) {
+      state.delete_confirm = !state.delete_confirm;
+    },
   },
   getters: {
     getAuth(state) {
@@ -91,6 +95,9 @@ export default createStore({
     },
     getProjectID(state) {
       return state.projectID;
+    },
+    getDeleteConfirm(state) {
+      return state.delete_confirm;
     },
   },
   actions: {

@@ -2,7 +2,7 @@
   <div>
     <side-bar class="side" @update="activeChange"></side-bar>
     <nav-bar-all class="navBar"></nav-bar-all>
-    <div class="terminate_delete_confirm" v-if="false">
+    <div class="terminate_delete_confirm" v-if="close_delete">
       <div
         class="close_terminate_delete_confirm"
         @click="close_delete_confirm"
@@ -72,6 +72,8 @@ onMounted(async () => {
   console.log("allRecords", store.getters.getAllRecords.length);
   //檢驗是否有會議記錄存在
   let minuteExist = false;
+  close_delete.value = store.getters.getDeleteConfirm;
+  console.log(close_delete.value);
 });
 
 const cards = computed(() => store.getters.getAllRecords);
@@ -90,14 +92,16 @@ const handleCardClick = (cardId) => {
 };
 
 // 確認刪除視窗，之後要改成接收sidebar的點擊
-let close_delete = ref(false);
+const close_delete = ref(false);
 
 const open_delete_confirm = () => {
   close_delete.value = true;
 };
 
 const close_delete_confirm = () => {
-  close_delete.value = false;
+  alert(store.getters.getDeleteConfirm);
+  // close_delete.value = false;
+  store.commit("setDeleteConfirm");
 };
 
 const activeChange = () => {
