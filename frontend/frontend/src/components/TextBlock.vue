@@ -252,7 +252,7 @@ onUnmounted(() => {
 <style scoped>
 .show-enter-active,
 .show-leave-active {
-  transition: opacity 0.5s;
+  transition: opacity 0.2s;
 }
 .show-enter-from,
 .show-leave-to {
