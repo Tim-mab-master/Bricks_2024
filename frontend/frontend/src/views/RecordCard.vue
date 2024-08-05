@@ -71,7 +71,8 @@ onMounted(async () => {
   // console.log("存在", minuteExist);
   console.log("allRecords", store.getters.getAllRecords.length);
   //檢驗是否有會議記錄存在
-  let minuteExist = false;
+  store.dispatch("fetchAllRecords");
+  store.dispatch("fetchTrashRecords");
   close_delete.value = store.getters.getDeleteConfirm;
   console.log(close_delete.value);
 });
