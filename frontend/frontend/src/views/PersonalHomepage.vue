@@ -598,8 +598,6 @@ import axios from "axios";
 import { Base64 } from "js-base64";
 import { useRoute } from "vue-router";
 import store from "../store/store.js";
-// import { fa } from "element-plus/es/locale/index.js";
-
 export default {
   name: "Personal_homepage",
 
@@ -688,7 +686,8 @@ export default {
       proj_info_type: "",
       proj_info_id: 0,
       router: useRouter(),
-      store: useStore(),
+      // store: useStore(),
+      store: store,
     };
   },
   methods: {
@@ -1055,8 +1054,16 @@ export default {
 
     //在proj_info裡面點擊進入專案
     enter_project_btn() {
-      this.store.commit("records/setProjectID", this.proj_info_id);
-      this.router.push({ name: "all" });
+      this.store.commit("setProjectID", this.proj_info_id);
+      console.log(this.store.getters.getProjectID);
+
+      //在跳轉時先拿取該專案的會議紀錄、垃圾桶會議記錄
+      store.dispatch("fetchAllRecords");
+      store.dispatch("fetchTrashRecords");
+
+      setTimeout(() => {
+        this.router.push({ name: "all" });
+      }, 150);
       //測試印出project/id
     },
 
@@ -1314,8 +1321,6 @@ export default {
       } else {
         projectId = this.currentProjectId;
       }
-      // 除的项目的 project_id
-
       console.log("prid", projectId);
 
       const path = "http://35.201.168.185:5000/to_trashcan";
@@ -1764,6 +1769,7 @@ export default {
       }
     },
   },
+
   computed: {
     filterProducts() {
       const str = this.search_project.toLowerCase();
