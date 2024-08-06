@@ -390,10 +390,16 @@ export default {
     const googleLogin = () => {
       // alert("callgoogle");
       axios
-        .get("http://34.81.219.139:5000/frontend/google_login")
+        .get("http://35.201.168.185:5000/frontend/google_login")
         .then((res) => {
+          // alert(res);
           console.log(res);
+          args_dict = request.args.to_dict();
         });
+    };
+
+    const submitForm = () => {
+      document.getElementById("redirectForm").submit();
     };
 
     onMounted(() => {
@@ -425,6 +431,7 @@ export default {
       // login,
       deleteCookie,
       googleLogin,
+      submitForm,
     };
   },
   created() {},

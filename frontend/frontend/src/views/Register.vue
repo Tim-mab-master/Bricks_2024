@@ -354,7 +354,7 @@ export default {
           this.errorMessage6
         )
       ) {
-        const path = "http://34.81.219.139:5000/register";
+        const path = "http://35.201.168.185:5000/register";
         const user = {
           user_email: this.email,
           user_password: this.password1,
@@ -369,12 +369,14 @@ export default {
           .post(path, user)
           .then((res) => {
             if (res.data.status == "success") {
+              console.log(res);
               this.userId = res.data.user_id;
+              alert(res.headers.authorization);
               this.setAuth(res.headers.authorization);
 
-              this.$router.push({
-                path: "/questionnaire",
-              });
+              // this.$router.push({
+              //   path: "/questionnaire",
+              // });
             } else {
               // this.$refs.account.style = "border-color : #e03939";
               // this.$refs.password.style = "border-color : #e03939";
