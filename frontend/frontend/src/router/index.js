@@ -12,6 +12,11 @@ const routes = [
     component: HomeView,
   },
   {
+    path: "/new",
+    name: "new",
+    component: () => import("../views/new.vue"),
+  },
+  {
     path: "/about",
     name: "about",
     // route level code-splitting
@@ -56,14 +61,14 @@ const routes = [
     component: () => import("../views/Login.vue"),
   },
   {
-    path: "/frontend/google_callback",
-    // name: "google_callback",
-    components: () => import("../views/google_callback.vue"),
+    path: "/google_login",
+    name: "google_login",
+    component: () => import("../views/GoogleLogin.vue"),
   },
   {
-    path: "/googlelogin",
-    name: "googleLogin",
-    components: () => import("../views/googleLogin.vue"),
+    path: "/google_callback",
+    name: "google_callback",
+    component: () => import("../views/GoogleCallback.vue"),
   },
   {
     path: "/questionnaire",
