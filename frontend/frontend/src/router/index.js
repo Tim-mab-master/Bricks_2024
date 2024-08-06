@@ -66,7 +66,7 @@ const routes = [
     component: () => import("../views/GoogleLogin.vue"),
   },
   {
-    path: "/google_callback",
+    path: "/frontend/google_callback",
     name: "google_callback",
     component: () => import("../views/GoogleCallback.vue"),
   },

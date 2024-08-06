@@ -1,6 +1,6 @@
 <template>
   <div>
-    <form ref="redirectForm" action="/google_login" method="post">
+    <form ref="redirectForm" action="/google_login" method="get">
       <input
         v-for="(value, key) in args"
         :key="key"
