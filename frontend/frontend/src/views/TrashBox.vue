@@ -4,7 +4,13 @@
     <div class="navAndCont" id="trash">
       <trash-bar class="navBar"></trash-bar>
       <div class="cards">
-        <trash-cards v-for="items in 16" :key="items"></trash-cards>
+        <trash-cards
+          v-for="card in cards"
+          :key="card.id"
+          :recordName="card.record_name"
+          :tags="card.tags"
+          >card</trash-cards
+        >
       </div>
     </div>
   </div>
@@ -25,13 +31,13 @@ export default {
     SideBar,
   },
   setup() {
-    {
-      const cards = computed(store.getters.getAllRecords);
-      onMounted(async () => {
-        console.log("onMounted");
-        console.log("allRecords", store.getters.getTrashRecords);
-      });
-    }
+    const cards = computed(() => store.getters.getAllRecords);
+
+    onMounted(async () => {
+      console.log("onMounted");
+      console.log("allRecords", store.getters.getTrashRecords);
+    });
+    return { cards };
   },
 };
 </script>

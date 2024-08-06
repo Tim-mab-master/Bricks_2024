@@ -172,6 +172,7 @@ const activeChange = () => {
   activeOption.value = computed(() => store.state.activeIndex);
 };
 
+//監控左下角的用戶刪除專案
 store.subscribe((mutation, state) => {
   if (mutation.type === "setDeleteConfirm") {
     if (store.getters.getDeleteConfirm === true) {
@@ -179,6 +180,7 @@ store.subscribe((mutation, state) => {
     }
   }
 });
+//監控左下角的用戶結束專案
 store.subscribe((mutation, state) => {
   if (mutation.type === "setTerminateConfirm") {
     if (store.getters.getTerminateConfirm === true) {
