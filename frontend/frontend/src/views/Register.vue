@@ -216,18 +216,14 @@
             <p>或</p>
           </div>
           <div class="other_resource">
-            <a href="">
-              <div>
-                <img src="../assets/Google_login.svg" alt="" />
-                <p>Google 登入</p>
-              </div>
-            </a>
-            <a href="">
-              <div id="FB_login_btn">
-                <img src="../assets/FB_login.svg" alt="" />
-                <p>Facebook 登入</p>
-              </div>
-            </a>
+            <div>
+              <img src="../assets/Google_login.svg" alt="" />
+              <p>Google 登入</p>
+            </div>
+            <div id="FB_login_btn">
+              <img src="../assets/FB_login.svg" alt="" />
+              <p>Facebook 登入</p>
+            </div>
           </div>
           <div class="login">
             <p>已經有帳戶？</p>
@@ -950,8 +946,8 @@ input::placeholder {
   text-indent: 38px;
 }
 
-.other_resource a img {
-  width: 18px;
+.other_resource img {
+  width: 20px;
   position: absolute;
   top: 50%;
   transform: translate(0, -50%);
