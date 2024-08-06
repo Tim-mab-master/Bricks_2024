@@ -36,6 +36,7 @@ export default {
     onMounted(async () => {
       console.log("onMounted");
       console.log("allRecords", store.getters.getTrashRecords);
+      store.dispatch("fetchTrashRecords");
     });
     return { cards };
   },

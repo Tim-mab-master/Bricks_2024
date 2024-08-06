@@ -127,7 +127,7 @@
         v-show="show_add_proj_type_list"
         ref="add_proj_type_list"
       >
-        <div class="add_proj_type_option_container">
+        <div class="add_proj_type_option_container scrollbar">
           <div class="add_proj_type_option" @click="type_not_choose">
             未分類
           </div>
@@ -927,16 +927,16 @@ export default {
         this.carts.push(new_cart);
         this.add_proj_type_options.push(this.cart_title_input);
         this.cart_title_input = "";
-        const path = "http://35.201.168.185:5000/add_type";
-        const insert_type = {
-          project_ended: false,
-          project_type: "課業＿高中",
-        };
-        axios.post(path, insert_type, {
-          headers: {
-            authorization: JSON.parse(localStorage.getItem("auth")),
-          },
-        });
+        // const path = "http://35.201.168.185:5000/add_type";
+        // const insert_type = {
+        //   project_ended: false,
+        //   project_type: "課業＿高中",
+        // };
+        // axios.post(path, insert_type, {
+        //   headers: {
+        //     authorization: JSON.parse(localStorage.getItem("auth")),
+        //   },
+        // });
       }
     },
     // 新增專案彈窗裡點擊選擇專案類型
@@ -2213,16 +2213,33 @@ export default {
   z-index: 3;
   background-color: white;
 }
+
 .add_proj_type_option_container {
-  width: 214px;
+  width: 208px;
   height: 180px;
-  overflow: scroll;
-  color: white;
+  overflow-y: scroll;
+  position: relative;
+  border-radius: 10px;
+  /* border: 2px solid black; */
+  scrollbar-width: thin;
+  scrollbar-color: #d6d6d6 #f2eeee;
+  scrollbar-gutter: stable;
+}
+.add_proj_type_option_container::-webkit-scrollbar {
+  height: 4px;
+  border-radius: 10px;
+}
+.add_proj_type_option_container::-webkit-scrollbar-track {
+  background-color: #000000;
+  border-radius: 10px;
+  /* margin: 20px 130px; */
+}
+.add_proj_type_option_container::-webkit-scrollbar-thumb {
   border-radius: 10px;
 }
 
 .add_proj_type_option {
-  width: 100%;
+  width: 98%;
   height: 45px;
   line-height: 45px;
   font-size: 16px;

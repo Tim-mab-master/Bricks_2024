@@ -96,9 +96,7 @@ onMounted(async () => {
   console.log("onMounted");
 
   console.log("allRecords", store.getters.getAllRecords.length);
-  //檢驗是否有會議記錄存在
   store.dispatch("fetchAllRecords");
-  store.dispatch("fetchTrashRecords");
 });
 
 const cards = computed(() => store.getters.getAllRecords);
