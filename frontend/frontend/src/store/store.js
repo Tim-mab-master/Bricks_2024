@@ -53,6 +53,7 @@ export default createStore({
     setCurrRecord(state, payload) {
       state.currRecord = payload.record;
       state.currTextBoxes = payload.boxes;
+      state.meetingName = payload.name;
     },
     setBlockNow(state, block) {
       state.blockNow = block;
@@ -157,21 +158,27 @@ export default createStore({
         };
 
         const response = await axios.post(
-          "http://34.81.219.139:5000/get_record",
-          body
+          "http://35.201.168.185:5000/get_record",body,
+          {
+            headers:{
+              authorization: JSON.parse(localStorage.getItem("auth")),
+            }
+          }
         );
 
         const payload = {
           record: response.data.record_info[0],
           boxes: [],
+          name: response.data.record_info.record_name,
         };
 
         if (response.data.textBox[0].length > 0) {
-          payload.boxes = response.data.textBox[0];
+          payload.boxes = response.data.textBox;
         } else {
           payload.boxes.push({
             record_id: state.recordID,
             textBox_content: "",
+            Tag: [],
           });
         }
 
@@ -187,11 +194,16 @@ export default createStore({
       };
 
       const response = await axios.post(
-        "http://34.81.219.139:5000/add_textBox",
-        newBlock
+        "http://35.201.168.185:5000/add_textBox",
+        newBlock,
+        {
+          headers:{
+            authorization: state.auth,
+          }
+        }
       );
       console.log(response.data.message);
-      await dispatch("records/fetchOneRecord");
+      await dispatch("fetchOneRecord");
     },
     async deleteBlock({ state, dispatch }) {
       const deleteBlock = {
@@ -206,6 +218,7 @@ export default createStore({
       await dispatch("records/fetchOneRecord");
     },
   },
+
   plugins: [localStoragePlugin],
   // modules: { records },
 });
