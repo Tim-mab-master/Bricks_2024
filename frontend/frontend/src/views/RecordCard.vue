@@ -27,6 +27,7 @@
           :key="card.id"
           :recordName="card.record_name"
           :tags="card.tags"
+          @click="toRecord(card.id)"
           >card</meeting-cards
         >
       </div>
@@ -49,7 +50,7 @@ import EmptyBack from "../components/EmptyBack.vue";
 import NavBarAll from "../components/NavBarAll.vue";
 import SideBar from "../components/SideBar.vue";
 import MeetingCards from "../components/MeetingCards.vue";
-import { ref, computed, onMounted, onBeforeMount, onBeforeUnmount } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 // import { useStore } from "vuex";
 import store from "../store/store.js";
@@ -87,10 +88,6 @@ const showinfo = () => {
 };
 
 const activeOption = ref(0);
-const handleCardClick = (cardId) => {
-  // 根据卡片点击情况进行路由导航
-  router.push(`/all/cards/meetingRecord/${cardId}`);
-};
 
 // 確認刪除視窗，之後要改成接收sidebar的點擊
 const close_delete = ref(false);
@@ -107,6 +104,11 @@ const close_delete_confirm = () => {
 
 const activeChange = () => {
   activeOption.value = computed(() => store.state.activeIndex);
+};
+
+const toRecord = (cardID) =>{
+  store.commit('setRecordID', cardID);  // 等後端回傳
+  router.push("cards/meetingRecord");
 };
 </script>
 

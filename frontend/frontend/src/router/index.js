@@ -101,7 +101,7 @@ const routes = [
         component: () => import("../views/NewMeetingRecord.vue"),
       },
       {
-        path: "cards/meetingRecord/:cardId",
+        path: "cards/meetingRecord",
         // alias: "",
         name: "meetingRecord",
         component: () => import("../views/MeetingRecord.vue"),

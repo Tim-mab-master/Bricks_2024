@@ -85,8 +85,10 @@ const actions = {
       };
 
       const response = await axios.post(
-        "http://34.81.219.139:5000/get_record",
-        body
+        "http://35.201.168.185:5000/get_record",
+        body,{
+          headers: { authorization: store.getters.getAuth },
+        }
       );
 
       const payload = {
@@ -115,11 +117,13 @@ const actions = {
     };
 
     const response = await axios.post(
-      "http://34.81.219.139:5000/add_textBox",
-      newBlock
+      "http://35.201.168.185:5000/add_textBox",
+      newBlock,{
+        headers: { authorization: store.getters.getAuth },
+      }
     );
     console.log(response.data.message);
-    await dispatch("records/fetchOneRecord");
+    await dispatch("fetchOneRecord");
   },
   async deleteBlock({ state, dispatch }) {
     const deleteBlock = {
@@ -127,11 +131,13 @@ const actions = {
     };
 
     const response = await axios.post(
-      "http://34.81.219.139:5000/delete_textBox",
-      deleteBlock
+      "http://35.201.168.185:5000/delete_textBox",
+      deleteBlock,{
+        headers: { authorization: store.getters.getAuth },
+      }
     );
     console.log(response.data.message);
-    await dispatch("records/fetchOneRecord");
+    await dispatch("fetchOneRecord");
   },
 };
 

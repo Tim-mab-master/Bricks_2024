@@ -231,15 +231,13 @@
 </template>
 
 <script setup>
-import { useStore } from "vuex";
+import store from "../store/store.js";
 import { useRouter } from "vue-router";
 import axios from "axios";
 import { ref, reactive, onMounted, computed } from "vue";
 import { defineProps, defineEmits } from "vue";
 import { ElNotification, ElMessage } from "element-plus";
 
-// 引用 store
-const store = useStore();
 const router = useRouter();
 // const props = defineProps(['recordInfo']);
 const emit = defineEmits(["submit"]);
@@ -256,7 +254,7 @@ const form = reactive({
   },
 });
 
-const recordInfo = computed(() => store.getters["records/getCurrRecord"]);
+const recordInfo = computed(() => store.getters.getCurrRecord);
 const meetingName = ref("");
 const time = ref("");
 const place = ref("");
@@ -379,14 +377,20 @@ const onSubmit = () => {
   emit("recordInfo", form.value);
 
   const editInfo = {
-    record_id: store.state.records.recordID,
-    record_name: meetingName.value,
-    record_date: formatted,
-    record_department: "",
-    record_host_name: optionsC.value[0].value,
-    record_place: place.value,
+    "record_id": store.state.recordID,
+    "record_name": meetingName.value,
+    "record_date": formatted,
+    "record_attendees_name": optionsA.value,
+    "record_absentees_name": optionsB.value,
+    "record_recorder_name": optionsC.value,
+    "record_place": place.value
+
   };
-  axios.post("http://34.81.186.58:5000/edit_record", editInfo).then((res) => {
+  axios.post("http://35.201.168.185:5000/edit_record", editInfo, {
+    headers:{
+      authorization: store.getters["getAuth"],
+    }
+  }).then((res) => {
     console.log(res.data.message);
   });
 
@@ -397,12 +401,12 @@ const onSubmit = () => {
   showOverlay.value = false;
   form.show = false;
 
-  store.dispatch("records/fetchAllRecords");
+  store.dispatch("fetchOneRecords");
 };
 
 // 在組件掛載時執行初始化請求
 onMounted(() => {
-  store.dispatch("records/fetchOneRecord");
+  store.dispatch("fetchOneRecord");
   // recordInfo = computed(() => store.getters(["records/getCurrRecord"]));
   console.log(recordInfo.value);
   if (recordInfo[0]) {
