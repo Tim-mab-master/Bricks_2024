@@ -49,7 +49,6 @@ import store from "../store/store.js";
 
 const meetingClass = ref("meeting");
 const recordInfo = ref({});
-const activeOption = ref(null);
 const isShowed = ref(false);
 const router = useRouter();
 const currentActive = ref("1-1");

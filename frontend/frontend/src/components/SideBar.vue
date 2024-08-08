@@ -71,7 +71,7 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 import store from "../store/store.js";
@@ -85,7 +85,7 @@ export default {
 
   setup(props, { emit }) {
     const active_color = ref("#fff");
-    const project_name = "專案名稱";
+    const project_name = computed(() => store.state.projectName);
     const incolor = "#C91F2F";
     const activeOption = ref(null);
     const isClicked = ref(false);

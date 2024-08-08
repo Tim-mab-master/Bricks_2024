@@ -241,6 +241,7 @@ import { ElNotification, ElMessage } from "element-plus";
 const router = useRouter();
 // const props = defineProps(['recordInfo']);
 const emit = defineEmits(["submit"]);
+const props = defineProps(["recordInfo"]);
 
 // 定義響應式數據
 const form = reactive({
@@ -254,7 +255,7 @@ const form = reactive({
   },
 });
 
-const recordInfo = computed(() => store.getters.getCurrRecord);
+// const recordInfo = computed(() => store.getters.getCurrRecord);
 const meetingName = ref("");
 const time = ref("");
 const place = ref("");
@@ -327,6 +328,24 @@ const handleSelectChangeC = (selectedValues) => {
   handleSelectChange(selectedValues, optionsC.value, valueC.value);
 };
 
+const ifNone = (input,values,option) =>{
+  if(input === "None"){
+    values.length = 0;
+    option.length = 0;
+  }
+  else{
+    input.forEach((person) =>{
+      option.push({
+        value: person,
+        label: person
+      });
+      values.push(person);
+    })
+    
+  }
+  console.log(values + "andInput" + input)
+};
+
 const handleSelectChange = (selectedValues, options, value) => {
   for (let i = 0; i < selectedValues.length; i++) {
     const existsInOptions = options.some(
@@ -374,21 +393,21 @@ const onSubmit = () => {
   )}-${formattedTime[1].substring(0, 5)}`;
   time.value = `${formattedDate} ${addTime}`;
   emit("submit");
-  emit("recordInfo", form.value);
+  // emit("recordInfo", form.value);
 
   const editInfo = {
     "record_id": store.state.recordID,
-    "record_name": meetingName.value,
+    "record_name": form.data.meetingName,
     "record_date": formatted,
-    "record_attendees_name": optionsA.value,
-    "record_absentees_name": optionsB.value,
-    "record_recorder_name": optionsC.value,
-    "record_place": place.value
+    "record_attendees_name": valueA.value,
+    "record_absentees_name": valueB.value,
+    "record_recorder_name": valueC.value,
+    "record_place": form.data.place,
 
   };
   axios.post("http://35.201.168.185:5000/edit_record", editInfo, {
     headers:{
-      authorization: store.getters["getAuth"],
+      authorization: store.state.auth
     }
   }).then((res) => {
     console.log(res.data.message);
@@ -406,16 +425,23 @@ const onSubmit = () => {
 
 // 在組件掛載時執行初始化請求
 onMounted(() => {
-  store.dispatch("fetchOneRecord");
-  // recordInfo = computed(() => store.getters(["records/getCurrRecord"]));
-  console.log(recordInfo.value);
-  if (recordInfo[0]) {
-    meetingName.value = recordInfo[0].record_name;
-    time.value = recordInfo[0].record_creation_time;
-    place.value = recordInfo[0].record_place;
-    optionsA.value = recordInfo[0].record_attendees_name;
-    optionsB.value = recordInfo[0].record_absentees_name;
-    optionsC.value = recordInfo[0].record_recorder_name;
+  console.log(props.recordInfo);
+  if (props.recordInfo) {
+    meetingName.value = props.recordInfo.record_name;
+    time.value = props.recordInfo.record_creation_time;
+    form.data.formName = props.recordInfo.record_name;
+    
+    if(props.recordInfo.record_place == "None"){
+      place.value = "";
+      form.data.place = "";
+    }else{
+      place.value = props.recordInfo.record_place;
+      form.data.place = props.recordInfo.record_place;
+    }
+
+    ifNone(props.recordInfo.record_attendees_name,form.data.valueA,optionsA);
+    ifNone(props.recordInfo.record_absentees_name,form.data.valueB,optionsB);
+    ifNone(props.recordInfo.record_recorder_name,form.data.valueC,optionsC);
   }
 });
 </script>

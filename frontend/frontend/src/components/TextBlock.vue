@@ -115,6 +115,7 @@ const props = defineProps({
   isUnlockShowed: Boolean,
   showAddbtn: Boolean,
   content: String,
+  tags: Array,
 });
 
 const emit = defineEmits(["add_cart", "deleteCart"]);
@@ -124,6 +125,10 @@ const isUnlockShowed = ref(props.isUnlockShowed);
 const textarea1 = ref("");
 const inputVisible = ref(false);
 const inputValue = ref("");
+const tagArray = props.tags.forEach(element => {
+  element.Tag_name;
+});
+// const dynamicTags = ref([]);
 const dynamicTags = ref([
   "Tag1",
   "Tag2",
@@ -243,6 +248,8 @@ const add_cart = () => {
 
 onMounted(() => {
   calculateVisibleTags();
+  // dynamicTags.value = tagArray;
+  // console.log("Tags",props.tags.value);
   window.addEventListener("resize", calculateVisibleTags);
   document.addEventListener("click", handleClickOutside);
 });

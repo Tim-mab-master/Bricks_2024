@@ -10,7 +10,7 @@
     </div>
 
     <div :class="meetingClass" v-if="showedInfo">
-      <meeting @submit="submit" @recordInfo="setInfo"></meeting>
+      <meeting @submit="submit" :recordInfo = "recordInfo"></meeting>
       <div class="textBlock">
         <text-block
           v-for="block in blocks"
@@ -19,6 +19,7 @@
           :showAddBtn="showAddBtn"
           @deleteCart="deleteCart(block)"
           :content="block.textBox_content"
+          :tags="block.Tag"
         />
       </div>
     </div>
@@ -50,10 +51,8 @@ import { onMounted } from "vue";
 
 const meetingClass = ref("meeting");
 const recordInfo = computed(() => store.getters.getCurrRecord);
-const activeOption = ref(null);
 const isShowed = ref(false);
 const router = useRouter();
-const currentActive = ref("1-1");
 const showedInfo = ref(true);
 const quantity = ref(1);
 const recordID = ref("");
@@ -63,19 +62,6 @@ const blocks = computed(() => store.getters.getCurrTextBoxes);
 const setInfo = (value) => {
   recordInfo.value = value;
 };
-
-// const submit = () => {
-//   console.log("recordInfo：" + recordInfo);
-//   const editedInfo = {
-//     "record_id": store.state.recordID,
-//     "record_name": "內部例會 0628",
-//     "record_date": "2024-06-28",
-//     "record_attendees_name": "Tim,Thomas,Bitch,水水",
-//     "record_absentees_name": "",
-//     "record_recorder_name": "Tim",
-//     "record_place": "達賢討論室 505"
-//   }
-// };
 
 const deleteCart = async (block) => {
   store.commit("setBlockNow", block);
@@ -97,8 +83,10 @@ const showBtn = () => {
 };
 
 onMounted(async () =>{
+  // store.dispatch("fetchOneRecord");
   console.log("會議記錄 ID是" + store.state.recordID);
-  store.dispatch("fetchOneRecord");
+  console.log("會議記錄資訊是", recordInfo.value);
+  console.log(blocks.value);
 })
 </script>
 

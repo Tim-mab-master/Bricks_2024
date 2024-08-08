@@ -202,7 +202,7 @@
         <div class="add_proj_type_text_plus" @click="list_add_a_cart"></div>
       </div>
 
-      <div class="proj_info_enter" @click="enter_project_btn">進入專案</div>
+      <div class="proj_info_enter" @click="enter_project_btn(proj_info_title)">進入專案</div>
     </div>
     <div class="main_body">
       <div class="bg">
@@ -1053,8 +1053,9 @@ export default {
     },
 
     //在proj_info裡面點擊進入專案
-    enter_project_btn() {
+    enter_project_btn(name) {
       this.store.commit("setProjectID", this.proj_info_id);
+      this.store.commit("setProjectName", name);
       console.log(this.store.getters.getProjectID);
 
       //在跳轉時先拿取該專案的會議紀錄、垃圾桶會議記錄
