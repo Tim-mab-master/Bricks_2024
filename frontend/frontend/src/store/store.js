@@ -24,7 +24,7 @@ export default createStore({
     trashRecords: [],
     currRecord: {},
     projectID: 0,
-    recordID: 3,
+    recordID: 51,
     currTextBoxes: [],
     blockNow: {},
     delete_confirm: false,
@@ -38,8 +38,8 @@ export default createStore({
     changePage(state, index) {
       state.activeIndex = index;
     },
-    setName(state, name) {
-      state.meetingName = name;
+    setProjectName(state, projectName){
+      state.projectName = projectName;
     },
     setAuth(state, authorization) {
       state.auth = authorization;
@@ -53,7 +53,7 @@ export default createStore({
     setCurrRecord(state, payload) {
       state.currRecord = payload.record;
       state.currTextBoxes = payload.boxes;
-      state.meetingName = payload.name;
+      state.meetingName = payload.record.record_name;
     },
     setBlockNow(state, block) {
       state.blockNow = block;
@@ -169,20 +169,20 @@ export default createStore({
         const payload = {
           record: response.data.record_info[0],
           boxes: [],
-          name: response.data.record_info.record_name,
         };
 
-        if (response.data.textBox[0].length > 0) {
-          payload.boxes = response.data.textBox;
-        } else {
+        if (response.data.textBox.length == 0) {
           payload.boxes.push({
             record_id: state.recordID,
             textBox_content: "",
             Tag: [],
           });
+        } else {
+          payload.boxes = response.data.textBox;
         }
 
         commit("setCurrRecord", payload);
+        console.log('payload',payload);
       } catch (error) {
         console.log("無法獲得單個內容");
       }
@@ -215,7 +215,7 @@ export default createStore({
         deleteBlock
       );
       console.log(response.data.message);
-      await dispatch("records/fetchOneRecord");
+      await dispatch("fetchOneRecord");
     },
   },
 
