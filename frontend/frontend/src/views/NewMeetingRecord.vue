@@ -56,7 +56,15 @@ const showedInfo = ref(true);
 const quantity = ref(1);
 const recordID = ref("");
 const showAddBtn = ref(false);
-const blocks = computed(() => store.getters.getCurrTextBoxes);
+const blocks = ref([
+  {
+    "Tag": [],
+    "TextBox_id": 0,
+    "record_id": store.state.recordID,
+    "textBox_content": "",
+    "textBox_update_time": "",
+  }
+]);
 
 const setInfo = (value) => {
   recordInfo.value = value;

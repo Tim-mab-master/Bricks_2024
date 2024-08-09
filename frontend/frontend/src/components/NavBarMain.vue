@@ -27,7 +27,9 @@ import UserInfo from './UserInfo.vue';
 import SearchBar from './SearchBar.vue';
 import NotificationMenu from './NotificationMenu.vue';
 import { useStore } from 'vuex';
-import { ref, watchEffect, onBeforeMount } from 'vue';
+import { ref, watchEffect, onBeforeMount, computed } from 'vue';
+import store from '../store/store';
+import axios from 'axios';
 export default {
     // props:['meetingName'],
     components:{
@@ -36,8 +38,7 @@ export default {
         NotificationMenu,
     },
     setup(props, {emit}){
-        const meetingName = ref("未命名會議紀錄")
-        const store = useStore();
+        const meetingName = computed(() => store.state.meetingName)
         const readOnly = ref(true);
         const edit = () =>{
             readOnly.value = false;
@@ -47,8 +48,7 @@ export default {
         }
         const saveEdit = () =>{
             readOnly.value = true;
-            store.commit('setName', props.meetingName);
-            
+            store.commit('setName', meetingName);
         }
         // onBeforeMount(() => {
         //     meetingName.value = store.state.
