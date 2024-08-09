@@ -59,6 +59,7 @@ const recordID = ref("");
 const showAddBtn = ref(false);
 const blocks = computed(() => store.getters.getCurrTextBoxes);
 
+
 const setInfo = (value) => {
   recordInfo.value = value;
 };
@@ -84,9 +85,9 @@ const showBtn = () => {
 
 onMounted(async () =>{
   // store.dispatch("fetchOneRecord");
-  console.log("會議記錄 ID是" + store.state.recordID);
-  console.log("會議記錄資訊是", recordInfo.value);
-  console.log(blocks.value);
+  // console.log("會議記錄 ID是" + store.state.recordID);
+  // console.log("會議記錄資訊是", recordInfo.value);
+  console.log("文字方塊是長這樣",blocks.value);
 })
 </script>
 

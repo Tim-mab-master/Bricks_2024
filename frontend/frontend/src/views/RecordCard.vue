@@ -99,9 +99,9 @@ const activeChange = () => {
   activeOption.value = computed(() => store.state.activeIndex);
 };
 
-const toRecord = (cardID) =>{
+const toRecord = async (cardID) =>{
   store.commit('setRecordID', cardID);  // 等後端回傳
-  store.dispatch('fetchOneRecord');
+  await store.dispatch('fetchOneRecord');
   router.push("cards/meetingRecord");
 };
 </script>

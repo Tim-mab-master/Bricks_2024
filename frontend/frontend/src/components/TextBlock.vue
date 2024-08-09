@@ -125,22 +125,21 @@ const isUnlockShowed = ref(props.isUnlockShowed);
 const textarea1 = ref("");
 const inputVisible = ref(false);
 const inputValue = ref("");
-const tagArray = props.tags.forEach(element => {
-  element.Tag_name;
-});
-// const dynamicTags = ref([]);
-const dynamicTags = ref([
-  "Tag1",
-  "Tag2",
-  "Tag3",
-  "Tag4",
-  "Tag5",
-  "Tag6",
-  "Tag7",
-  "Tag8",
-  "Tag9",
-  "Tag10",
-]);
+const tagArray = ref([]);
+
+const dynamicTags = computed(() => tagArray.value);
+// const dynamicTags = ref([
+//   "Tag1",
+//   "Tag2",
+//   "Tag3",
+//   "Tag4",
+//   "Tag5",
+//   "Tag6",
+//   "Tag7",
+//   "Tag8",
+//   "Tag9",
+//   "Tag10",
+// ]);
 const isShowed = ref(false);
 const rightClickRef = ref(null);
 const isCartDisabled = ref(false);
@@ -248,8 +247,9 @@ const add_cart = () => {
 
 onMounted(() => {
   calculateVisibleTags();
-  // dynamicTags.value = tagArray;
-  // console.log("Tags",props.tags.value);
+  if(props.tags){
+    tagArray.value = props.tags.map((element) => element.Tag_name);
+  }
   window.addEventListener("resize", calculateVisibleTags);
   document.addEventListener("click", handleClickOutside);
 });

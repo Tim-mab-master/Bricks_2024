@@ -328,23 +328,47 @@ const handleSelectChangeC = (selectedValues) => {
   handleSelectChange(selectedValues, optionsC.value, valueC.value);
 };
 
-const ifNone = (input,values,option) =>{
-  if(input === "None"){
-    values.length = 0;
-    option.length = 0;
-  }
-  else{
-    input.forEach((person) =>{
-      option.push({
-        value: person,
-        label: person
+const checkNone = (input, values, options) =>{
+  if(typeof input === 'string' && input !== "None" && input !== ""){
+    const result = input.split(',');
+    result.forEach((person) => {
+      options.push({
+        value: person.trim(), // 確保去除前後空白
+        label: person.trim()
       });
-      values.push(person);
+    values.push(person.trim());
     })
-    
+  }else{
+      values = [];
+      options = [];
   }
-  console.log(values + "andInput" + input)
-};
+}
+
+
+
+// const ifNone = (input, values, option) => {
+//   // 檢查 input 是否是有效的字串
+//   if (typeof input === 'string' && input !== "None") {
+//     // 將 input 分割成陣列
+//     const result = input.split(',');
+
+//     // 遍歷分割後的結果，並更新 values 和 option
+//     result.forEach((person) => {
+//       option.push({
+//         value: person.trim(), // 確保去除前後空白
+//         label: person.trim()
+//       });
+//       values.push(person.trim());
+//     });
+//   } else {
+//     // 如果 input 是 "None" 或其他非字串，清空 values 和 option
+//     values = [];
+//     option = [];
+//   }
+
+//   console.log('Values:', values, 'and Input:', input);
+// };
+
 
 const handleSelectChange = (selectedValues, options, value) => {
   for (let i = 0; i < selectedValues.length; i++) {
@@ -423,6 +447,8 @@ const onSubmit = () => {
   store.dispatch("fetchOneRecords");
 };
 
+
+
 // 在組件掛載時執行初始化請求
 onMounted(() => {
   console.log(props.recordInfo);
@@ -439,9 +465,9 @@ onMounted(() => {
       form.data.place = props.recordInfo.record_place;
     }
 
-    ifNone(props.recordInfo.record_attendees_name,form.data.valueA,optionsA);
-    ifNone(props.recordInfo.record_absentees_name,form.data.valueB,optionsB);
-    ifNone(props.recordInfo.record_recorder_name,form.data.valueC,optionsC);
+    checkNone(props.recordInfo.record_attendees_name,valueA.value,optionsA.value);
+    checkNone(props.recordInfo.record_absentees_name,valueB.value,optionsB.value);
+    checkNone(props.recordInfo.record_recorder_name,valueC.value,optionsC.value);
   }
 });
 </script>
