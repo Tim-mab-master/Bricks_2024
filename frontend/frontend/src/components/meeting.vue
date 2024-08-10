@@ -241,7 +241,7 @@ import { ElNotification, ElMessage } from "element-plus";
 const router = useRouter();
 // const props = defineProps(['recordInfo']);
 const emit = defineEmits(["submit"]);
-const props = defineProps(["recordInfo"]);
+const props = defineProps(["recordInfo", "newRecordInfo"]);
 
 // 定義響應式數據
 const form = reactive({
@@ -344,32 +344,6 @@ const checkNone = (input, values, options) =>{
   }
 }
 
-
-
-// const ifNone = (input, values, option) => {
-//   // 檢查 input 是否是有效的字串
-//   if (typeof input === 'string' && input !== "None") {
-//     // 將 input 分割成陣列
-//     const result = input.split(',');
-
-//     // 遍歷分割後的結果，並更新 values 和 option
-//     result.forEach((person) => {
-//       option.push({
-//         value: person.trim(), // 確保去除前後空白
-//         label: person.trim()
-//       });
-//       values.push(person.trim());
-//     });
-//   } else {
-//     // 如果 input 是 "None" 或其他非字串，清空 values 和 option
-//     values = [];
-//     option = [];
-//   }
-
-//   console.log('Values:', values, 'and Input:', input);
-// };
-
-
 const handleSelectChange = (selectedValues, options, value) => {
   for (let i = 0; i < selectedValues.length; i++) {
     const existsInOptions = options.some(
@@ -468,6 +442,9 @@ onMounted(() => {
     checkNone(props.recordInfo.record_attendees_name,valueA.value,optionsA.value);
     checkNone(props.recordInfo.record_absentees_name,valueB.value,optionsB.value);
     checkNone(props.recordInfo.record_recorder_name,valueC.value,optionsC.value);
+  }else{
+    meetingName.value = props.newRecordInfo.record_name;
+    form.data.formName = props.newRecordInfo.record_name;
   }
 });
 </script>
