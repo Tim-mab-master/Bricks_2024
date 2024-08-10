@@ -290,7 +290,7 @@ export default {
   display: flex;
   bottom: 38px;
   justify-content: center;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
 }
 
@@ -299,7 +299,7 @@ export default {
   margin-top: 13px;
 
   display: flex;
-  width: 90%;
+  width: 40%;
   justify-content: center;
   align-items: center;
   border: 0px black solid;
@@ -307,9 +307,9 @@ export default {
 
   border-radius: 999px;
   color: #fff;
-  background: #8b8b8bad;
+  /*background: #8b8b8bad;*/
+  background: #c91f2f;
   top: 0;
-
   font-size: 14px;
   font-style: normal;
   font-weight: 400;

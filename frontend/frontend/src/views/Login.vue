@@ -298,6 +298,8 @@ export default {
                 }, 2000);
               }
             } else if (res.data.status === "success") {
+              console.log(res);
+              alert(res.headers.authorization);
               errorTime.value = 0;
               authorization.value = res.headers.authorization;
               console.log(authorization.value);
@@ -392,7 +394,6 @@ export default {
       axios
         .get("http://35.201.168.185:5000/frontend/google_login")
         .then((res) => {
-          // alert(res);
           console.log(res);
           // args_dict = request.args.to_dict();
         });
