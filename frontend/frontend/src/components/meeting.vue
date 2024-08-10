@@ -369,7 +369,6 @@ const handleSelectChange = (selectedValues, options, value) => {
 };
 
 const onSubmit = () => {
-  store.commit("setMeetingName", form.data.formName);
   meetingName.value = form.data.formName;
   place.value = form.data.place;
 
@@ -391,7 +390,6 @@ const onSubmit = () => {
   )}-${formattedTime[1].substring(0, 5)}`;
   time.value = `${formattedDate} ${addTime}`;
   emit("submit");
-  // emit("recordInfo", form.value);
 
   const editInfo = {
     "record_id": store.state.recordID,
@@ -418,6 +416,10 @@ const onSubmit = () => {
   showOverlay.value = false;
   form.show = false;
 
+  if(props.newProjectInfo){
+    store.commit("setRecordID",props.newProjectInfo.record_id);
+  }
+  
   store.dispatch("fetchOneRecords");
 };
 
