@@ -10,7 +10,7 @@
     </div>
 
     <div :class="meetingClass" v-if="showedInfo">
-      <meeting @submit="submit" @recordInfo="setInfo"></meeting>
+      <meeting @submit="submit" @newRecordInfo="newRecordInfo"></meeting>
       <div class="textBlock">
         <text-block
           v-for="block in blocks"
@@ -45,12 +45,10 @@ import Ordering from "../components/SharonBricks/Ordering.vue";
 import sort from "../components/SharonBricks/Sort.vue";
 import DocumentWithInfo from "@/components/KerwinBricks/DCMwithDate.vue";
 import axios from "axios";
-import { onMounted } from "vue";
-import { useStore } from "vuex";
+import store from "../store/store.js";
 
 const meetingClass = ref("meeting");
 const recordInfo = ref({});
-const activeOption = ref(null);
 const isShowed = ref(false);
 const router = useRouter();
 const currentActive = ref("1-1");
@@ -58,8 +56,16 @@ const showedInfo = ref(true);
 const quantity = ref(1);
 const recordID = ref("");
 const showAddBtn = ref(false);
-const store = useStore();
-const blocks = computed(() => store.getters["records/getCurrTextBoxes"]);
+const newRecordInfo = computed(() => store.getters.getNewRecord)
+const blocks = ref([
+  {
+    "Tag": [],
+    "TextBox_id": 0,
+    "record_id": store.state.recordID,
+    "textBox_content": "",
+    "textBox_update_time": "",
+  }
+]);
 
 const setInfo = (value) => {
   recordInfo.value = value;
@@ -67,33 +73,21 @@ const setInfo = (value) => {
 
 const submit = () => {
   console.log("recordInfo：" + recordInfo);
-  // const body = {
-  //   "project_id": 86,
-  //   "record_name": recordInfo.value.data.formName,
-  //   "record_date": recordInfo.value.data.date,
-  //   "record_department": "後端",
-  //   "record_attendances": 4,
-  //   "record_host_name": "劉宸宇",
-  //   "record_place": recordInfo.value.data.place
-  // }
-  // const response = axios.post("http://34.81.219.139:5000/add_record", body);
-  // console.log(response.message);
-  // store.dispatch("records/fetchAllRecords");
 };
 
 const deleteCart = async (block) => {
-  store.commit("records/setBlockNow", block);
+  store.commit("setBlockNow", block);
   // console.log(store.state.records.blockNow);
-  store.dispatch("records/deleteBlock");
+  store.dispatch("deleteBlock");
 };
 
 const showInfo = (value) => {
   showedInfo.value = value;
 };
 const add_block = (block) => {
-  store.commit("records/setBlockNow", block);
+  store.commit("setBlockNow", block);
   // console.log(store.state.records.blockNow);
-  store.dispatch("records/addBlock");
+  store.dispatch("addBlock");
 };
 
 const showBtn = () => {

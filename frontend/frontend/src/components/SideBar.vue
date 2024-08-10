@@ -71,7 +71,7 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 import store from "../store/store.js";
@@ -85,7 +85,7 @@ export default {
 
   setup(props, { emit }) {
     const active_color = ref("#fff");
-    const project_name = "專案名稱";
+    const project_name = computed(() => store.state.projectName);
     const incolor = "#C91F2F";
     const activeOption = ref(null);
     const isClicked = ref(false);
@@ -118,18 +118,16 @@ export default {
       const formattedDate = `${year}-${month}-${day}`;
 
       const body = {
-        // "user_id": "0",
-
         project_id: JSON.parse(localStorage.getItem("projectID")),
         record_date: formattedDate,
       };
-      axios.post("http://35.201.168.185:5000/add_record", body, {
+      const response = axios.post("http://35.201.168.185:5000/add_record", body, {
         headers: {
           authorization: JSON.parse(localStorage.getItem("auth")),
         },
       });
       value = true;
-      // emit('showAdd',value);
+      store.commit("setNewRecord", response);
       router.push({ name: "newRecord" });
     };
 

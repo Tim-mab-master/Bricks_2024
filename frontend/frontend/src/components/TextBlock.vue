@@ -115,6 +115,7 @@ const props = defineProps({
   isUnlockShowed: Boolean,
   showAddbtn: Boolean,
   content: String,
+  tags: Array,
 });
 
 const emit = defineEmits(["add_cart", "deleteCart"]);
@@ -124,18 +125,9 @@ const isUnlockShowed = ref(props.isUnlockShowed);
 const textarea1 = ref("");
 const inputVisible = ref(false);
 const inputValue = ref("");
-const dynamicTags = ref([
-  "Tag1",
-  "Tag2",
-  "Tag3",
-  "Tag4",
-  "Tag5",
-  "Tag6",
-  "Tag7",
-  "Tag8",
-  "Tag9",
-  "Tag10",
-]);
+const tagArray = ref([]);
+
+const dynamicTags = computed(() => tagArray.value);
 const isShowed = ref(false);
 const rightClickRef = ref(null);
 const isCartDisabled = ref(false);
@@ -243,6 +235,9 @@ const add_cart = () => {
 
 onMounted(() => {
   calculateVisibleTags();
+  if(props.tags){
+    tagArray.value = props.tags.map((element) => element.Tag_name);
+  }
   window.addEventListener("resize", calculateVisibleTags);
   document.addEventListener("click", handleClickOutside);
 });
@@ -255,7 +250,7 @@ onUnmounted(() => {
 <style scoped>
 .show-enter-active,
 .show-leave-active {
-  transition: opacity 0.5s;
+  transition: opacity 0.2s;
 }
 .show-enter-from,
 .show-leave-to {

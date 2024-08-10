@@ -231,18 +231,17 @@
 </template>
 
 <script setup>
-import { useStore } from "vuex";
+import store from "../store/store.js";
 import { useRouter } from "vue-router";
 import axios from "axios";
 import { ref, reactive, onMounted, computed } from "vue";
 import { defineProps, defineEmits } from "vue";
 import { ElNotification, ElMessage } from "element-plus";
 
-// 引用 store
-const store = useStore();
 const router = useRouter();
 // const props = defineProps(['recordInfo']);
 const emit = defineEmits(["submit"]);
+const props = defineProps(["recordInfo", "newRecordInfo"]);
 
 // 定義響應式數據
 const form = reactive({
@@ -256,7 +255,7 @@ const form = reactive({
   },
 });
 
-const recordInfo = computed(() => store.getters["records/getCurrRecord"]);
+// const recordInfo = computed(() => store.getters.getCurrRecord);
 const meetingName = ref("");
 const time = ref("");
 const place = ref("");
@@ -329,6 +328,22 @@ const handleSelectChangeC = (selectedValues) => {
   handleSelectChange(selectedValues, optionsC.value, valueC.value);
 };
 
+const checkNone = (input, values, options) =>{
+  if(typeof input === 'string' && input !== "None" && input !== ""){
+    const result = input.split(',');
+    result.forEach((person) => {
+      options.push({
+        value: person.trim(), // 確保去除前後空白
+        label: person.trim()
+      });
+    values.push(person.trim());
+    })
+  }else{
+      values = [];
+      options = [];
+  }
+}
+
 const handleSelectChange = (selectedValues, options, value) => {
   for (let i = 0; i < selectedValues.length; i++) {
     const existsInOptions = options.some(
@@ -354,7 +369,7 @@ const handleSelectChange = (selectedValues, options, value) => {
 };
 
 const onSubmit = () => {
-  store.commit("setName", form.data.formName);
+  store.commit("setMeetingName", form.data.formName);
   meetingName.value = form.data.formName;
   place.value = form.data.place;
 
@@ -376,17 +391,23 @@ const onSubmit = () => {
   )}-${formattedTime[1].substring(0, 5)}`;
   time.value = `${formattedDate} ${addTime}`;
   emit("submit");
-  emit("recordInfo", form.value);
+  // emit("recordInfo", form.value);
 
   const editInfo = {
-    record_id: store.state.records.recordID,
-    record_name: meetingName.value,
-    record_date: formatted,
-    record_department: "",
-    record_host_name: optionsC.value[0].value,
-    record_place: place.value,
+    "record_id": store.state.recordID,
+    "record_name": form.data.meetingName,
+    "record_date": formatted,
+    "record_attendees_name": valueA.value,
+    "record_absentees_name": valueB.value,
+    "record_recorder_name": valueC.value,
+    "record_place": form.data.place,
+
   };
-  axios.post("http://34.81.186.58:5000/edit_record", editInfo).then((res) => {
+  axios.post("http://35.201.168.185:5000/edit_record", editInfo, {
+    headers:{
+      authorization: JSON.parse(localStorage.getItem("auth")),
+    }
+  }).then((res) => {
     console.log(res.data.message);
   });
 
@@ -397,21 +418,33 @@ const onSubmit = () => {
   showOverlay.value = false;
   form.show = false;
 
-  store.dispatch("records/fetchAllRecords");
+  store.dispatch("fetchOneRecords");
 };
+
+
 
 // 在組件掛載時執行初始化請求
 onMounted(() => {
-  store.dispatch("records/fetchOneRecord");
-  // recordInfo = computed(() => store.getters(["records/getCurrRecord"]));
-  console.log(recordInfo.value);
-  if (recordInfo[0]) {
-    meetingName.value = recordInfo[0].record_name;
-    time.value = recordInfo[0].record_creation_time;
-    place.value = recordInfo[0].record_place;
-    optionsA.value = recordInfo[0].record_attendees_name;
-    optionsB.value = recordInfo[0].record_absentees_name;
-    optionsC.value = recordInfo[0].record_recorder_name;
+  console.log(props.recordInfo);
+  if (props.recordInfo) {
+    meetingName.value = props.recordInfo.record_name;
+    time.value = props.recordInfo.record_creation_time;
+    form.data.formName = props.recordInfo.record_name;
+    
+    if(props.recordInfo.record_place == "None"){
+      place.value = "";
+      form.data.place = "";
+    }else{
+      place.value = props.recordInfo.record_place;
+      form.data.place = props.recordInfo.record_place;
+    }
+
+    checkNone(props.recordInfo.record_attendees_name,valueA.value,optionsA.value);
+    checkNone(props.recordInfo.record_absentees_name,valueB.value,optionsB.value);
+    checkNone(props.recordInfo.record_recorder_name,valueC.value,optionsC.value);
+  }else{
+    meetingName.value = props.newRecordInfo.record_name;
+    form.data.formName = props.newRecordInfo.record_name;
   }
 });
 </script>

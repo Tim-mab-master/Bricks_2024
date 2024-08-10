@@ -46,6 +46,7 @@
           :key="card.id"
           :recordName="card.record_name"
           :tags="card.tags"
+          @click="toRecord(card.record_id)"
           >card</meeting-cards
         >
       </div>
@@ -101,18 +102,7 @@ onMounted(async () => {
 
 const cards = computed(() => store.getters.getAllRecords);
 
-const showinfo = () => {
-  // alert("拿到");
-  // console.log("cards", cards);
-  // 先用直接拿的方法拿到allRecords，之後要用getter
-  // console.log("所有records", store_js.state.allRecords);
-};
-
 const activeOption = ref(0);
-const handleCardClick = (cardId) => {
-  // 根据卡片点击情况进行路由导航
-  router.push(`/all/cards/meetingRecord/${cardId}`);
-};
 
 // 確認刪除視窗，之後要改成接收sidebar的點擊
 let close_delete = ref(false);
@@ -186,6 +176,11 @@ store.subscribe((mutation, state) => {
     }
   }
 });
+const toRecord = async (cardID) => {
+  store.commit("setRecordID", cardID); // 等後端回傳
+  await store.dispatch("fetchOneRecord");
+  router.push("cards/meetingRecord");
+};
 </script>
 
 <style scoped>

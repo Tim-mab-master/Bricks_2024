@@ -24,11 +24,12 @@ export default createStore({
     trashRecords: [],
     currRecord: {},
     projectID: 0,
-    recordID: 3,
+    recordID: 51,
     currTextBoxes: [],
     blockNow: {},
     delete_confirm: false,
     terminate_confirm: false,
+    newRecord: {},
   },
   // actions: {
   //   setAuth(authorization) {
@@ -39,8 +40,14 @@ export default createStore({
     changePage(state, index) {
       state.activeIndex = index;
     },
-    setName(state, name) {
-      state.meetingName = name;
+    setMeetingName(state, meetingName) {
+      state.meetingName = meetingName;
+    },
+    setNewProject(state, newRecord) {
+      state.newRecord = newRecord;
+    },
+    setProjectName(state, projectName) {
+      state.projectName = projectName;
     },
     setAuth(state, authorization) {
       state.auth = authorization;
@@ -54,6 +61,7 @@ export default createStore({
     setCurrRecord(state, payload) {
       state.currRecord = payload.record;
       state.currTextBoxes = payload.boxes;
+      state.meetingName = payload.record.record_name;
     },
     setBlockNow(state, block) {
       state.blockNow = block;
@@ -84,7 +92,6 @@ export default createStore({
       console.log(state.allRecords);
       return state.allRecords;
     },
-
     getTrashRecords(state) {
       console.log("值");
       console.log(state.allRecords);
@@ -93,6 +100,9 @@ export default createStore({
 
     getCurrRecord(state) {
       return state.currRecord;
+    },
+    getNewRecord(state) {
+      return state.newRecord;
     },
     getCurrTextBoxes(state) {
       return state.currTextBoxes;
@@ -164,8 +174,13 @@ export default createStore({
         };
 
         const response = await axios.post(
-          "http://34.81.219.139:5000/get_record",
-          body
+          "http://35.201.168.185:5000/get_record",
+          body,
+          {
+            headers: {
+              authorization: JSON.parse(localStorage.getItem("auth")),
+            },
+          }
         );
 
         const payload = {
@@ -173,16 +188,18 @@ export default createStore({
           boxes: [],
         };
 
-        if (response.data.textBox[0].length > 0) {
-          payload.boxes = response.data.textBox[0];
-        } else {
+        if (response.data.textBox.length == 0) {
           payload.boxes.push({
             record_id: state.recordID,
             textBox_content: "",
+            Tag: [],
           });
+        } else {
+          payload.boxes = response.data.textBox;
         }
 
         commit("setCurrRecord", payload);
+        console.log("payload", payload);
       } catch (error) {
         console.log("無法獲得單個內容");
       }
@@ -194,11 +211,16 @@ export default createStore({
       };
 
       const response = await axios.post(
-        "http://34.81.219.139:5000/add_textBox",
-        newBlock
+        "http://35.201.168.185:5000/add_textBox",
+        newBlock,
+        {
+          headers: {
+            authorization: state.auth,
+          },
+        }
       );
       console.log(response.data.message);
-      await dispatch("records/fetchOneRecord");
+      await dispatch("fetchOneRecord");
     },
     async deleteBlock({ state, dispatch }) {
       const deleteBlock = {
@@ -210,9 +232,10 @@ export default createStore({
         deleteBlock
       );
       console.log(response.data.message);
-      await dispatch("records/fetchOneRecord");
+      await dispatch("fetchOneRecord");
     },
   },
+
   plugins: [localStoragePlugin],
   // modules: { records },
 });
