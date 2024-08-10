@@ -121,11 +121,15 @@ export default {
         project_id: JSON.parse(localStorage.getItem("projectID")),
         record_date: formattedDate,
       };
-      const response = axios.post("http://35.201.168.185:5000/add_record", body, {
-        headers: {
-          authorization: JSON.parse(localStorage.getItem("auth")),
-        },
-      });
+      const response = axios.post(
+        "http://35.201.168.185:5000/add_record",
+        body,
+        {
+          headers: {
+            authorization: JSON.parse(localStorage.getItem("auth")),
+          },
+        }
+      );
       value = true;
       store.commit("setNewRecord", response);
       router.push({ name: "newRecord" });
@@ -136,33 +140,11 @@ export default {
     };
 
     const terminate_project = () => {
-      // store.commit("setDeleteConfirm");
-      // alert(store.getters.getDeleteConfirm);
-      const body = { project_id: store.getters.getProjectID, state: "end" };
-      axios
-        .post("http://35.201.168.185:5000/set_project_end", body, {
-          headers: {
-            authorization: JSON.parse(localStorage.getItem("auth")),
-          },
-        })
-        .then((res) => {
-          console.log(res);
-        });
-      router.push("../personalHomepage");
+      store.commit("setTerminateConfirm");
     };
 
     const delete_project = () => {
-      const body = { project_id: store.getters.getProjectID };
-      axios
-        .post("http://35.201.168.185:5000/to_trashcan", body, {
-          headers: {
-            authorization: JSON.parse(localStorage.getItem("auth")),
-          },
-        })
-        .then((res) => {
-          console.log(res);
-        });
-      router.push("../personalHomepage");
+      store.commit("setDeleteConfirm");
     };
 
     return {
@@ -310,26 +292,31 @@ export default {
   display: flex;
   bottom: 38px;
   justify-content: center;
+  /* flex-direction: row; */
   flex-direction: column;
+
   align-items: center;
 }
 
 .buttons {
   height: 34px;
-  margin-top: 13px;
+  /* margin: 0 2px; */
+  margin: 8px 2px 0 0;
 
   display: flex;
+  /* width: 44%; */
   width: 90%;
+
   justify-content: center;
   align-items: center;
-  border: 0px black solid;
+  border: 1px rgb(147, 112, 112) solid;
   cursor: pointer;
 
   border-radius: 999px;
   color: #fff;
-  background: #8b8b8bad;
+  /*background: #8b8b8bad;*/
+  background: #c91f2f;
   top: 0;
-
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
