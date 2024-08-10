@@ -2,20 +2,39 @@
   <div>
     <side-bar class="side" @update="activeChange"></side-bar>
     <nav-bar-all class="navBar"></nav-bar-all>
-    <div class="terminate_delete_confirm" v-if="close_delete">
+    <div class="terminate_confirm" v-if="close_terminate">
       <div
         class="close_terminate_delete_confirm"
-        @click="close_delete_confirm"
+        @click="close_terminate_confirm"
       ></div>
       <h4 class="confirm_title">結束專案</h4>
       <p class="confirm_content">
         確認結束此專案？執行後請至「已結束專案」查看
       </p>
       <div class="confirm_button_container">
+        <div class="confirm_button cb_cancle" @click="close_terminate_confirm">
+          取消
+        </div>
+        <div
+          class="confirm_button cb_confirm"
+          @click="confirm_terminate_button"
+        >
+          確定
+        </div>
+      </div>
+    </div>
+    <div class="delete_confirm" v-if="close_delete">
+      <div
+        class="close_terminate_delete_confirm"
+        @click="close_delete_confirm"
+      ></div>
+      <h4 class="confirm_title">刪除專案</h4>
+      <p class="confirm_content">確認刪除此專案？執行後請至「垃圾桶」查看</p>
+      <div class="confirm_button_container">
         <div class="confirm_button cb_cancle" @click="close_delete_confirm">
           取消
         </div>
-        <div class="confirm_button cb_confirm" @click="confirm_button">
+        <div class="confirm_button cb_confirm" @click="confirm_delete_button">
           確定
         </div>
       </div>
@@ -50,10 +69,18 @@ import EmptyBack from "../components/EmptyBack.vue";
 import NavBarAll from "../components/NavBarAll.vue";
 import SideBar from "../components/SideBar.vue";
 import MeetingCards from "../components/MeetingCards.vue";
-import { ref, computed, onMounted } from "vue";
+import {
+  ref,
+  computed,
+  onMounted,
+  onBeforeMount,
+  onBeforeUnmount,
+  watch,
+} from "vue";
 import { useRouter } from "vue-router";
-// import { useStore } from "vuex";
 import store from "../store/store.js";
+import { mapGetters } from "vuex";
+import axios from "axios";
 
 const router = useRouter();
 // const store = useStore();
@@ -69,13 +96,8 @@ const minuteExistMethod = () => {
 onMounted(async () => {
   console.log("onMounted");
 
-  // console.log("存在", minuteExist);
   console.log("allRecords", store.getters.getAllRecords.length);
-  //檢驗是否有會議記錄存在
   store.dispatch("fetchAllRecords");
-  store.dispatch("fetchTrashRecords");
-  close_delete.value = store.getters.getDeleteConfirm;
-  console.log(close_delete.value);
 });
 
 const cards = computed(() => store.getters.getAllRecords);
@@ -83,25 +105,80 @@ const cards = computed(() => store.getters.getAllRecords);
 const activeOption = ref(0);
 
 // 確認刪除視窗，之後要改成接收sidebar的點擊
-const close_delete = ref(false);
+let close_delete = ref(false);
+let close_terminate = ref(false);
+
+const open_terminate_confirm = () => {
+  close_terminate.value = true;
+};
+
+const close_terminate_confirm = () => {
+  close_terminate.value = false;
+  //把deleteConfirm改回false
+  store.commit("setTerminateConfirm");
+};
 
 const open_delete_confirm = () => {
   close_delete.value = true;
 };
 
 const close_delete_confirm = () => {
-  alert(store.getters.getDeleteConfirm);
-  // close_delete.value = false;
+  close_delete.value = false;
+  //把deleteConfirm改回false
   store.commit("setDeleteConfirm");
+};
+
+const confirm_terminate_button = () => {
+  const body = { project_id: store.getters.getProjectID, state: "end" };
+  axios
+    .post("http://35.201.168.185:5000/set_project_end", body, {
+      headers: {
+        authorization: JSON.parse(localStorage.getItem("auth")),
+      },
+    })
+    .then((res) => {
+      console.log(res);
+    });
+  router.push("../personalHomepage");
+};
+
+const confirm_delete_button = () => {
+  const body = { project_id: store.getters.getProjectID };
+  axios
+    .post("http://35.201.168.185:5000/to_trashcan", body, {
+      headers: {
+        authorization: JSON.parse(localStorage.getItem("auth")),
+      },
+    })
+    .then((res) => {
+      console.log(res);
+    });
+  router.push("../personalHomepage");
 };
 
 const activeChange = () => {
   activeOption.value = computed(() => store.state.activeIndex);
 };
 
-const toRecord = async (cardID) =>{
-  store.commit('setRecordID', cardID);  // 等後端回傳
-  await store.dispatch('fetchOneRecord');
+//監控左下角的用戶刪除專案
+store.subscribe((mutation, state) => {
+  if (mutation.type === "setDeleteConfirm") {
+    if (store.getters.getDeleteConfirm === true) {
+      open_delete_confirm();
+    }
+  }
+});
+//監控左下角的用戶結束專案
+store.subscribe((mutation, state) => {
+  if (mutation.type === "setTerminateConfirm") {
+    if (store.getters.getTerminateConfirm === true) {
+      open_terminate_confirm();
+    }
+  }
+});
+const toRecord = async (cardID) => {
+  store.commit("setRecordID", cardID); // 等後端回傳
+  await store.dispatch("fetchOneRecord");
   router.push("cards/meetingRecord");
 };
 </script>
@@ -124,7 +201,19 @@ const toRecord = async (cardID) =>{
 }
 
 /* 確認刪除、結束專案跳出視窗 */
-.terminate_delete_confirm {
+.terminate_confirm {
+  width: 344px;
+  height: 160px;
+  position: fixed;
+  border-radius: 14px;
+  background-color: white;
+  box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.4);
+  z-index: 6;
+  left: calc((100vw - 344px + 234px) / 2);
+  top: 35%;
+}
+
+.delete_confirm {
   width: 344px;
   height: 160px;
   position: fixed;
@@ -225,24 +314,19 @@ const toRecord = async (cardID) =>{
 
 .cards {
   /* border: 2px solid black; */
-  display: grid;
+  display: flex;
+  flex-wrap: wrap;
   grid-column-gap: 16px;
   grid-row-gap: 20px;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  margin: 28px 10vw 28px 28px;
-
-  position: absolute;
-  /* top: 48px; */
-  /* border: 1px; */
+  margin: 28px 1.5vw 28px 28px;
 }
+
 .navAndCont {
-  background-color: #dcdfe6;
   /* border: 2px solid black; */
+  background-color: #dcdfe6;
   position: absolute;
-  /* border: 2px solid yellow; */
   left: 200px;
-  /* width: calc(100vw - 220px); */
-  height: calc(100vh - 55px);
+  height: auto;
   top: 50px;
   right: 0;
 }

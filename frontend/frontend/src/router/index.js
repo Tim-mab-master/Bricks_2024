@@ -56,6 +56,16 @@ const routes = [
     component: () => import("../views/Login.vue"),
   },
   {
+    path: "/google_login",
+    name: "google_login",
+    component: () => import("../views/GoogleLogin.vue"),
+  },
+  {
+    path: "/frontend/google_callback",
+    name: "google_callback",
+    component: () => import("../views/GoogleCallback.vue"),
+  },
+  {
     path: "/questionnaire",
     name: "questionnaire",
     component: () => import("../views/Questionnaire.vue"),
@@ -122,21 +132,23 @@ router.beforeEach((to) => {
   if (to.fullPath === "/login") return;
   if (to.fullPath === "/register") return;
   if (to.fullPath === "/questionnaire") return;
+  if (to.fullPath === "/frontend/google_callback") return;
+  if (to.fullPath === "/google_login") return;
 
-  if (
-    JSON.parse(
-      localStorage.getItem("auth") === "no_login_yet" ||
-        localStorage.getItem("auth") === null
-    )
-  ) {
-    console.log("don't have auth");
-    alert("請先登入");
-    return "/homepage";
-  } else {
-    console.log("have auth");
-    console.log(localStorage.getItem("auth"));
-    // return "/homepage";
-  }
+  // if (
+  //   JSON.parse(
+  //     localStorage.getItem("auth") === "no_login_yet" ||
+  //       localStorage.getItem("auth") === null
+  //   )
+  // ) {
+  //   console.log("don't have auth");
+  //   alert("請先登入");
+  //   return "/homepage";
+  // } else {
+  //   console.log("have auth");
+  //   console.log(localStorage.getItem("auth"));
+  //   // return "/homepage";
+  // }
 
   // 驗證成功，可以放行
   return true;

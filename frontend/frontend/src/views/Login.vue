@@ -135,19 +135,19 @@
           <p>或</p>
         </div>
         <div class="other_resource">
-          <a href="">
-            <div id="Google_login_btn" @click="googleLogin">
-              <img src="../assets/Google_login.svg" alt="" />
-              <p>Google 登入</p>
-            </div>
-          </a>
+          <!-- <a href=""> -->
+          <div id="Google_login_btn" @click="googleLogin">
+            <img src="../assets/Google_login.svg" alt="" />
+            <p>Google 登入</p>
+          </div>
+          <!-- </a> -->
 
-          <a href="">
-            <div id="FB_login_btn">
-              <img src="../assets/FB_login.svg" alt="" />
-              <p>Facebook 登入</p>
-            </div>
-          </a>
+          <!-- <a href=""> -->
+          <div id="FB_login_btn">
+            <img src="../assets/FB_login.svg" alt="" />
+            <p>Facebook 登入</p>
+          </div>
+          <!-- </a> -->
         </div>
         <div class="register">
           <p style="font-size: 16px; margin-top: 1.4px">還沒有帳戶？</p>
@@ -298,6 +298,8 @@ export default {
                 }, 2000);
               }
             } else if (res.data.status === "success") {
+              console.log(res);
+              alert(res.headers.authorization);
               errorTime.value = 0;
               authorization.value = res.headers.authorization;
               console.log(authorization.value);
@@ -390,10 +392,15 @@ export default {
     const googleLogin = () => {
       // alert("callgoogle");
       axios
-        .get("http://34.81.219.139:5000/frontend/google_login")
+        .get("http://35.201.168.185:5000/frontend/google_login")
         .then((res) => {
           console.log(res);
+          // args_dict = request.args.to_dict();
         });
+    };
+
+    const submitForm = () => {
+      document.getElementById("redirectForm").submit();
     };
 
     onMounted(() => {
@@ -425,6 +432,7 @@ export default {
       // login,
       deleteCookie,
       googleLogin,
+      submitForm,
     };
   },
   created() {},
@@ -688,8 +696,8 @@ input::placeholder {
 }
 
 .other_resource div {
-  width: 128.25px;
-  height: 34.5px;
+  width: 44%;
+  height: 100%;
   border: 1px solid #b6aeae;
   border-radius: 14px;
   font-size: 13.5px;
@@ -702,6 +710,7 @@ input::placeholder {
   position: relative;
   text-indent: 33px;
   background-color: white;
+  cursor: pointer;
 }
 
 #FB_login_btn {
@@ -709,8 +718,8 @@ input::placeholder {
   float: right;
 }
 
-.other_resource a img {
-  width: 18px;
+.other_resource img {
+  width: 20px;
   position: absolute;
   top: 50%;
   transform: translate(0, -50%);

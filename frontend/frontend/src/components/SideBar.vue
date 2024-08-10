@@ -136,33 +136,11 @@ export default {
     };
 
     const terminate_project = () => {
-      // store.commit("setDeleteConfirm");
-      // alert(store.getters.getDeleteConfirm);
-      const body = { project_id: store.getters.getProjectID, state: "end" };
-      axios
-        .post("http://35.201.168.185:5000/set_project_end", body, {
-          headers: {
-            authorization: JSON.parse(localStorage.getItem("auth")),
-          },
-        })
-        .then((res) => {
-          console.log(res);
-        });
-      router.push("../personalHomepage");
+      store.commit("setTerminateConfirm");
     };
 
     const delete_project = () => {
-      const body = { project_id: store.getters.getProjectID };
-      axios
-        .post("http://35.201.168.185:5000/to_trashcan", body, {
-          headers: {
-            authorization: JSON.parse(localStorage.getItem("auth")),
-          },
-        })
-        .then((res) => {
-          console.log(res);
-        });
-      router.push("../personalHomepage");
+      store.commit("setDeleteConfirm");
     };
 
     return {
@@ -310,7 +288,7 @@ export default {
   display: flex;
   bottom: 38px;
   justify-content: center;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
 }
 
@@ -319,7 +297,7 @@ export default {
   margin-top: 13px;
 
   display: flex;
-  width: 90%;
+  width: 40%;
   justify-content: center;
   align-items: center;
   border: 0px black solid;
@@ -327,9 +305,9 @@ export default {
 
   border-radius: 999px;
   color: #fff;
-  background: #8b8b8bad;
+  /*background: #8b8b8bad;*/
+  background: #c91f2f;
   top: 0;
-
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
