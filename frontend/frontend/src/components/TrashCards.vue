@@ -8,8 +8,8 @@
         <span id="name">{{ record_name }}</span>
       </div>
       <div id="tagPart">
-        <el-tag class="tag" v-for="item in 8" :key="item">標籤</el-tag>
-        <el-tag class="tag">新增標籤</el-tag>
+        <el-tag class="tag" v-for="item in tags" :key="item">item</el-tag>
+        <!-- <el-tag class="tag">新增標籤</el-tag> -->
       </div>
     </el-card>
     <!-- v-if="isShowed" -->
@@ -33,12 +33,13 @@ import { ElMessage } from "element-plus";
 export default {
   components: {},
 
-  setup() {
+  setup(props, { emit }) {
     const isShowed = ref(false);
     const url =
       "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png";
     const normal = "#303133";
-    const record_name = "會議記錄";
+    const record_name = props.recordName;
+    const tags = props.tags;
     // ParentIsShowed = false;
     // const buttonRef = ref(null);
 
@@ -72,6 +73,7 @@ export default {
       normal,
       url,
       record_name,
+      tags,
       isShowed,
       unshown,
       deleteForever,

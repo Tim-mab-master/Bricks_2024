@@ -28,6 +28,7 @@ export default createStore({
     currTextBoxes: [],
     blockNow: {},
     delete_confirm: false,
+    terminate_confirm: false,
     newRecord: {},
   },
   // actions: {
@@ -39,13 +40,13 @@ export default createStore({
     changePage(state, index) {
       state.activeIndex = index;
     },
-    setMeetingName(state, meetingName){
+    setMeetingName(state, meetingName) {
       state.meetingName = meetingName;
     },
-    setNewProject(state, newRecord){
+    setNewProject(state, newRecord) {
       state.newRecord = newRecord;
     },
-    setProjectName(state, projectName){
+    setProjectName(state, projectName) {
       state.projectName = projectName;
     },
     setAuth(state, authorization) {
@@ -78,6 +79,9 @@ export default createStore({
     setDeleteConfirm(state) {
       state.delete_confirm = !state.delete_confirm;
     },
+    setTerminateConfirm(state) {
+      state.terminate_confirm = !state.terminate_confirm;
+    },
   },
   getters: {
     getAuth(state) {
@@ -97,7 +101,7 @@ export default createStore({
     getCurrRecord(state) {
       return state.currRecord;
     },
-    getNewRecord(state){
+    getNewRecord(state) {
       return state.newRecord;
     },
     getCurrTextBoxes(state) {
@@ -108,6 +112,9 @@ export default createStore({
     },
     getDeleteConfirm(state) {
       return state.delete_confirm;
+    },
+    getTerminateConfirm(state) {
+      return state.terminate_confirm;
     },
   },
   actions: {
@@ -167,11 +174,12 @@ export default createStore({
         };
 
         const response = await axios.post(
-          "http://35.201.168.185:5000/get_record",body,
+          "http://35.201.168.185:5000/get_record",
+          body,
           {
-            headers:{
+            headers: {
               authorization: JSON.parse(localStorage.getItem("auth")),
-            }
+            },
           }
         );
 
@@ -191,7 +199,7 @@ export default createStore({
         }
 
         commit("setCurrRecord", payload);
-        console.log('payload',payload);
+        console.log("payload", payload);
       } catch (error) {
         console.log("無法獲得單個內容");
       }
@@ -206,9 +214,9 @@ export default createStore({
         "http://35.201.168.185:5000/add_textBox",
         newBlock,
         {
-          headers:{
+          headers: {
             authorization: state.auth,
-          }
+          },
         }
       );
       console.log(response.data.message);

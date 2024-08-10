@@ -216,18 +216,14 @@
             <p>或</p>
           </div>
           <div class="other_resource">
-            <a href="">
-              <div>
-                <img src="../assets/Google_login.svg" alt="" />
-                <p>Google 登入</p>
-              </div>
-            </a>
-            <a href="">
-              <div id="FB_login_btn">
-                <img src="../assets/FB_login.svg" alt="" />
-                <p>Facebook 登入</p>
-              </div>
-            </a>
+            <div>
+              <img src="../assets/Google_login.svg" alt="" />
+              <p>Google 登入</p>
+            </div>
+            <div id="FB_login_btn">
+              <img src="../assets/FB_login.svg" alt="" />
+              <p>Facebook 登入</p>
+            </div>
           </div>
           <div class="login">
             <p>已經有帳戶？</p>
@@ -259,6 +255,7 @@
 <script>
 import Register from "./Register.vue";
 import axios from "axios";
+import store from "../store/store.js";
 export default {
   name: "Reigster",
 
@@ -353,26 +350,29 @@ export default {
           this.errorMessage6
         )
       ) {
-        const path = "http://34.81.219.139:5000/register";
+        const path = "http://35.201.168.185:5000/register";
         const user = {
           user_email: this.email,
           user_password: this.password1,
           user_name: this.account,
         };
         // console.log(user);
-        this.email = "";
-        this.password1 = "";
-        this.password2 = "";
-        this.account = "";
+        // this.email = "";
+        // this.password1 = "";
+        // this.password2 = "";
+        // this.account = "";
         axios
           .post(path, user)
           .then((res) => {
             if (res.data.status == "success") {
+              console.log(res);
               this.userId = res.data.user_id;
-              this.$router.push({
-                path: "/questionnaire",
-                // params: { user_id: this.userId },
-              });
+              alert(res.headers.authorization);
+              this.setAuth(res.headers.authorization);
+
+              // this.$router.push({
+              //   path: "/questionnaire",
+              // });
             } else {
               // this.$refs.account.style = "border-color : #e03939";
               // this.$refs.password.style = "border-color : #e03939";
@@ -390,6 +390,9 @@ export default {
         console.log("failure");
       }
       // href="./Register_second"
+    },
+    setAuth(authorization) {
+      store.commit("setAuth", authorization);
     },
   },
   watch: {
@@ -943,8 +946,8 @@ input::placeholder {
   text-indent: 38px;
 }
 
-.other_resource a img {
-  width: 18px;
+.other_resource img {
+  width: 20px;
   position: absolute;
   top: 50%;
   transform: translate(0, -50%);
