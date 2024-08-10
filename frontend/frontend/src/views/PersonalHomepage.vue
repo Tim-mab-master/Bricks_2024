@@ -202,7 +202,9 @@
         <div class="add_proj_type_text_plus" @click="list_add_a_cart"></div>
       </div>
 
-      <div class="proj_info_enter" @click="enter_project_btn(proj_info_title)">進入專案</div>
+      <div class="proj_info_enter" @click="enter_project_btn(proj_info_title)">
+        進入專案
+      </div>
     </div>
     <div class="main_body">
       <div class="bg">
@@ -218,6 +220,13 @@
             <el-alert
               v-if="alertNoSameName"
               title="請勿建立相同專案名稱"
+              type="error"
+              show-icon
+          /></Transition>
+          <Transition name="errorIn">
+            <el-alert
+              v-if="alertNoSameCartName"
+              title="專案名稱已存在"
               type="error"
               show-icon
           /></Transition>
@@ -632,6 +641,7 @@ export default {
       alertEnterName: false,
       alertNoSameName: false,
       alertNoSameType: false,
+      alertNoSameCartName: false,
 
       // 所有專案(用在搜尋專案)
       all_proj: [],
@@ -917,9 +927,13 @@ export default {
       this.isFocused = false;
       this.cart_title_input = "";
     },
+
     // 從新增專案的輸入框直接新增一個類型
     add_a_cart() {
-      if (this.cart_title_input !== "") {
+      let existingCart = this.carts.find(
+        (cart) => cart.title_word === this.cart_title_input
+      );
+      if (this.cart_title_input !== "" && !existingCart) {
         const new_cart = {
           title_word: this.cart_title_input,
           project_box: [],
@@ -937,6 +951,8 @@ export default {
         //     authorization: JSON.parse(localStorage.getItem("auth")),
         //   },
         // });
+      } else {
+        this.alertNoSameCartName = true;
       }
     },
     // 新增專案彈窗裡點擊選擇專案類型
