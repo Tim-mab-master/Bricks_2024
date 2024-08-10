@@ -121,11 +121,15 @@ export default {
         project_id: JSON.parse(localStorage.getItem("projectID")),
         record_date: formattedDate,
       };
-      const response = axios.post("http://35.201.168.185:5000/add_record", body, {
-        headers: {
-          authorization: JSON.parse(localStorage.getItem("auth")),
-        },
-      });
+      const response = axios.post(
+        "http://35.201.168.185:5000/add_record",
+        body,
+        {
+          headers: {
+            authorization: JSON.parse(localStorage.getItem("auth")),
+          },
+        }
+      );
       value = true;
       store.commit("setNewRecord", response);
       router.push({ name: "newRecord" });
@@ -288,19 +292,24 @@ export default {
   display: flex;
   bottom: 38px;
   justify-content: center;
-  flex-direction: row;
+  /* flex-direction: row; */
+  flex-direction: column;
+
   align-items: center;
 }
 
 .buttons {
   height: 34px;
-  margin-top: 13px;
+  /* margin: 0 2px; */
+  margin: 8px 2px 0 0;
 
   display: flex;
-  width: 40%;
+  /* width: 44%; */
+  width: 90%;
+
   justify-content: center;
   align-items: center;
-  border: 0px black solid;
+  border: 1px rgb(147, 112, 112) solid;
   cursor: pointer;
 
   border-radius: 999px;
