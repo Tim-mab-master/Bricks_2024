@@ -118,18 +118,16 @@ export default {
       const formattedDate = `${year}-${month}-${day}`;
 
       const body = {
-        // "user_id": "0",
-
         project_id: JSON.parse(localStorage.getItem("projectID")),
         record_date: formattedDate,
       };
-      axios.post("http://35.201.168.185:5000/add_record", body, {
+      const response = axios.post("http://35.201.168.185:5000/add_record", body, {
         headers: {
           authorization: JSON.parse(localStorage.getItem("auth")),
         },
       });
       value = true;
-      // emit('showAdd',value);
+      store.commit("setNewRecord", response);
       router.push({ name: "newRecord" });
     };
 

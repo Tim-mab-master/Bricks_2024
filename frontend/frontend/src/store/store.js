@@ -28,6 +28,7 @@ export default createStore({
     currTextBoxes: [],
     blockNow: {},
     delete_confirm: false,
+    newRecord: {},
   },
   // actions: {
   //   setAuth(authorization) {
@@ -40,6 +41,9 @@ export default createStore({
     },
     setMeetingName(state, meetingName){
       state.meetingName = meetingName;
+    },
+    setNewProject(state, newRecord){
+      state.newRecord = newRecord;
     },
     setProjectName(state, projectName){
       state.projectName = projectName;
@@ -84,7 +88,6 @@ export default createStore({
       console.log(state.allRecords);
       return state.allRecords;
     },
-
     getTrashRecords(state) {
       console.log("值");
       console.log(state.allRecords);
@@ -93,6 +96,9 @@ export default createStore({
 
     getCurrRecord(state) {
       return state.currRecord;
+    },
+    getNewRecord(state){
+      return state.newRecord;
     },
     getCurrTextBoxes(state) {
       return state.currTextBoxes;

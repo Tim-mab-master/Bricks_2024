@@ -10,7 +10,7 @@
     </div>
 
     <div :class="meetingClass" v-if="showedInfo">
-      <meeting @submit="submit" @recordInfo="setInfo"></meeting>
+      <meeting @submit="submit" @newRecordInfo="newRecordInfo"></meeting>
       <div class="textBlock">
         <text-block
           v-for="block in blocks"
@@ -56,6 +56,7 @@ const showedInfo = ref(true);
 const quantity = ref(1);
 const recordID = ref("");
 const showAddBtn = ref(false);
+const newRecordInfo = computed(() => store.getters.getNewRecord)
 const blocks = ref([
   {
     "Tag": [],
