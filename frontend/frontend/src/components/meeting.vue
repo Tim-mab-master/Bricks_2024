@@ -395,7 +395,7 @@ const handleSelectChange = (selectedValues, options, value) => {
 };
 
 const onSubmit = () => {
-  store.commit("setName", form.data.formName);
+  store.commit("setMeetingName", form.data.formName);
   meetingName.value = form.data.formName;
   place.value = form.data.place;
 
@@ -431,7 +431,7 @@ const onSubmit = () => {
   };
   axios.post("http://35.201.168.185:5000/edit_record", editInfo, {
     headers:{
-      authorization: store.state.auth
+      authorization: JSON.parse(localStorage.getItem("auth")),
     }
   }).then((res) => {
     console.log(res.data.message);

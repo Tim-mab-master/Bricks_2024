@@ -128,18 +128,6 @@ const inputValue = ref("");
 const tagArray = ref([]);
 
 const dynamicTags = computed(() => tagArray.value);
-// const dynamicTags = ref([
-//   "Tag1",
-//   "Tag2",
-//   "Tag3",
-//   "Tag4",
-//   "Tag5",
-//   "Tag6",
-//   "Tag7",
-//   "Tag8",
-//   "Tag9",
-//   "Tag10",
-// ]);
 const isShowed = ref(false);
 const rightClickRef = ref(null);
 const isCartDisabled = ref(false);

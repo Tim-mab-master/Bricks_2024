@@ -38,6 +38,9 @@ export default createStore({
     changePage(state, index) {
       state.activeIndex = index;
     },
+    setMeetingName(state, meetingName){
+      state.meetingName = meetingName;
+    },
     setProjectName(state, projectName){
       state.projectName = projectName;
     },
