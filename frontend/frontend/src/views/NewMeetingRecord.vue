@@ -49,12 +49,7 @@ import store from "../store/store.js";
 
 const meetingClass = ref("meeting");
 const recordInfo = ref({});
-const isShowed = ref(false);
-const router = useRouter();
-const currentActive = ref("1-1");
 const showedInfo = ref(true);
-const quantity = ref(1);
-const recordID = ref("");
 const showAddBtn = ref(false);
 const newRecordInfo = computed(() => store.getters.getNewRecord)
 const blocks = ref([
@@ -66,10 +61,6 @@ const blocks = ref([
     "textBox_update_time": "",
   }
 ]);
-
-const setInfo = (value) => {
-  recordInfo.value = value;
-};
 
 const submit = () => {
   console.log("recordInfo：" + recordInfo);
@@ -90,9 +81,6 @@ const add_block = (block) => {
   store.dispatch("addBlock");
 };
 
-const showBtn = () => {
-  showAddBtn.value = true;
-};
 </script>
 
 <style scoped>

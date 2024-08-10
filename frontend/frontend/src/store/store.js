@@ -12,9 +12,6 @@ const localStoragePlugin = (store) => {
 
 export default createStore({
   state: {
-    activeIndex: "/",
-    //        isLogin: false,
-    activeIndex: 0,
     testNum: 0,
     projectName: "專案名稱",
     meetingName: "未命名會議紀錄",
@@ -30,20 +27,13 @@ export default createStore({
     delete_confirm: false,
     newRecord: {},
   },
-  // actions: {
-  //   setAuth(authorization) {
-  //     SetAuth(authorization);
-  //   },
-  // },
+
   mutations: {
     changePage(state, index) {
       state.activeIndex = index;
     },
     setMeetingName(state, meetingName){
       state.meetingName = meetingName;
-    },
-    setNewProject(state, newRecord){
-      state.newRecord = newRecord;
     },
     setProjectName(state, projectName){
       state.projectName = projectName;
@@ -61,6 +51,10 @@ export default createStore({
       state.currRecord = payload.record;
       state.currTextBoxes = payload.boxes;
       state.meetingName = payload.record.record_name;
+    },
+    setNewProject(state, newRecord){
+      state.newRecord = newRecord;
+      state.meetingName = newRecord.record_name;
     },
     setBlockNow(state, block) {
       state.blockNow = block;
