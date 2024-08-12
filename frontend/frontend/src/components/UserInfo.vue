@@ -15,11 +15,16 @@
                     <p>{{ user_name }}</p>
                 </div>
             </el-dropdown-item>
+
             <el-dropdown-item>
                 <div class="dropDown">
-                    <el-icon class="material-icons"><user/></el-icon ><span class="text">個人檔案</span>
+                    <el-icon class="material-icons"><user/></el-icon ><span class="text">修改個人檔案</span>
                 </div>
+                <el-button type="text" @click="dialogTableVisible = true">修改個人檔案</el-button>
+
             </el-dropdown-item>
+            
+
             <el-dropdown-item>
                 <div class="dropDown">
                     <el-icon><span class="material-icons">help_outline</span></el-icon><span class="text">問題回報</span>
