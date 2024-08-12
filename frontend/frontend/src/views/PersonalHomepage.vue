@@ -564,7 +564,6 @@ import { Base64 } from "js-base64";
 import { useRoute } from "vue-router";
 import store from "../store/store.js";
 import UserInfo from '../components/UserInfo.vue';
-// import { fa } from "element-plus/es/locale/index.js";
 
 export default {
   name: "Personal_homepage",

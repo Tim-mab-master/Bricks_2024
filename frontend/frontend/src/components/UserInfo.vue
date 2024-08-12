@@ -16,12 +16,10 @@
                 </div>
             </el-dropdown-item>
 
-            <el-dropdown-item>
+            <el-dropdown-item @click="editInfo">
                 <div class="dropDown">
                     <el-icon class="material-icons"><user/></el-icon ><span class="text">修改個人檔案</span>
                 </div>
-                <el-button type="text" @click="dialogTableVisible = true">修改個人檔案</el-button>
-
             </el-dropdown-item>
             
 
@@ -35,12 +33,15 @@
                     <el-icon><span class="material-icons">desktop_windows</span></el-icon><span class="text">介面教學</span>
                 </div>
             </el-dropdown-item>
-            <el-dropdown-item >
+            <el-dropdown-item @click="log_out">
                 <div class="dropDown">
-                    <el-icon><i class="material-icons">exit_to_app</i></el-icon><span class="text">登出</span>
+                <el-icon>
+                    <i class="material-icons">exit_to_app</i>
+                </el-icon>
+                <span class="text">登出</span>
                 </div>
             </el-dropdown-item>
-          </el-dropdown-menu>
+            </el-dropdown-menu>
           </div>
         </template>
       </el-dropdown>    
@@ -49,16 +50,88 @@
 </template>
 
 <script>
+import { h } from 'vue';
+import EditInfoForm from './EditInfoForm.vue';
+
 export default {
     setup(){
         return{
             user_name: "Designer",
             squareUrl: "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
+            email: '',
+            password: '',
+            name: '',
         };
     },
     methods:{
+      log_out() {
+        this.$confirm('確定登出專案？登出後需重新輸入帳號密碼才可登入', '是否登出', {
+          confirmButtonText: '確定',
+          cancelButtonText: '取消',
+          type: 'error',
+        }).then(() => {
+          this.$message({
+            type: 'success',
+            message: '登出成功!'
+          });
+            this.$router.push({ path: '/login' });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消登出'
+          });          
+        });
+      },
+      editInfo() {
+      const EditInfoFormInstance = h(EditInfoForm);
 
-    }
+      this.$msgbox({
+        title: '修改個人檔案',
+        message: EditInfoFormInstance,
+        showCancelButton: true,
+        confirmButtonText: '完成',
+        cancelButtonText: '取消',
+        beforeClose: (action, instance, done) => {
+          const form = EditInfoFormInstance.component.proxy;
+          if (action === 'confirm') {
+            // 校验输入
+            if (!form.email.match(/[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/)) {
+              instance.message = '信箱格式不正确';
+            } else if (form.password.length < 6) {
+              instance.message = '密碼至少需要6位字符';
+            // } else if (){
+
+            }else{
+                
+              done();//回傳後端
+            }
+          } else {
+            done();
+          }
+        }
+      }).then(() => {
+        const form = EditInfoFormInstance.component.proxy;
+        this.$message({
+          type: 'success',
+          message: '修改完成！'
+        });
+
+        // 在這裡你可以將 email, password 和 name 發送到後端以更新用戶信息
+        console.log('Email:', form.email);
+        console.log('Password:', form.password);
+        console.log('Name:', form.user_name);
+
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '取消修改'
+        });
+      });
+    },
+    done(){
+    //呼叫後端api
+    },
+ }
 }
 </script>
 
@@ -150,4 +223,5 @@ export default {
         } */
 
     }
+    
 </style>
