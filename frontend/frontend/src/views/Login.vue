@@ -208,64 +208,6 @@ export default {
     const check_btn = () => {
       checked.value = !checked.value;
     };
-    // login的事件，目前這個用不到了
-    // const login = () => {
-    //   //前端部分先進行帳號密碼原則檢驗，還有其他條件式
-    //   if (password == "" || account == "") {
-    //     // this.$refs.account.style = "border-color : #e03939";
-    //     // this.$refs.password.style = "border-color : #e03939";
-    //     // this.$refs.wrong1.style = "display : block";
-    //     // this.$refs.wrong2.style = "display : block";
-    //     alertBlankInput.value = true; // this.errorTime = this.errorTime + 1;
-    //     error = true;
-    //   } else {
-    //     const path = "http://34.81.219.139:5000/bricks_login";
-    //     const user = {
-    //       user_email: account,
-    //       user_password: password,
-    //       isKeepLogin: checked,
-    //     };
-    //     console.log("user: ", user);
-    //     account = "";
-    //     password = "";
-    //     axios
-    //       .post(path, user)
-    //       .then((res) => {
-    //         // token 在 res.data裡面
-    //         token = res.data;
-    //         // 在Vue组件中的某个方法中执行解密操作
-    //         decode_token_json = decodeToken(token);
-    //         // 直接取出要的東西
-    //         if (decode_token_json.status == "success") {
-    //           errorTime = 0;
-
-    //           this.$router.push({
-    //             name: "PersonalHomepage",
-    //             // params: { user_email: this.decode_token_json.user_email },
-    //           });
-    //         } else {
-    //           // this.$refs.account.style = "border-color : #e03939";
-    //           // this.$refs.password.style = "border-color : #e03939";
-    //           // this.$refs.wrong1.style = "display : block";
-    //           // this.$refs.wrong2.style = "display : block";
-    //           // this.accountError = res.data.accountError;
-    //           // this.passwordError = res.data.passwordError;
-    //           errorTime = errorTime + 1;
-    //           if (errorTime >= 3) {
-    //             errorMessage = "如果登入時遇到困難，可點擊「忘記密碼」";
-    //             errorTime = errorTime + 1;
-    //           } else {
-    //             // 之後改成 this.decode_token_json.message
-    //             errorMessage = "您的帳號或密碼不正確，請再試一次";
-    //           }
-    //           error = true;
-    //         }
-    //       })
-    //       .catch((error) => {
-    //         console.log(error);
-    //       });
-    //   }
-    // };
 
     //登入
     const goToPersonalPage = () => {
@@ -307,11 +249,6 @@ export default {
                 name: "personalHomepage",
               });
               setAuth(authorization.value);
-
-              // router.push({
-              //   name: "kerwin",
-              // params: { authorization: authorization.value },
-              // });
 
               if (checked.value) {
                 setCookie(account._value, password._value);
