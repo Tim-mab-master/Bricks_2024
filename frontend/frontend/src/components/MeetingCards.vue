@@ -48,6 +48,7 @@ export default{
 
         const show = () => {
             isShowed.value = !isShowed.value;
+            // alert("123");
         };
 
         const unShow = () => {

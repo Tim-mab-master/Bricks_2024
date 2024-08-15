@@ -278,7 +278,7 @@ export default {
         }, 2000);
       } else {
         axios
-          .post("http://34.81.219.139:5000/bricks_login", {
+          .post("http://35.201.168.185:5000/bricks_login", {
             user_email: account._value,
             user_password: password._value,
           })
@@ -299,9 +299,16 @@ export default {
               }
             } else if (res.data.status === "success") {
               console.log(res);
-              alert(res.headers.authorization);
+
+              //刪去回傳的auth中不需要的部分
+              const cleanedToken = res.headers.authorization
+                .replace(/^Bearer b'/, "") // 去掉前面的 Bearer b'
+                .replace(/'$/, ""); // 去掉末尾的 '
+              const formattedToken = `Bearer ${cleanedToken}`;
+
+              alert(formattedToken);
               errorTime.value = 0;
-              authorization.value = res.headers.authorization;
+              authorization.value = formattedToken;
               console.log(authorization.value);
               router.push({
                 name: "personalHomepage",
