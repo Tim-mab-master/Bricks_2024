@@ -953,6 +953,9 @@ export default {
         // });
       } else {
         this.alertNoSameCartName = true;
+        setTimeout(() => {
+          this.alertNoSameCartName = false;
+        }, 1000);
       }
     },
     // 新增專案彈窗裡點擊選擇專案類型
