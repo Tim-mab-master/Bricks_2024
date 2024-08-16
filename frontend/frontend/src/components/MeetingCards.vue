@@ -26,6 +26,8 @@
 import { onUnmounted, ref, watch, onMounted} from 'vue';
 import CardRightClick from './CardRightClick.vue';
 import { useRouter } from "vue-router";
+import store from "../store/store.js";
+
 export default{
     components:{
         CardRightClick,
@@ -34,6 +36,8 @@ export default{
         isShowed: Boolean,
         recordName: String,
         tags: Array,
+        recordID: String
+        // id: ,
     },
 
     setup(props,{emit}){
@@ -43,6 +47,7 @@ export default{
         const normal = "#303133";
         const record_name = props.recordName;
         const tags = props.tags;
+        const record_id = props.recordID
         onMounted(async () => {
             console.log("onMountedname12", props.recordName);
         }); // ParentIsShowed = false;
@@ -51,7 +56,9 @@ export default{
 
         const show = () => {
             isShowed.value = !isShowed.value;
-            // alert("123");
+            //設在這裡
+            alert(props.recordID);
+            store.commit("setRecordID", props.recordID);
         };
 
         const unShow = () => {

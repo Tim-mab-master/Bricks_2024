@@ -45,6 +45,7 @@
           v-for="card in cards"
           :key="card.id"
           :recordName="card.record_name"
+          :recordID="card.record_id"
           :tags="card.tags"
           @click="toRecord(card.record_id)"
           >card</meeting-cards

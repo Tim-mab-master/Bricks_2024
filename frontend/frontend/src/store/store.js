@@ -97,7 +97,9 @@ export default createStore({
       console.log(state.trashRecords);
       return state.trashRecords;
     },
-
+    getRecordID(state) {
+      return state.recordID;
+    },
     getCurrRecord(state) {
       return state.currRecord;
     },
