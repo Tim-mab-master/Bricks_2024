@@ -59,25 +59,22 @@ export default {
   bottom: 0;
 }
 .cards {
-  display: grid;
+  display: flex;
+  flex-wrap: wrap;
   grid-column-gap: 16px;
   grid-row-gap: 20px;
-  grid-template-columns: repeat(auto-fill, 280px);
-  margin: 28px 2vw 28px 28px;
-  grid-auto-columns: minmax(auto, 50vw);
-  /* grid-auto-flow: dense; */
-  position: relative;
-  top: 48px;
+  margin: 28px 1.5vw 28px 28px;
   /* border: 2px solid black; */
 }
 .navAndCont {
   background-color: #dcdfe6;
   position: absolute;
   /* border: 2px solid black; */
-
   left: 200px;
+  min-height: calc(100vh - 50px);
+  height: auto;
   width: auto;
-  top: 0;
+  top: 50px;
   right: 0;
 }
 
