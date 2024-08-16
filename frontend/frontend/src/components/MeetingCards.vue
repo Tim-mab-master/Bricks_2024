@@ -23,7 +23,7 @@
 
 <script>
 
-import { onUnmounted, ref, watch} from 'vue';
+import { onUnmounted, ref, watch, onMounted} from 'vue';
 import CardRightClick from './CardRightClick.vue';
 import { useRouter } from "vue-router";
 export default{
@@ -43,6 +43,9 @@ export default{
         const normal = "#303133";
         const record_name = props.recordName;
         const tags = props.tags;
+        onMounted(async () => {
+            console.log("onMountedname12", props.recordName);
+        }); // ParentIsShowed = false;
         // ParentIsShowed = false;
         // const buttonRef = ref(null);
 
