@@ -31,16 +31,13 @@ export default {
     SideBar,
   },
   setup() {
-    const cards = computed(() => store.getters.getTrashRecords);
-    // const cards = store.getters.getTrashRecords;
-
     onMounted(async () => {
-      console.log("onMounted");
       store.dispatch("fetchTrashRecords");
-      console.log("卡片", cards);
-
       console.log("allRecordsTrash", store.getters.getTrashRecords);
     });
+
+    const cards = computed(() => store.getters.getTrashRecords);
+    // const cards = store.getters.getTrashRecords;
     return { cards };
   },
 };

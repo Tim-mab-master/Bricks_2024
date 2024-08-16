@@ -94,8 +94,8 @@ export default createStore({
     },
     getTrashRecords(state) {
       console.log("值");
-      console.log(state.allRecords);
-      return state.allRecords;
+      console.log(state.trashRecords);
+      return state.trashRecords;
     },
 
     getCurrRecord(state) {
