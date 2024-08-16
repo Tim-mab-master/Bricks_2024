@@ -98,6 +98,7 @@ onMounted(async () => {
 
   console.log("allRecords", store.getters.getAllRecords.length);
   store.dispatch("fetchAllRecords");
+  console.log("cardsAll", cards);
 });
 
 const cards = computed(() => store.getters.getAllRecords);
@@ -324,9 +325,11 @@ const toRecord = async (cardID) => {
 
 .navAndCont {
   /* border: 2px solid black; */
+
   background-color: #dcdfe6;
   position: absolute;
   left: 200px;
+  min-height: calc(100vh - 50px);
   height: auto;
   top: 50px;
   right: 0;

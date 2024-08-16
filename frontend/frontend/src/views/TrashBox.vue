@@ -31,12 +31,15 @@ export default {
     SideBar,
   },
   setup() {
-    const cards = computed(() => store.getters.getAllRecords);
+    const cards = computed(() => store.getters.getTrashRecords);
+    // const cards = store.getters.getTrashRecords;
 
     onMounted(async () => {
       console.log("onMounted");
-      console.log("allRecords", store.getters.getTrashRecords);
       store.dispatch("fetchTrashRecords");
+      console.log("卡片", cards);
+
+      console.log("allRecordsTrash", store.getters.getTrashRecords);
     });
     return { cards };
   },
@@ -73,6 +76,8 @@ export default {
 .navAndCont {
   background-color: #dcdfe6;
   position: absolute;
+  /* border: 2px solid black; */
+
   left: 200px;
   width: auto;
   top: 0;

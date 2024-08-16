@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 // import DeleteForever from '../KarenBricks/DeleteForever.vue';
 import { ElNotification } from "element-plus";
 import { ElMessage } from "element-plus";
@@ -40,7 +40,10 @@ export default {
     const normal = "#303133";
     const record_name = props.recordName;
     const tags = props.tags;
-    // ParentIsShowed = false;
+
+    onMounted(async () => {
+      console.log("onMountedname", props.recordName);
+    }); // ParentIsShowed = false;
     // const buttonRef = ref(null);
 
     const show = () => {
