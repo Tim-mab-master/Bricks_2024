@@ -15,6 +15,7 @@
         <text-block
           v-for="block in blocks"
           :key="block.id"
+          @click = "setBlockNow(block)"
           @add_cart="add_block(block)"
           :showAddBtn="showAddBtn"
           @deleteCart="deleteCart(block)"
@@ -73,9 +74,12 @@ const deleteCart = async (block) => {
 const showInfo = (value) => {
   showedInfo.value = value;
 };
-const add_block = (block) => {
+
+const setBlockNow = (block) =>{
   store.commit("setBlockNow", block);
-  // console.log(store.state.records.blockNow);
+};
+
+const add_block = () => {
   store.dispatch("addBlock");
 };
 
