@@ -1354,6 +1354,9 @@ export default {
         this.trashcan = false;
       }
     },
+
+    //個人資訊開頭
+
     // 垃圾桶點擊還原專案
     recover_project() {
       // this.recovered = true;
@@ -1399,7 +1402,7 @@ export default {
           console.error("API呼叫失敗", error);
         });
     })
-      
+     //個人資訊開頭
     },
     // 垃圾桶點選永久刪除
     forever_delete_project() {
@@ -1412,6 +1415,9 @@ export default {
       this.forever_delete_confirm = false;
       this.showOverlay_trash = false;
     },
+
+     //個人資訊開頭
+
     forever_delete(){
       let projectIds = [];
 
@@ -1454,6 +1460,8 @@ export default {
     })
   },
     
+ //個人資訊開頭
+
     //永久刪除專案了
     // forever_delete(){
     //   this.forever_delete_confirm = false;

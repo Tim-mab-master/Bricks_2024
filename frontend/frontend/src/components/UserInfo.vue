@@ -1,4 +1,6 @@
+
 <template >
+    
     <el-dropdown trigger="click" class="all">
         <span class="el-dropdown-link">
             <div id="userInfo">
@@ -45,31 +47,50 @@
           </div>
         </template>
       </el-dropdown>    
-    
-    
 </template>
 
 <script>
 import { h } from 'vue';
+import axios from "axios";
 import EditInfoForm from './EditInfoForm.vue';
 
+
 export default {
-    setup(){
-        return{
-            user_name: "Designer",
+    props: {
+        user_name: {
+            type: String,
+            required: true
+        }
+    },
+    components: {
+        EditInfoForm
+    },
+    setup(props){
+        return {
             squareUrl: "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
-            email: '',
-            password: '',
-            name: '',
         };
     },
+    // 個人資訊開頭
     methods:{
       log_out() {
         this.$confirm('確定登出專案？登出後需重新輸入帳號密碼才可登入', '是否登出', {
           confirmButtonText: '確定',
           cancelButtonText: '取消',
           type: 'error',
-        }).then(() => {
+        })
+        .then(() => {
+            const logout = "http://35.201.168.185:5000/bricks_logout";
+            axios
+            .post(logout, null,{
+                headers: { authorization: JSON.parse(localStorage.getItem("auth")) },
+            })
+            .then((res) => {
+                if (res.data.status === "success"){
+                    console.log("logout success")
+                }
+            })
+            
+
           this.$message({
             type: 'success',
             message: '登出成功!'
@@ -83,8 +104,8 @@ export default {
         });
       },
       editInfo() {
-      const EditInfoFormInstance = h(EditInfoForm);
-
+        const EditInfoFormInstance = h(EditInfoForm);
+        
       this.$msgbox({
         title: '修改個人檔案',
         message: EditInfoFormInstance,
@@ -102,7 +123,6 @@ export default {
             // } else if (){
 
             }else{
-                
               done();//回傳後端
             }
           } else {
@@ -116,7 +136,7 @@ export default {
           message: '修改完成！'
         });
 
-        // 在這裡你可以將 email, password 和 name 發送到後端以更新用戶信息
+        // 更新
         console.log('Email:', form.email);
         console.log('Password:', form.password);
         console.log('Name:', form.user_name);
@@ -130,7 +150,35 @@ export default {
     },
     done(){
     //呼叫後端api
+        const edit_info = "http://35.201.168.185:5000/edit_info";
+        const edited_info = {
+            user_name: "abc",
+	        user_email: "abc@gmail.com",
+        }
+        axios
+        .post(edit_info, edited_info,{
+            headers: { authorization: JSON.parse(localStorage.getItem("auth")) },
+        })
+        .then((res) => {
+            if (res.data.status === "success"){
+                console.log("haha")
+            }
+        })
     },
+    mounted(){
+        const show_info = "http://35.201.168.185:5000/show_info";
+        axios
+        .post(show_info, null,{
+            headers: { authorization: JSON.parse(localStorage.getItem("auth")) },
+        })
+        .then((res) => {
+            if (res.data.status === "success"){
+                this.user_name = res.data.user_info.user_name;
+                console.log("user_name",this.user_name)
+            }
+        })
+    },
+    // 個人資訊開頭
  }
 }
 </script>
