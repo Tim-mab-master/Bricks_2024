@@ -36,7 +36,7 @@ export default createStore({
     setMeetingName(state, meetingName) {
       state.meetingName = meetingName;
     },
-    setNewProject(state, newRecord) {
+    setNewRecord(state, newRecord) {
       state.newRecord = newRecord;
     },
     setProjectName(state, projectName) {
@@ -94,18 +94,24 @@ export default createStore({
       console.log(state.allRecords);
       return state.allRecords;
     },
-
     getCurrRecord(state) {
-      return state.currRecord;
+      if(state.currRecord != {}){
+        return state.currRecord;
+      }else{
+        return state.newRecord;
+      }
     },
-    getNewRecord(state) {
-      return state.newRecord;
-    },
+    // getNewRecord(state) {
+    //   return state.newRecord;
+    // },
     getCurrTextBoxes(state) {
       return state.currTextBoxes;
     },
     getProjectID(state) {
       return state.projectID;
+    },
+    getRecordID(state){
+      return state.recordID;
     },
     getDeleteConfirm(state) {
       return state.delete_confirm;

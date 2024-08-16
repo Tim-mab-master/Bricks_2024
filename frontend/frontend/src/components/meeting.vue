@@ -59,7 +59,6 @@
             :key="index"
             >{{ option.label }}</el-tag
           >
-          <!-- <input type="attend" id="attend" v-model="attends" class="text-input" placeholder="-"> -->
         </td>
       </tr>
       <tr>
@@ -89,8 +88,6 @@
             :key="index"
             >{{ option.label }}</el-tag
           >
-
-          <!-- <input type="absent" id="absent" v-model="absents" class="text-input" placeholder="-"> -->
         </td>
       </tr>
       <tr>
@@ -105,7 +102,6 @@
             :key="index"
             >{{ option.label }}</el-tag
           >
-          <!-- <input type="record" id="record" v-model="recorder" class="text-input" placeholder="-"> -->
         </td>
       </tr>
     </table>
@@ -235,33 +231,34 @@ import store from "../store/store.js";
 import { useRouter } from "vue-router";
 import axios from "axios";
 import { ref, reactive, onMounted, computed } from "vue";
-import { defineProps, defineEmits } from "vue";
+import { defineEmits } from "vue";
 import { ElNotification, ElMessage } from "element-plus";
 
 const router = useRouter();
-// const props = defineProps(['recordInfo']);
 const emit = defineEmits(["submit"]);
-const props = defineProps(["recordInfo", "newRecordInfo"]);
+
+// 使用 store 的 getter 來獲取當前記錄
+const recordInfo = computed(() => store.getters.getCurrRecord);
 
 // 定義響應式數據
 const form = reactive({
   show: false,
   data: {
-    formName: "",
+    formName: recordInfo.value.record_name,
     date: new Date(),
     time: [new Date(), new Date(Date.now() + 60 * 60 * 1000)],
-    place: "",
+    place: recordInfo.value.record_place,
     // 其他表單項目
   },
 });
 
-// const recordInfo = computed(() => store.getters.getCurrRecord);
-const meetingName = ref("");
-const time = ref("");
-const place = ref("");
+const meetingName = computed(() => recordInfo.value.record_name);
+const time = computed(() => recordInfo.value.record_update_time);
+const place = computed(() => recordInfo.value.record_place);
 const showOverlay = ref(false);
 const placeholder = ref("輸入會議名稱");
 
+// 初始化出席人員、缺席人員和記錄人員的選項
 const valueA = ref([]);
 const optionsA = ref([]);
 const valueB = ref([]);
@@ -269,6 +266,33 @@ const optionsB = ref([]);
 const valueC = ref([]);
 const optionsC = ref([]);
 
+// 方法來檢查和設置出席、缺席、紀錄人員的列表
+const checkNone = (input, values, options) => {
+  if (typeof input === 'string' && input !== "None" && input !== "") {
+    const result = input.split(',');
+    result.forEach((person) => {
+      options.push({
+        value: person.trim(), // 確保去除前後空白
+        label: person.trim()
+      });
+      values.push(person.trim());
+    })
+  } else {
+    values.length = 0; // 清空數組
+    options.length = 0; // 清空數組
+  }
+};
+
+// 組件掛載時初始化數據
+onMounted(() => {
+  if (recordInfo.value) {
+    checkNone(recordInfo.value.record_attendees_name, valueA.value, optionsA.value);
+    checkNone(recordInfo.value.record_absentees_name, valueB.value, optionsB.value);
+    checkNone(recordInfo.value.record_recorder_name, valueC.value, optionsC.value);
+  }
+});
+
+// 其餘的代碼保持不變
 const clearPlaceholder = () => {
   placeholder.value = "";
 };
@@ -283,8 +307,7 @@ const recover = () => {
   ElNotification({
     dangerouslyUseHTMLString: true,
     title: "成功復原會議記錄",
-    message:
-      '<a href="/path/to/recovery/file" style="color: #67C23A; text-decoration: underline;">點擊檢視復原檔案</a>',
+    message: '<a href="/path/to/recovery/file" style="color: #67C23A; text-decoration: underline;">點擊檢視復原檔案</a>',
     type: "success",
     position: "bottom-right",
   });
@@ -328,22 +351,6 @@ const handleSelectChangeC = (selectedValues) => {
   handleSelectChange(selectedValues, optionsC.value, valueC.value);
 };
 
-const checkNone = (input, values, options) =>{
-  if(typeof input === 'string' && input !== "None" && input !== ""){
-    const result = input.split(',');
-    result.forEach((person) => {
-      options.push({
-        value: person.trim(), // 確保去除前後空白
-        label: person.trim()
-      });
-    values.push(person.trim());
-    })
-  }else{
-      values = [];
-      options = [];
-  }
-}
-
 const handleSelectChange = (selectedValues, options, value) => {
   for (let i = 0; i < selectedValues.length; i++) {
     const existsInOptions = options.some(
@@ -368,46 +375,32 @@ const handleSelectChange = (selectedValues, options, value) => {
   }
 };
 
-const onSubmit = () => {
-  meetingName.value = form.data.formName;
-  place.value = form.data.place;
-
-  const date = form.data.date;
-  const year = date.getFullYear();
-  const month = (date.getMonth() + 1).toString().padStart(2, "0"); // 月份是從0開始的，所以需要加1
-  const day = date.getDate().toString().padStart(2, "0"); // 確保日期是兩位數
-  // const options = { year: 'numeric', month: 'short', day: '2-digit' };
-  const formattedDate = `${year}/${month}/${day}`;
-  const formatted = `${year}-${month}-${day}`;
-
-  const format = { hour: "2-digit", minute: "2-digit", hour12: false };
-  const formattedTime = form.data.time.map((date) =>
-    date.toLocaleTimeString("en-US", format)
-  );
-  const addTime = `${formattedTime[0].substring(
-    0,
-    5
-  )}-${formattedTime[1].substring(0, 5)}`;
-  time.value = `${formattedDate} ${addTime}`;
+const onSubmit = async () => {
   emit("submit");
 
   const editInfo = {
-    "record_id": store.state.recordID,
-    "record_name": form.data.meetingName,
-    "record_date": formatted,
-    "record_attendees_name": valueA.value,
-    "record_absentees_name": valueB.value,
-    "record_recorder_name": valueC.value,
-    "record_place": form.data.place,
-
+    record_id: store.getters.getRecordID,
+    record_name: form.data.formName,
+    record_date: form.data.date,
+    record_attendees_name: valueA.value.join(','),
+    record_absentees_name: valueB.value.join(','),
+    record_recorder_name: valueC.value.join(','),
+    record_place: form.data.place,
   };
-  axios.post("http://35.201.168.185:5000/edit_record", editInfo, {
-    headers:{
+
+  await axios.post("http://35.201.168.185:5000/edit_record", editInfo, {
+    headers: {
       authorization: JSON.parse(localStorage.getItem("auth")),
     }
   }).then((res) => {
     console.log(res.data.message);
   });
+
+  store.dispatch('fetchOneRecord');
+
+  // checkNone(recordInfo.value.record_attendees_name, valueA.value, optionsA.value);
+  // checkNone(recordInfo.value.record_absentees_name, valueB.value, optionsB.value);
+  // checkNone(recordInfo.value.record_recorder_name, valueC.value, optionsC.value);
 
   ElMessage({
     message: "已儲存會議基本資訊",
@@ -415,40 +408,7 @@ const onSubmit = () => {
   });
   showOverlay.value = false;
   form.show = false;
-
-  if(props.newProjectInfo){
-    store.commit("setRecordID",props.newProjectInfo.record_id);
-  }
-  
-  store.dispatch("fetchOneRecords");
 };
-
-
-
-// 在組件掛載時執行初始化請求
-onMounted(() => {
-  console.log(props.recordInfo);
-  if (props.recordInfo) {
-    meetingName.value = props.recordInfo.record_name;
-    time.value = props.recordInfo.record_creation_time;
-    form.data.formName = props.recordInfo.record_name;
-    
-    if(props.recordInfo.record_place == "None"){
-      place.value = "";
-      form.data.place = "";
-    }else{
-      place.value = props.recordInfo.record_place;
-      form.data.place = props.recordInfo.record_place;
-    }
-
-    checkNone(props.recordInfo.record_attendees_name,valueA.value,optionsA.value);
-    checkNone(props.recordInfo.record_absentees_name,valueB.value,optionsB.value);
-    checkNone(props.recordInfo.record_recorder_name,valueC.value,optionsC.value);
-  }else{
-    meetingName.value = props.newRecordInfo.record_name;
-    form.data.formName = props.newRecordInfo.record_name;
-  }
-});
 </script>
 
 <style scoped>
