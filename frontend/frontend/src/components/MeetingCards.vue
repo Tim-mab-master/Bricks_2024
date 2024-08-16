@@ -57,7 +57,7 @@ export default{
         const show = () => {
             isShowed.value = !isShowed.value;
             //設在這裡
-            alert(props.recordID);
+            // alert(props.recordID);
             store.commit("setRecordID", props.recordID);
         };
 

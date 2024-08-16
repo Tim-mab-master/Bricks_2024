@@ -76,9 +76,7 @@ export default {
           //if success
           ElMessage.error("您已刪除會議記錄");
         });
-
-      // status = false;
-      // emit('clicked',status)
+      store.dispatch("fetchAllRecords");
     };
     return {
       change,
