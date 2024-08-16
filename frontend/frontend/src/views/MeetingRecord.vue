@@ -10,7 +10,7 @@
     </div>
 
     <div :class="meetingClass" v-if="showedInfo">
-      <meeting @submit="submit" :recordInfo = "recordInfo"></meeting>
+      <meeting @submit="reload" :recordInfo = "recordInfo"></meeting>
       <div class="textBlock">
         <text-block
           v-for="block in blocks"
@@ -60,8 +60,8 @@ const showAddBtn = ref(false);
 const blocks = computed(() => store.getters.getCurrTextBoxes);
 
 
-const setInfo = (value) => {
-  recordInfo.value = value;
+const reload = (value) => {
+  store.dispatch('fetchOneRecord');
 };
 
 const deleteCart = async (block) => {
@@ -84,9 +84,8 @@ const showBtn = () => {
 };
 
 onMounted(async () =>{
-  // store.dispatch("fetchOneRecord");
-  // console.log("會議記錄 ID是" + store.state.recordID);
-  // console.log("會議記錄資訊是", recordInfo.value);
+  // store.dispatch("fetchAllRecords");
+  store.dispatch("fetchOneRecords");
   console.log("文字方塊是長這樣",blocks.value);
 })
 </script>
