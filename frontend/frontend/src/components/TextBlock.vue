@@ -189,8 +189,6 @@ const handleInputConfirm = () => {
   calculateVisibleTags();
 };
 
-const edit_textArea = () => {};
-
 const show = () => {
   isShowed.value = !isShowed.value;
   isUnlockShowed.value = false;

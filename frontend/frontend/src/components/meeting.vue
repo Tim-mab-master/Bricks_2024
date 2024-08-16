@@ -398,10 +398,6 @@ const onSubmit = async () => {
 
   store.dispatch('fetchOneRecord');
 
-  // checkNone(recordInfo.value.record_attendees_name, valueA.value, optionsA.value);
-  // checkNone(recordInfo.value.record_absentees_name, valueB.value, optionsB.value);
-  // checkNone(recordInfo.value.record_recorder_name, valueC.value, optionsC.value);
-
   ElMessage({
     message: "已儲存會議基本資訊",
     type: "success",

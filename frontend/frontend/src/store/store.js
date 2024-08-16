@@ -214,11 +214,9 @@ export default createStore({
       };
 
       const response = await axios.post(
-        "http://35.201.168.185:5000/add_textBox",
-        newBlock,
-        {
+        "http://35.201.168.185:5000/add_textBox",newBlock,{
           headers: {
-            authorization: state.auth,
+            authorization: JSON.parse(localStorage.getItem("auth")),
           },
         }
       );
