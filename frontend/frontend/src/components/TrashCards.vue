@@ -8,7 +8,7 @@
         <span id="name">{{ record_name }}</span>
       </div>
       <div id="tagPart">
-        <el-tag class="tag" v-for="item in tags" :key="item">item</el-tag>
+        <el-tag class="tag" v-for="item in tags" :key="item">{{ item }}</el-tag>
         <!-- <el-tag class="tag">新增標籤</el-tag> -->
       </div>
     </el-card>
@@ -25,13 +25,14 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 // import DeleteForever from '../KarenBricks/DeleteForever.vue';
 import { ElNotification } from "element-plus";
 import { ElMessage } from "element-plus";
 
 export default {
   components: {},
+  props: { recordName: String, tags: Array },
 
   setup(props, { emit }) {
     const isShowed = ref(false);
@@ -40,7 +41,10 @@ export default {
     const normal = "#303133";
     const record_name = props.recordName;
     const tags = props.tags;
-    // ParentIsShowed = false;
+
+    onMounted(async () => {
+      console.log("onMountedname123123132", props.tags);
+    }); // ParentIsShowed = false;
     // const buttonRef = ref(null);
 
     const show = () => {

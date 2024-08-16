@@ -91,8 +91,11 @@ export default createStore({
     },
     getTrashRecords(state) {
       console.log("值");
-      console.log(state.allRecords);
-      return state.allRecords;
+      console.log(state.trashRecords);
+      return state.trashRecords;
+    },
+    getRecordID(state) {
+      return state.recordID;
     },
     getCurrRecord(state) {
       if(state.currRecord != {}){
@@ -139,7 +142,7 @@ export default createStore({
           .then((res) => {
             // console.log(JSON.parse(localStorage.getItem("auth"))); //確認auth是否正確
             commit("setAllRecords", res.data.record); //以array紀錄會議名稱
-            console.log("回復", res);
+            console.log("回復", res.data.record);
           });
       } catch (error) {
         console.log(error);
@@ -161,8 +164,8 @@ export default createStore({
 
           .then((res) => {
             // console.log(JSON.parse(localStorage.getItem("auth"))); //確認auth是否正確
-            commit("setTrashRecords", res.data.record); //以array紀錄會議名稱
-            console.log("回復", res);
+            commit("setTrashRecords", res.data.item); //以array紀錄會議名稱
+            console.log("垃圾桶", res.data.item);
           });
       } catch (error) {
         console.log(error);
