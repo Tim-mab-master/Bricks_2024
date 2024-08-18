@@ -268,15 +268,15 @@ const optionsC = ref([]);
 
 // 方法來檢查和設置出席、缺席、紀錄人員的列表
 const checkNone = (input, values, options) => {
-  if (typeof input === 'string' && input !== "None" && input !== "") {
-    const result = input.split(',');
+  if (typeof input === "string" && input !== "None" && input !== "") {
+    const result = input.split(",");
     result.forEach((person) => {
       options.push({
         value: person.trim(), // 確保去除前後空白
-        label: person.trim()
+        label: person.trim(),
       });
       values.push(person.trim());
-    })
+    });
   } else {
     values.length = 0; // 清空數組
     options.length = 0; // 清空數組
@@ -286,9 +286,21 @@ const checkNone = (input, values, options) => {
 // 組件掛載時初始化數據
 onMounted(() => {
   if (recordInfo.value) {
-    checkNone(recordInfo.value.record_attendees_name, valueA.value, optionsA.value);
-    checkNone(recordInfo.value.record_absentees_name, valueB.value, optionsB.value);
-    checkNone(recordInfo.value.record_recorder_name, valueC.value, optionsC.value);
+    checkNone(
+      recordInfo.value.record_attendees_name,
+      valueA.value,
+      optionsA.value
+    );
+    checkNone(
+      recordInfo.value.record_absentees_name,
+      valueB.value,
+      optionsB.value
+    );
+    checkNone(
+      recordInfo.value.record_recorder_name,
+      valueC.value,
+      optionsC.value
+    );
   }
 });
 
@@ -307,7 +319,8 @@ const recover = () => {
   ElNotification({
     dangerouslyUseHTMLString: true,
     title: "成功復原會議記錄",
-    message: '<a href="/path/to/recovery/file" style="color: #67C23A; text-decoration: underline;">點擊檢視復原檔案</a>',
+    message:
+      '<a href="/path/to/recovery/file" style="color: #67C23A; text-decoration: underline;">點擊檢視復原檔案</a>',
     type: "success",
     position: "bottom-right",
   });
@@ -382,21 +395,23 @@ const onSubmit = async () => {
     record_id: store.getters.getRecordID,
     record_name: form.data.formName,
     record_date: form.data.date,
-    record_attendees_name: valueA.value.join(','),
-    record_absentees_name: valueB.value.join(','),
-    record_recorder_name: valueC.value.join(','),
+    record_attendees_name: valueA.value.join(","),
+    record_absentees_name: valueB.value.join(","),
+    record_recorder_name: valueC.value.join(","),
     record_place: form.data.place,
   };
 
-  await axios.post("http://35.201.168.185:5000/edit_record", editInfo, {
-    headers: {
-      authorization: JSON.parse(localStorage.getItem("auth")),
-    }
-  }).then((res) => {
-    console.log(res.data.message);
-  });
+  await axios
+    .post("http://35.201.168.185:5000/edit_record", editInfo, {
+      headers: {
+        authorization: JSON.parse(localStorage.getItem("auth")),
+      },
+    })
+    .then((res) => {
+      console.log(res.data.message);
+    });
 
-  store.dispatch('fetchOneRecord');
+  store.dispatch("fetchOneRecord");
 
   ElMessage({
     message: "已儲存會議基本資訊",
@@ -513,7 +528,6 @@ p {
   padding: 20px;
   border-radius: 4px;
   background-color: #ffffff;
-  border: 2px solid black;
 }
 .form .el-form-item {
   /* margin-bottom: 25px; */
