@@ -1,8 +1,8 @@
 <template>
   <div id="card">
     <div id="container">
-      <span id="copy" @click="copyLink">複製連結</span>
-      <span id="delete" @click="deleteRecord">刪除會議記錄</span>
+      <span id="copy" @click.stop="copyLink">複製連結</span>
+      <span id="delete" @click.stop="deleteRecord">刪除會議記錄</span>
     </div>
   </div>
   <div ref="containerRef">
@@ -11,14 +11,16 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import { nextTick, ref } from "vue";
 import { ElMessage } from "element-plus";
 import { onMounted, onBeforeUnmount } from "vue";
+import { useRouter } from "vue-router";
 import store from "../store/store.js";
 import axios from "axios";
 
 export default {
   setup(props, { emit }) {
+    const router = useRouter();
     // const containerRef = ref(null);
     // const status = ref(false);
 
@@ -74,7 +76,12 @@ export default {
 
         .then((res) => {
           //if success
-          ElMessage.error("您已刪除會議記錄");
+          nextTick(() => {
+            ElMessage.error("您已刪除會議記錄");
+          });
+          setTimeout(() => {
+            router.go(0);
+          }, 500);
         });
       store.dispatch("fetchAllRecords");
     };
