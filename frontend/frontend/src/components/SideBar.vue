@@ -306,8 +306,7 @@ export default {
   margin: 8px 2px 0 0;
 
   display: flex;
-  /* width: 44%; */
-  width: 90%;
+  width: 86%;
 
   justify-content: center;
   align-items: center;

@@ -100,7 +100,6 @@ const minuteExistMethod = () => {
 
 onMounted(async () => {
   console.log("onMounted");
-
   console.log("allRecords", store.getters.getAllRecords.length);
   store.dispatch("fetchAllRecords");
   console.log("cardsAll", cards);
