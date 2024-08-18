@@ -26,6 +26,7 @@ import TrashCards from "../components/TrashCards.vue";
 import NavBarAll from "../components/NavBarAll.vue";
 import { ref, computed, onMounted, onBeforeMount, onBeforeUnmount } from "vue";
 import store from "../store/store.js";
+import { useRoute, useRouter } from "vue-router";
 
 export default {
   name: "trashBox",

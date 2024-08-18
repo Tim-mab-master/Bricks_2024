@@ -31,22 +31,14 @@ import { ElNotification } from "element-plus";
 import { ElMessage } from "element-plus";
 import store from "../store/store.js";
 import axios from "axios";
-// import router, { useRoute } from "vue-router";
-import { tr } from "element-plus/es/locale/index.js";
+import router, { useRoute, useRouter } from "vue-router";
+// import { tr } from "element-plus/es/locale/index.js";
 
 export default {
   components: {},
   props: { recordName: String, tags: Array, recordID: String },
 
   setup(props, { emit }) {
-    // const route = useRoute();
-    // const isRouterAlive = ref(true);
-    // const reload = () => {
-    //   isRouterAlive.value = false;
-    //   nextTick(() => {
-    //     isRouterAlive.value = true;
-    //   });
-    // };
     const isShowed = ref(false);
     const url =
       "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png";
@@ -54,6 +46,7 @@ export default {
     const record_name = props.recordName;
     const tags = props.tags;
     const record_id = props.recordID;
+    const router = useRouter();
 
     onMounted(async () => {
       console.log("onMountedname123123132", props.recordID);
@@ -62,7 +55,6 @@ export default {
     const show = () => {
       isShowed.value = !isShowed.value;
       if (isShowed.value === true) {
-        alert(record_id);
         store.commit("setRecordID", record_id);
       }
     };
@@ -81,8 +73,11 @@ export default {
         })
         .then((res) => {
           ElMessage("您已永久刪除會議記錄");
+          setTimeout(() => {
+            unshown();
+            router.go(0);
+          }, 500);
         });
-      unshown();
     };
 
     const recover = () => {
