@@ -25,17 +25,28 @@
 </template>
 
 <script>
-import { onMounted, ref } from "vue";
+import { nextTick, onMounted, ref } from "vue";
 // import DeleteForever from '../KarenBricks/DeleteForever.vue';
 import { ElNotification } from "element-plus";
 import { ElMessage } from "element-plus";
 import store from "../store/store.js";
+import axios from "axios";
+// import router, { useRoute } from "vue-router";
+import { tr } from "element-plus/es/locale/index.js";
 
 export default {
   components: {},
   props: { recordName: String, tags: Array, recordID: String },
 
   setup(props, { emit }) {
+    // const route = useRoute();
+    // const isRouterAlive = ref(true);
+    // const reload = () => {
+    //   isRouterAlive.value = false;
+    //   nextTick(() => {
+    //     isRouterAlive.value = true;
+    //   });
+    // };
     const isShowed = ref(false);
     const url =
       "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png";
@@ -61,17 +72,16 @@ export default {
     };
 
     const deleteForever = () => {
-      const body = { project_id: store.getters.getProjectID, state: "end" };
+      const body = { record_id: record_id };
       axios
-        .post("http://35.201.168.185:5000/set_project_end", body, {
+        .post("http://35.201.168.185:5000//delete_record_permanent", body, {
           headers: {
             authorization: JSON.parse(localStorage.getItem("auth")),
           },
         })
         .then((res) => {
-          console.log(res);
+          ElMessage("您已永久刪除會議記錄");
         });
-      ElMessage("您已永久刪除會議記錄");
       unshown();
     };
 
