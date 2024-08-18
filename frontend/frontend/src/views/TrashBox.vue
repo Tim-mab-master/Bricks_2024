@@ -1,6 +1,8 @@
 <template>
   <div>
     <side-bar></side-bar>
+    <nav-bar-all class="navBar"></nav-bar-all>
+
     <div class="navAndCont" id="trash">
       <trash-bar class="navBar"></trash-bar>
       <div class="cards">
@@ -20,6 +22,7 @@
 import SideBar from "../components/SideBar.vue";
 import TrashBar from "../components/TrashBar.vue";
 import TrashCards from "../components/TrashCards.vue";
+import NavBarAll from "../components/NavBarAll.vue";
 import { ref, computed, onMounted, onBeforeMount, onBeforeUnmount } from "vue";
 import store from "../store/store.js";
 
@@ -29,6 +32,7 @@ export default {
     TrashBar,
     TrashCards,
     SideBar,
+    NavBarAll,
   },
   setup() {
     onMounted(async () => {
