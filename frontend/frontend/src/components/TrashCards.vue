@@ -81,15 +81,27 @@ export default {
     };
 
     const recover = () => {
-      ElNotification({
-        dangerouslyUseHTMLString: true,
-        title: "成功復原會議記錄",
-        message:
-          '<a href="/path/to/recovery/file" style="color: #67C23A; text-decoration: underline;">點擊檢視復原檔案</a>',
-        type: "success",
-        position: "bottom-right",
-      });
-      unshown();
+      const body = { record_id: record_id };
+      axios
+        .post("http://35.201.168.185:5000//recover_record", body, {
+          headers: {
+            authorization: JSON.parse(localStorage.getItem("auth")),
+          },
+        })
+        .then((res) => {
+          setTimeout(() => {
+            ElNotification({
+              dangerouslyUseHTMLString: true,
+              title: "成功復原會議記錄",
+              message:
+                '<a href="/path/to/recovery/file" style="color: #67C23A; text-decoration: underline;">點擊檢視復原檔案</a>',
+              type: "success",
+              position: "bottom-right",
+            });
+            unshown();
+          }, 500);
+          // router.go(0);
+        });
     };
 
     return {
