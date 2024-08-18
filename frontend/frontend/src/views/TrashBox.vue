@@ -11,6 +11,7 @@
           :key="card.id"
           :recordName="card.record_name"
           :tags="card.tags"
+          :recordID="card.record_id"
           >card</trash-cards
         >
       </div>

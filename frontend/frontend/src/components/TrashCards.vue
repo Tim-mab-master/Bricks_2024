@@ -29,10 +29,11 @@ import { onMounted, ref } from "vue";
 // import DeleteForever from '../KarenBricks/DeleteForever.vue';
 import { ElNotification } from "element-plus";
 import { ElMessage } from "element-plus";
+import store from "../store/store.js";
 
 export default {
   components: {},
-  props: { recordName: String, tags: Array },
+  props: { recordName: String, tags: Array, recordID: String },
 
   setup(props, { emit }) {
     const isShowed = ref(false);
@@ -41,14 +42,18 @@ export default {
     const normal = "#303133";
     const record_name = props.recordName;
     const tags = props.tags;
+    const record_id = props.recordID;
 
     onMounted(async () => {
-      console.log("onMountedname123123132", props.tags);
-    }); // ParentIsShowed = false;
-    // const buttonRef = ref(null);
+      console.log("onMountedname123123132", props.recordID);
+    });
 
     const show = () => {
       isShowed.value = !isShowed.value;
+      if (isShowed.value === true) {
+        alert(record_id);
+        store.commit("setRecordID", record_id);
+      }
     };
 
     const unshown = () => {
@@ -56,6 +61,16 @@ export default {
     };
 
     const deleteForever = () => {
+      const body = { project_id: store.getters.getProjectID, state: "end" };
+      axios
+        .post("http://35.201.168.185:5000/set_project_end", body, {
+          headers: {
+            authorization: JSON.parse(localStorage.getItem("auth")),
+          },
+        })
+        .then((res) => {
+          console.log(res);
+        });
       ElMessage("您已永久刪除會議記錄");
       unshown();
     };
@@ -78,6 +93,7 @@ export default {
       url,
       record_name,
       tags,
+      record_id,
       isShowed,
       unshown,
       deleteForever,
