@@ -39,6 +39,8 @@
         </div>
       </div>
     </div>
+
+    <!-- 個人資訊開頭 -->
     <div v-if="minuteExistMethod" class="navAndCont" id="cards">
       <div class="cards">
         <meeting-cards
@@ -51,6 +53,8 @@
           >card</meeting-cards
         >
       </div>
+      <!-- 個人資訊結尾 -->
+
       <div v-if="false" class="cover">
         <div></div>
       </div>

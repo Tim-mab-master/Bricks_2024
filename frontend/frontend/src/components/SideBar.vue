@@ -85,6 +85,8 @@ export default {
 
   setup(props, { emit }) {
     const active_color = ref("#fff");
+
+    //專案名稱
     const project_name = computed(() => store.state.projectName);
     const incolor = "#C91F2F";
     const activeOption = ref(null);
