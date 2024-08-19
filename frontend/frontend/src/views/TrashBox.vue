@@ -1,6 +1,8 @@
 <template>
   <div>
     <side-bar></side-bar>
+    <nav-bar-all class="navBar"></nav-bar-all>
+
     <div class="navAndCont" id="trash">
       <trash-bar class="navBar"></trash-bar>
       <div class="cards">
@@ -9,6 +11,7 @@
           :key="card.id"
           :recordName="card.record_name"
           :tags="card.tags"
+          :recordID="card.record_id"
           >card</trash-cards
         >
       </div>
@@ -20,8 +23,10 @@
 import SideBar from "../components/SideBar.vue";
 import TrashBar from "../components/TrashBar.vue";
 import TrashCards from "../components/TrashCards.vue";
+import NavBarAll from "../components/NavBarAll.vue";
 import { ref, computed, onMounted, onBeforeMount, onBeforeUnmount } from "vue";
 import store from "../store/store.js";
+import { useRoute, useRouter } from "vue-router";
 
 export default {
   name: "trashBox",
@@ -29,15 +34,16 @@ export default {
     TrashBar,
     TrashCards,
     SideBar,
+    NavBarAll,
   },
   setup() {
-    const cards = computed(() => store.getters.getAllRecords);
-
     onMounted(async () => {
-      console.log("onMounted");
-      console.log("allRecords", store.getters.getTrashRecords);
       store.dispatch("fetchTrashRecords");
+      console.log("allRecordsTrash", store.getters.getTrashRecords);
     });
+
+    const cards = computed(() => store.getters.getTrashRecords);
+    // const cards = store.getters.getTrashRecords;
     return { cards };
   },
 };
@@ -59,23 +65,22 @@ export default {
   bottom: 0;
 }
 .cards {
-  display: grid;
+  display: flex;
+  flex-wrap: wrap;
   grid-column-gap: 16px;
   grid-row-gap: 20px;
-  grid-template-columns: repeat(auto-fill, 280px);
-  margin: 28px 2vw 28px 28px;
-  grid-auto-columns: minmax(auto, 50vw);
-  /* grid-auto-flow: dense; */
-  position: relative;
-  top: 48px;
+  margin: 28px 1.5vw 28px 28px;
   /* border: 2px solid black; */
 }
 .navAndCont {
   background-color: #dcdfe6;
   position: absolute;
+  /* border: 2px solid black; */
   left: 200px;
+  min-height: calc(100vh - 50px);
+  height: auto;
   width: auto;
-  top: 0;
+  top: 50px;
   right: 0;
 }
 

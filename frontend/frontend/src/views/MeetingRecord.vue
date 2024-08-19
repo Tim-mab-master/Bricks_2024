@@ -1,7 +1,7 @@
 <template>
   <!-- <div class="all"> -->
   <side-bar class="sideBar"></side-bar>
-  <nav-bar-main class="navBar" :meetingName = recordInfo.name></nav-bar-main>
+  <nav-bar-main class="navBar" :meetingName="recordInfo.name"></nav-bar-main>
 
   <div class="navAndCont" id="new">
     <div class="tag">
@@ -10,12 +10,12 @@
     </div>
 
     <div :class="meetingClass" v-if="showedInfo">
-      <meeting @submit="reload" :recordInfo = "recordInfo"></meeting>
+      <meeting @submit="reload" :recordInfo="recordInfo"></meeting>
       <div class="textBlock">
         <text-block
           v-for="block in blocks"
           :key="block.id"
-          @click = "setBlockNow(block)"
+          @click="setBlockNow(block)"
           @add_cart="add_block(block)"
           :showAddBtn="showAddBtn"
           @deleteCart="deleteCart(block)"
@@ -60,9 +60,8 @@ const recordID = ref("");
 const showAddBtn = ref(false);
 const blocks = computed(() => store.getters.getCurrTextBoxes);
 
-
 const reload = (value) => {
-  store.dispatch('fetchOneRecord');
+  store.dispatch("fetchOneRecord");
 };
 
 const deleteCart = async (block) => {
@@ -75,7 +74,7 @@ const showInfo = (value) => {
   showedInfo.value = value;
 };
 
-const setBlockNow = (block) =>{
+const setBlockNow = (block) => {
   store.commit("setBlockNow", block);
 };
 
@@ -87,11 +86,11 @@ const showBtn = () => {
   showAddBtn.value = true;
 };
 
-onMounted(async () =>{
-  // store.dispatch("fetchAllRecords");
+onMounted(async () => {
+  store.dispatch("fetchAllRecords");
   store.dispatch("fetchOneRecords");
-  console.log("文字方塊是長這樣",blocks.value);
-})
+  console.log("文字方塊是長這樣", blocks.value);
+});
 </script>
 
 <style scoped>

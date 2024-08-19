@@ -367,12 +367,16 @@ export default {
             if (res.data.status == "success") {
               console.log(res);
               this.userId = res.data.user_id;
-              alert(res.headers.authorization);
-              this.setAuth(res.headers.authorization);
+              const cleanedToken = res.headers.authorization
+                .replace(/^Bearer b'/, "") // 去掉前面的 Bearer b'
+                .replace(/'$/, ""); // 去掉末尾的 '
+              const formattedToken = `Bearer ${cleanedToken}`;
+              alert(formattedToken);
+              this.setAuth(formattedToken);
 
-              // this.$router.push({
-              //   path: "/questionnaire",
-              // });
+              this.$router.push({
+                path: "/questionnaire",
+              });
             } else {
               // this.$refs.account.style = "border-color : #e03939";
               // this.$refs.password.style = "border-color : #e03939";

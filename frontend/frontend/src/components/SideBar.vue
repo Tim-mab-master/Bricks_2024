@@ -85,6 +85,8 @@ export default {
 
   setup(props, { emit }) {
     const active_color = ref("#fff");
+
+    //專案名稱
     const project_name = computed(() => store.state.projectName);
     const incolor = "#C91F2F";
     const activeOption = ref(null);
@@ -304,8 +306,7 @@ export default {
   margin: 8px 2px 0 0;
 
   display: flex;
-  /* width: 44%; */
-  width: 90%;
+  width: 86%;
 
   justify-content: center;
   align-items: center;

@@ -953,6 +953,9 @@ export default {
         // });
       } else {
         this.alertNoSameCartName = true;
+        setTimeout(() => {
+          this.alertNoSameCartName = false;
+        }, 1000);
       }
     },
     // 新增專案彈窗裡點擊選擇專案類型
@@ -1451,41 +1454,55 @@ export default {
     },
     // 垃圾桶點擊還原專案
     recover_project() {
-      this.recovered = true;
-      setTimeout(() => {
-        this.recovered = false;
-      }, 1000);
-      this.recover = true;
-      this.trashcan = true;
+      // this.recovered = true;
+      // setTimeout(() => {
+      //   this.recovered = false;
+      // }, 1000);
+      // this.recover = true;
+      // this.trashcan = true;
 
-      let projectId = 0;
-      this.all_proj.forEach((project) => {
-        if (
-          project.project_name ===
-          this.trash_carts_in_month[this.currentCartIndex].proj_box[
+      let projectIds = [];
+
+      // 遍歷所有選中的專案
+      this.selectedProjects.forEach((cartIndex) => {
+        console.log("cartIndex", cartIndex);
+        let projectName =
+          this.trash_carts_in_month[cartIndex].proj_box[
             this.currentProjectIndex
-          ].proj_name
-        ) {
-          projectId = project.id;
-        }
-      });
-
-      const path = "http://35.201.168.185:5000/trashcan_recover";
-      const trashcan_recover = {
-        project_id: projectId,
-      };
-      axios
-        .post(path, trashcan_recover, {
-          headers: { authorization: JSON.parse(localStorage.getItem("auth")) },
-        })
-        .then((res) => {
-          if (res.data.status == "success") {
-            setTimeout(() => {
-              this.$router.go(0);
-            }, 500);
-          } else {
+          ].proj_name;
+        console.log("projectName", projectName);
+        this.all_proj.forEach((project) => {
+          if (project.project_name === projectName) {
+            projectIds.push(project.id);
           }
         });
+      });
+      projectIds.forEach((projectId) => {
+        const path = "http://35.201.168.185:5000/trashcan_recover";
+        const delete_record_permanent = {
+          project_id: projectId,
+        };
+        axios
+          .post(path, delete_record_permanent, {
+            headers: {
+              authorization: JSON.parse(localStorage.getItem("auth")),
+            },
+          })
+          .then((res) => {
+            if (res.data.status === "success") {
+              console.log("Projects deleted successfully");
+              setTimeout(() => {
+                this.$router.go(0);
+              }, 500);
+            } else {
+              console.error("刪除專案失敗");
+            }
+          })
+          .catch((error) => {
+            console.error("API呼叫失敗", error);
+          });
+      });
+      //個人資訊開頭
     },
     // 垃圾桶點選永久刪除
     forever_delete_project() {
@@ -1497,42 +1514,56 @@ export default {
       this.forever_delete_confirm = false;
       this.showOverlay_trash = false;
     },
-    //永久刪除專案了
+
+    //個人資訊開頭
+
     forever_delete() {
-      this.forever_delete_confirm = false;
-      this.showOverlay_trash = false;
-      let projectId = 0;
-      this.all_proj.forEach((project) => {
-        if (
-          project.project_name ===
-          this.trash_carts_in_month[this.currentCartIndex].proj_box[
+      let projectIds = [];
+
+      // 遍歷所有選中的專案
+      this.selectedProjects.forEach((cartIndex) => {
+        console.log("cartIndex", cartIndex);
+        let projectName =
+          this.trash_carts_in_month[cartIndex].proj_box[
             this.currentProjectIndex
-          ].proj_name
-        ) {
-          projectId = project.id;
-        }
+          ].proj_name;
+        console.log("projectName", projectName);
+        this.all_proj.forEach((project) => {
+          if (project.project_name === projectName) {
+            projectIds.push(project.id);
+          }
+        });
       });
-      //這裡寫從垃圾桶永久刪除api
 
-      // const path = "http://35.201.168.185:5000/delete_record_permanent";
-      // const delete_record_permanent = {
-      //   project_id: projectId,
-      // };
-      // axios
-      //   .post(path, delete_record_permanent, {
-      //     headers: { authorization: JSON.parse(localStorage.getItem("auth")) },
-      //   })
-      //   .then((res) => {
-      //     if (res.data.status == "success") {
-      //       console.log("lll")
-      //       setTimeout(() => {
-      //         this.$router.go(0);
-      //       }, 500);
-      //     }else{
+      // 永久刪除專案
 
-      //     }
-      //   });
+      projectIds.forEach((projectId) => {
+        const path = "http://35.201.168.185:5000/permanent_delete";
+        const delete_record_permanent = {
+          project_id: projectId,
+        };
+        axios
+          .post(path, delete_record_permanent, {
+            headers: {
+              authorization: JSON.parse(localStorage.getItem("auth")),
+            },
+          })
+          .then((res) => {
+            if (res.data.status === "success") {
+              console.log("Projects deleted successfully");
+              setTimeout(() => {
+                this.$router.go(0);
+              }, 500);
+            } else {
+              console.error("刪除專案失敗");
+            }
+          })
+          .catch((error) => {
+            console.error("API呼叫失敗", error);
+          });
+      });
     },
+
     handleClickOutside() {
       // 專案總覽右鍵彈窗
       if (

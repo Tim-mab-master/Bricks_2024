@@ -8,7 +8,7 @@
         <span id="name">{{ record_name }}</span>
       </div>
       <div id="tagPart">
-        <el-tag class="tag" v-for="item in tags" :key="item">item</el-tag>
+        <el-tag class="tag" v-for="item in tags" :key="item">{{ item }}</el-tag>
         <!-- <el-tag class="tag">新增標籤</el-tag> -->
       </div>
     </el-card>
@@ -25,13 +25,18 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import { nextTick, onMounted, ref } from "vue";
 // import DeleteForever from '../KarenBricks/DeleteForever.vue';
 import { ElNotification } from "element-plus";
 import { ElMessage } from "element-plus";
+import store from "../store/store.js";
+import axios from "axios";
+import router, { useRoute, useRouter } from "vue-router";
+// import { tr } from "element-plus/es/locale/index.js";
 
 export default {
   components: {},
+  props: { recordName: String, tags: Array, recordID: String },
 
   setup(props, { emit }) {
     const isShowed = ref(false);
@@ -40,11 +45,18 @@ export default {
     const normal = "#303133";
     const record_name = props.recordName;
     const tags = props.tags;
-    // ParentIsShowed = false;
-    // const buttonRef = ref(null);
+    const record_id = props.recordID;
+    const router = useRouter();
+
+    onMounted(async () => {
+      console.log("onMountedname123123132", props.recordID);
+    });
 
     const show = () => {
       isShowed.value = !isShowed.value;
+      if (isShowed.value === true) {
+        store.commit("setRecordID", record_id);
+      }
     };
 
     const unshown = () => {
@@ -52,20 +64,44 @@ export default {
     };
 
     const deleteForever = () => {
-      ElMessage("您已永久刪除會議記錄");
-      unshown();
+      const body = { record_id: record_id };
+      axios
+        .post("http://35.201.168.185:5000//delete_record_permanent", body, {
+          headers: {
+            authorization: JSON.parse(localStorage.getItem("auth")),
+          },
+        })
+        .then((res) => {
+          ElMessage("您已永久刪除會議記錄");
+          setTimeout(() => {
+            unshown();
+            router.go(0);
+          }, 500);
+        });
     };
 
     const recover = () => {
-      ElNotification({
-        dangerouslyUseHTMLString: true,
-        title: "成功復原會議記錄",
-        message:
-          '<a href="/path/to/recovery/file" style="color: #67C23A; text-decoration: underline;">點擊檢視復原檔案</a>',
-        type: "success",
-        position: "bottom-right",
-      });
-      unshown();
+      const body = { record_id: record_id };
+      axios
+        .post("http://35.201.168.185:5000//recover_record", body, {
+          headers: {
+            authorization: JSON.parse(localStorage.getItem("auth")),
+          },
+        })
+        .then((res) => {
+          setTimeout(() => {
+            ElNotification({
+              dangerouslyUseHTMLString: true,
+              title: "成功復原會議記錄",
+              message:
+                '<a href="/path/to/recovery/file" style="color: #67C23A; text-decoration: underline;">點擊檢視復原檔案</a>',
+              type: "success",
+              position: "bottom-right",
+            });
+            unshown();
+          }, 500);
+          // router.go(0);
+        });
     };
 
     return {
@@ -74,6 +110,7 @@ export default {
       url,
       record_name,
       tags,
+      record_id,
       isShowed,
       unshown,
       deleteForever,
