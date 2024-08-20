@@ -122,6 +122,9 @@ export default createStore({
     getTerminateConfirm(state) {
       return state.terminate_confirm;
     },
+    getBlockNow(state){
+      return state.blockNow;
+    }
   },
   actions: {
     async fetchAllRecords({ state, commit }) {
@@ -172,7 +175,7 @@ export default createStore({
       }
     },
 
-    async fetchOneRecord({ state, commit }) {
+    async fetchOneRecord({ state, commit, dispatch }) {
       try {
         const body = {
           project_id: state.projectID,
@@ -195,11 +198,13 @@ export default createStore({
         };
 
         if (response.data.textBox.length == 0) {
-          payload.boxes.push({
-            record_id: state.recordID,
-            textBox_content: "",
-            Tag: [],
-          });
+          dispatch('addBlock');
+          // payload.boxes.push({
+
+          //   record_id: state.recordID,
+          //   textBox_content: "",
+          //   Tag: [],
+          // });
         } else {
           payload.boxes = response.data.textBox;
         }
@@ -212,8 +217,8 @@ export default createStore({
     },
     async addBlock({ state, dispatch }) {
       const newBlock = {
-        record_id: state.blockNow.record_id,
-        textBox_content: state.blockNow.content,
+        record_id: state.recordID,
+        textBox_content: "",
       };
 
       const response = await axios.post(
@@ -232,8 +237,11 @@ export default createStore({
       };
 
       const response = await axios.post(
-        "http://34.81.219.139:5000/delete_textBox",
-        deleteBlock
+        "http://35.201.168.185:5000/delete_textBox",deleteBlock,{
+          headers: {
+            authorization: JSON.parse(localStorage.getItem("auth")),
+          },
+        }
       );
       console.log(response.data.message);
       await dispatch("fetchOneRecord");
