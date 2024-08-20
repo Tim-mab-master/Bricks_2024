@@ -30,7 +30,7 @@
                   <span>會議紀錄</span>
                 </template>
                 <el-menu-item index="1-1"
-                  ><router-link to="/all/cards" class="menuText"
+                  ><router-link to="/all/cards" class="menuText" @click = "click"
                     >全部</router-link
                   ></el-menu-item
                 >
@@ -137,6 +137,10 @@ export default {
       router.push({ name: "newRecord" });
     };
 
+    const click = () =>{
+      store.dispatch('fetchOneRecord');
+    };
+
     const selected = () => {
       menuClass.value = "selected";
     };
@@ -165,6 +169,7 @@ export default {
       selected,
       terminate_project,
       delete_project,
+      click
     };
   },
 };
