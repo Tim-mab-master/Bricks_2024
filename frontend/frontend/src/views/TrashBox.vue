@@ -49,12 +49,15 @@
         確認結束此會議記錄？請注意，永久刪除後將無法復原
       </p>
       <div class="confirm_button_container">
-        <div class="confirm_button cb_cancle" @click="close_terminate_confirm">
+        <div
+          class="confirm_button cb_cancle"
+          @click="close_delete_forever_confirm"
+        >
           取消
         </div>
         <div
           class="confirm_button cb_confirm"
-          @click="confirm_terminate_button"
+          @click="confirm_delete_forever_button"
         >
           永久刪除
         </div>
@@ -101,8 +104,13 @@ export default {
     const forever_delete_true = ref(false);
     const close_forever_delete = () => {
       forever_delete_true.value = !forever_delete_true.value;
+      store.commit("setForeverDeleteRecord");
     };
     const cards = computed(() => store.getters.getTrashRecords);
+
+    const close_delete_forever_confirm = () => {
+      store.commit("setForeverDeleteRecord");
+    };
 
     //監控"永久刪除會議記錄"被點擊
     store.subscribe((mutation, state) => {
@@ -114,8 +122,14 @@ export default {
         }
       }
     });
+
     // const cards = store.getters.getTrashRecords;
-    return { cards, forever_delete_true, close_forever_delete };
+    return {
+      cards,
+      forever_delete_true,
+      close_forever_delete,
+      close_delete_forever_confirm,
+    };
   },
 };
 </script>
@@ -152,7 +166,7 @@ export default {
   border-radius: 14px;
   background-color: white;
   box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.4);
-  z-index: 6;
+  z-index: 12;
   left: 36%;
   top: 35%;
 }

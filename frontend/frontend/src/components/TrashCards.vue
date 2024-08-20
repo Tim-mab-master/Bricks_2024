@@ -65,6 +65,9 @@ export default {
 
     const deleteForever = () => {
       store.commit("setForeverDeleteRecord");
+      nextTick(() => {
+        unshown();
+      });
       // const body = { record_id: record_id };
       // axios
       //   .post("http://35.201.168.185:5000//delete_record_permanent", body, {
