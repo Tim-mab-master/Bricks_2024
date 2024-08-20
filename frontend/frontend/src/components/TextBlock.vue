@@ -58,7 +58,7 @@
             v-if="!inputVisible"
             class="button-new-tag ml-1 addTags"
             size="small"
-            @click="showInput"
+            @click="showInput('事項')"
             :disabled="isCartDisabled"
             @locked="isLocked"
             >+ 事項</el-button
@@ -67,7 +67,7 @@
             v-if="!inputVisible"
             class="button-new-tag ml-1 addTags"
             size="small"
-            @click="showInput"
+            @click="showInput('組別')"
             :disabled="isCartDisabled"
             @locked="isLocked"
             >+ 組別</el-button
@@ -109,6 +109,8 @@ import {
 import { useEmit } from "@vueuse/core";
 import EditTextara from "./EditTextara.vue";
 import Unlock from "./Unlock.vue";
+import axios from "axios";
+import store from "../store/store";
 
 const props = defineProps({
   isShowed: Boolean,
@@ -126,6 +128,7 @@ const textarea1 = ref("");
 const inputVisible = ref(false);
 const inputValue = ref("");
 const tagArray = ref([]);
+const blockNow = computed(() => store.getters.getBlockNow)
 
 const dynamicTags = computed(() => tagArray.value);
 const isShowed = ref(false);
@@ -134,6 +137,7 @@ const isCartDisabled = ref(false);
 const hiddenTagCount = ref(0);
 const visibleTags = ref([]);
 const inputRef = ref(null);
+const TagClass = ref("");
 
 const showHiddenTags = () => {
   visibleTags.value = dynamicTags.value;
@@ -171,8 +175,9 @@ const handleClose = (tag) => {
   }
 };
 
-const showInput = () => {
+const showInput = (tagClass) => {
   inputVisible.value = true;
+  TagClass.value = tagClass;
   nextTick(() => {
     if (inputRef.value) {
       inputRef.value.focus();
@@ -180,13 +185,27 @@ const showInput = () => {
   });
 };
 
-const handleInputConfirm = () => {
+const handleInputConfirm = async () => {
   if (inputValue.value) {
     dynamicTags.value.push(inputValue.value);
+    console.log("blockNow：",blockNow.value);
+    const newTag = {
+        "textBox_id": blockNow.value.TextBox_id,
+        "tag_name": inputValue.value,
+        "tag_class": TagClass.value
+      }
+      const response = axios.post("http://35.201.168.185:5000/add_tag",newTag,{
+        headers: {
+          authorization: JSON.parse(localStorage.getItem("auth")),
+        },
+      })
+      console.log(response.message);
   }
+  await store.dispatch('fetchAllRecords');
   inputVisible.value = false;
   inputValue.value = "";
   calculateVisibleTags();
+  
 };
 
 const show = () => {
