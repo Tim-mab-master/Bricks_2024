@@ -9,6 +9,8 @@
 import { ref } from "vue";
 import SideBar from "../components/SideBar.vue";
 import { useRouter } from "vue-router";
+import store from "../store/store.js";
+
 export default {
   components: { SideBar },
   setup() {
@@ -23,6 +25,15 @@ export default {
         router.push("/all/trashBox");
       }
     };
+
+    //監控"永久刪除會議記錄"被點擊，跳出背景陰影
+    store.subscribe((mutation, state) => {
+      if (mutation.type === "setForeverDeleteRecord") {
+        if (store.getters.getForeverDeleteRecord === true) {
+          alert("deleterecords");
+        }
+      }
+    });
     return {
       activeOption,
       activeChange,

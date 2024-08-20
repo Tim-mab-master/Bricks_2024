@@ -26,6 +26,7 @@ export default createStore({
     blockNow: {},
     delete_confirm: false,
     terminate_confirm: false,
+    forever_delete_record_confirm: false,
     newRecord: {},
   },
 
@@ -56,7 +57,7 @@ export default createStore({
       state.currTextBoxes = payload.boxes;
       state.meetingName = payload.record.record_name;
     },
-    setNewProject(state, newRecord){
+    setNewProject(state, newRecord) {
       state.newRecord = newRecord;
       state.meetingName = newRecord.record_name;
     },
@@ -79,6 +80,10 @@ export default createStore({
     setTerminateConfirm(state) {
       state.terminate_confirm = !state.terminate_confirm;
     },
+    setForeverDeleteRecord(state) {
+      state.forever_delete_record_confirm =
+        !state.forever_delete_record_confirm;
+    },
   },
   getters: {
     getAuth(state) {
@@ -98,9 +103,9 @@ export default createStore({
       return state.recordID;
     },
     getCurrRecord(state) {
-      if(state.currRecord != {}){
+      if (state.currRecord != {}) {
         return state.currRecord;
-      }else{
+      } else {
         return state.newRecord;
       }
     },
@@ -113,7 +118,7 @@ export default createStore({
     getProjectID(state) {
       return state.projectID;
     },
-    getRecordID(state){
+    getRecordID(state) {
       return state.recordID;
     },
     getDeleteConfirm(state) {
@@ -121,6 +126,9 @@ export default createStore({
     },
     getTerminateConfirm(state) {
       return state.terminate_confirm;
+    },
+    getForeverDeleteRecord(state) {
+      return state.forever_delete_record_confirm;
     },
   },
   actions: {
@@ -217,7 +225,9 @@ export default createStore({
       };
 
       const response = await axios.post(
-        "http://35.201.168.185:5000/add_textBox",newBlock,{
+        "http://35.201.168.185:5000/add_textBox",
+        newBlock,
+        {
           headers: {
             authorization: JSON.parse(localStorage.getItem("auth")),
           },

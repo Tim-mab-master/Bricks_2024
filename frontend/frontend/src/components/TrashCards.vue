@@ -64,20 +64,21 @@ export default {
     };
 
     const deleteForever = () => {
-      const body = { record_id: record_id };
-      axios
-        .post("http://35.201.168.185:5000//delete_record_permanent", body, {
-          headers: {
-            authorization: JSON.parse(localStorage.getItem("auth")),
-          },
-        })
-        .then((res) => {
-          ElMessage("您已永久刪除會議記錄");
-          setTimeout(() => {
-            unshown();
-            router.go(0);
-          }, 500);
-        });
+      store.commit("setForeverDeleteRecord");
+      // const body = { record_id: record_id };
+      // axios
+      //   .post("http://35.201.168.185:5000//delete_record_permanent", body, {
+      //     headers: {
+      //       authorization: JSON.parse(localStorage.getItem("auth")),
+      //     },
+      //   })
+      //   .then((res) => {
+      //     ElMessage("您已永久刪除會議記錄");
+      //     setTimeout(() => {
+      //       unshown();
+      //       router.go(0);
+      //     }, 500);
+      //   });
     };
 
     const recover = () => {

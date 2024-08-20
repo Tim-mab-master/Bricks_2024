@@ -103,6 +103,17 @@ export default {
       forever_delete_true.value = !forever_delete_true.value;
     };
     const cards = computed(() => store.getters.getTrashRecords);
+
+    //監控"永久刪除會議記錄"被點擊
+    store.subscribe((mutation, state) => {
+      if (mutation.type === "setForeverDeleteRecord") {
+        if (store.getters.getForeverDeleteRecord === true) {
+          alert("deleterecords");
+          // 跳出彈出視窗
+          forever_delete_true.value = true;
+        }
+      }
+    });
     // const cards = store.getters.getTrashRecords;
     return { cards, forever_delete_true, close_forever_delete };
   },
