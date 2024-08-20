@@ -26,17 +26,20 @@
         </div>
         <div class="split-line" style="width: 100%"></div>
         <div class="tags" :disabled="isCartDisabled">
-          <el-tag
-            v-for="(tag, index) in visibleTags"
-            :key="index"
-            class="tag"
-            closable
-            :disable-transitions="false"
-            :disabled="isCartDisabled"
-            @close="handleClose(tag)"
-          >
-            {{ tag }}
-          </el-tag>
+          <el-tooltip :content="Tagclass" effect="light">
+            <el-tag
+              v-for="(tag, index) in visibleTags"
+              :key="index"
+              class="tag"
+              closable
+              :disable-transitions="false"
+              :disabled="isCartDisabled"
+              @close="handleClose(tag)"
+            >
+              {{ tag.Tag_name }}
+            </el-tag>
+          </el-tooltip>
+
           <el-tag
             v-if="hiddenTagCount > 0"
             class="tag"
@@ -130,7 +133,7 @@ const inputValue = ref("");
 const tagArray = ref([]);
 const blockNow = computed(() => store.getters.getBlockNow)
 
-const dynamicTags = computed(() => tagArray.value);
+const dynamicTags = computed(() => props.tags);
 const isShowed = ref(false);
 const rightClickRef = ref(null);
 const isCartDisabled = ref(false);
@@ -170,6 +173,16 @@ const handleClose = (tag) => {
     const index = dynamicTags.value.indexOf(tag);
     if (index !== -1) {
       dynamicTags.value.splice(index, 1);
+      const deleteTag = {
+        "textBox_id": (blockNow.value.TextBox_id).toString(),
+        "tag_id": (tag.Tag_id).toString(),
+      };
+      const response = axios.post("http://35.201.168.185:5000/delete_tag", deleteTag, {
+        headers: {
+          authorization: JSON.parse(localStorage.getItem("auth")),
+        },
+      })
+      console.log(response)
     }
     calculateVisibleTags();
   }
@@ -187,8 +200,8 @@ const showInput = (tagClass) => {
 
 const handleInputConfirm = async () => {
   if (inputValue.value) {
-    dynamicTags.value.push(inputValue.value);
-    console.log("blockNow：",blockNow.value);
+    // dynamicTags.value.push(inputValue.value);
+    // console.log("blockNow：",blockNow.value);
     const newTag = {
         "textBox_id": blockNow.value.TextBox_id,
         "tag_name": inputValue.value,
@@ -201,7 +214,7 @@ const handleInputConfirm = async () => {
       })
       console.log(response.message);
   }
-  await store.dispatch('fetchAllRecords');
+  await store.dispatch('fetchOneRecord');
   inputVisible.value = false;
   inputValue.value = "";
   calculateVisibleTags();

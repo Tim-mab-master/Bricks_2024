@@ -27,6 +27,7 @@ export default createStore({
     delete_confirm: false,
     terminate_confirm: false,
     newRecord: {},
+    allTags: [],
   },
 
   mutations: {
@@ -79,6 +80,9 @@ export default createStore({
     setTerminateConfirm(state) {
       state.terminate_confirm = !state.terminate_confirm;
     },
+    setAllTags(state, tags){
+      state.allTags = tags;
+    },
   },
   getters: {
     getAuth(state) {
@@ -104,9 +108,6 @@ export default createStore({
         return state.newRecord;
       }
     },
-    // getNewRecord(state) {
-    //   return state.newRecord;
-    // },
     getCurrTextBoxes(state) {
       return state.currTextBoxes;
     },
@@ -124,7 +125,10 @@ export default createStore({
     },
     getBlockNow(state){
       return state.blockNow;
-    }
+    },
+    getAllTags(state){
+      return state.allTags;
+    },
   },
   actions: {
     async fetchAllRecords({ state, commit }) {
@@ -199,12 +203,6 @@ export default createStore({
 
         if (response.data.textBox.length == 0) {
           dispatch('addBlock');
-          // payload.boxes.push({
-
-          //   record_id: state.recordID,
-          //   textBox_content: "",
-          //   Tag: [],
-          // });
         } else {
           payload.boxes = response.data.textBox;
         }
@@ -232,8 +230,9 @@ export default createStore({
       await dispatch("fetchOneRecord");
     },
     async deleteBlock({ state, dispatch }) {
+
       const deleteBlock = {
-        textBox_id: state.blockNow.id,
+        "textBox_id": state.blockNow.textBox_id,
       };
 
       const response = await axios.post(
@@ -246,10 +245,21 @@ export default createStore({
       console.log(response.data.message);
       await dispatch("fetchOneRecord");
     },
+    async fetchAllTags({state}){
+      const project = {
+        project_id: state.projectID,
+      }
+      const response = await axios.post("http://35.201.168.185:5000/tag_index", project, {
+        headers: {
+          authorization: JSON.parse(localStorage.getItem("auth")),
+        },
+      }).catch(console.log("wrong"))
+      // console.log(response.data.item);
+      state.commit('setAllTags', response.data.item);
+    },
   },
 
   plugins: [localStoragePlugin],
-  // modules: { records },
 });
 
 // export default store;

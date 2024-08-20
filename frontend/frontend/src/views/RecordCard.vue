@@ -74,14 +74,7 @@ import EmptyBack from "../components/EmptyBack.vue";
 import NavBarAll from "../components/NavBarAll.vue";
 import SideBar from "../components/SideBar.vue";
 import MeetingCards from "../components/MeetingCards.vue";
-import {
-  ref,
-  computed,
-  onMounted,
-  onBeforeMount,
-  onBeforeUnmount,
-  watch,
-} from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import store from "../store/store.js";
 import { mapGetters } from "vuex";
@@ -185,6 +178,7 @@ store.subscribe((mutation, state) => {
 const toRecord = async (cardID) => {
   store.commit("setRecordID", cardID); // 等後端回傳
   await store.dispatch("fetchOneRecord");
+  await store.dispatch("fetchAllTags");
   router.push("cards/meetingRecord");
 };
 </script>

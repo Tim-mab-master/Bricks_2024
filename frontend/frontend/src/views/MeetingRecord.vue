@@ -87,8 +87,8 @@ const showBtn = () => {
 };
 
 onMounted(async () => {
-  store.dispatch("fetchAllRecords");
   store.dispatch("fetchOneRecords");
+  await store.dispatch("fetchAllTags");
   console.log("文字方塊是長這樣", blocks.value);
 });
 </script>
