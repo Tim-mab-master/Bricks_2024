@@ -16,7 +16,7 @@
             </div>
         
         </el-card>
-        <div v-if="isShowed" id="rightClick" ref = "rightClick" @click="unShow"><card-right-click  /></div>
+        <div v-if="isShowed" id="rightClick" ref = "rightClick" @click="unShow" @blur="unShow"><card-right-click  /></div>
 
     </div>
 </template>

@@ -47,6 +47,10 @@ export default {
     // document.removeEventListener('click', handleClickOutside);
     // });
 
+    const info = () => {
+      alert("123");
+    };
+
     const change = (status) => {
       status = false;
       emit("chosen", status);
