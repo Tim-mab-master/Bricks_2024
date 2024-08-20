@@ -184,88 +184,88 @@ export default {
 </script>
 
 <style scoped>
-    #all{
-        /* zoom:75%; */
-    }
-    #userInfo{
-        display: flex;
-        /* padding: 0px 0px; */
-        align-items: center;
-        gap: 8px;
-        align-self: stretch;
-        cursor: pointer;
-    }
+/* #all {
+  zoom:75%;
+} */
+#userInfo {
+  display: flex;
+  /* padding: 0px 0px; */
+  align-items: center;
+  gap: 8px;
+  align-self: stretch;
+  cursor: pointer;
+}
 
-    #userInfo p{
-        color: #303133;
-        font-family: Noto Sans TC;
-        font-size: 14px;
-        font-style: normal;
-        font-weight: 400;
-        line-height: 24px; /* 171.429% */
-        /* cursor: pointer; */
-    }
+#userInfo p {
+  color: #303133;
+  font-family: Noto Sans TC;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 24px; /* 171.429% */
+  /* cursor: pointer; */
+}
 
-    #userInfo #avatar{
-        height: 32px;
-        width: auto;
-    }
+#userInfo #avatar {
+  height: 32px;
+  width: auto;
+}
 
-    .dropDown{
-        cursor: pointer;
-        display: flex;
-        /* gap: 4px; */
-        /* width: 200px; */
-        padding: 8px;
-        height: auto;
-        justify-content:center;
-        align-items: center;
-        padding-left: 12px;
-    }
+.dropDown {
+  cursor: pointer;
+  display: flex;
+  /* gap: 4px; */
+  /* width: 200px; */
+  padding: 8px;
+  height: auto;
+  justify-content: center;
+  align-items: center;
+  padding-left: 12px;
+}
 
-    .dropDown .text{
-        /* zoom:75%; */
-        display: block;
-        color: var(--base-color-text-el-text-color-primary, #303133);
-        /* CN regular/body1-Regular */
-        font-family: PingFang TC;
-        font-size: 14px;
-        font-style: normal;
-        font-weight: 400;
-        line-height: 24px; /* 171.429% */
-        padding-left: 4px;
-        text-align: left;
-        margin-left: 4px;
-    }
+.dropDown .text {
+  /* zoom:75%; */
+  display: block;
+  color: var(--base-color-text-el-text-color-primary, #303133);
+  /* CN regular/body1-Regular */
+  font-family: PingFang TC;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 24px; /* 171.429% */
+  padding-left: 4px;
+  text-align: left;
+  margin-left: 4px;
+}
 
-    #userInfoInside{
-        display: flex;
-        padding: 16px;
-        align-items: center;
-        /* gap: 20px; */
+#userInfoInside {
+  display: flex;
+  padding: 16px;
+  align-items: center;
+  /* gap: 20px; */
 
-        color: #000;
-    }
-    #userInfoInside #avartarInside{
-        width: 56px;
-        height: 56px;
-    }
+  color: #000;
+}
+#userInfoInside #avartarInside {
+  width: 56px;
+  height: 56px;
+}
 
-    #userInfoInside p{
-        font-family: PingFang TC;
-        font-size: 20px;
-        font-style: normal;
-        font-weight: 400;
-        line-height: 28px; /* 140% */
-        padding-left: 14px;
-    }
+#userInfoInside p {
+  font-family: PingFang TC;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 28px; /* 140% */
+  padding-left: 14px;
+}
 
-    .material-icons { 
-        font-size: 18px; 
-    }
+.material-icons {
+  font-size: 18px;
+}
 
-    @media screen and (max-width: 1440px) and (min-width:1240px) {
-        /* #userInfoInside, .firstDrop, .dropDown, .userInfo, .firstDrop, #dropDown{
+@media screen and (max-width: 1440px) and (min-width: 1240px) {
+  /* #userInfoInside, .firstDrop, .dropDown, .userInfo, .firstDrop, #dropDown{
             transform: scale(0.8);
             transform-origin: left top;
         } */

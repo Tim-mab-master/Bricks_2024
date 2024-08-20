@@ -128,12 +128,13 @@
       >
         {{ proj_type }}
       </div>
+      <!-- 選擇專案視窗 -->
       <div
         class="add_proj_type_list"
         v-show="show_add_proj_type_list"
         ref="add_proj_type_list"
       >
-        <div class="add_proj_type_option_container">
+        <div class="add_proj_type_option_container scrollbar">
           <div class="add_proj_type_option" @click="type_not_choose">
             未分類
           </div>
@@ -170,10 +171,47 @@
         v-model="proj_info_title"
         disabled="disabled"
       />
-      <input type="text" class="proj_info_type" v-model="proj_info_type" />
-      <!-- {{ proj_info_type }} -->
+      <input
+        type="text"
+        class="proj_info_type"
+        v-model="proj_info_type"
+        @click="add_proj_type_btn"
+        :style="{ background: add_proj_type_arrow }"
+        ref="add_proj_type"
+      />
+      <div
+        class="add_proj_type_list"
+        v-show="show_add_proj_type_list"
+        ref="add_proj_type_list"
+      >
+        <!-- 資料訊息 -->
+        <div class="add_proj_type_option_container">
+          <div class="add_proj_type_option" @click="change_type_not_choose">
+            未分類
+          </div>
+          <div
+            v-for="(option, index) in add_proj_type_options"
+            :key="index"
+            class="add_proj_type_option"
+            @click="change_type_choosen(option)"
+          >
+            {{ option }}
+          </div>
+        </div>
+        <div class="add_proj_type_list_line"></div>
+        <input
+          type="text"
+          class="add_proj_type_text"
+          placeholder="新增類別"
+          v-model="add_proj_type_text"
+          @keyup.enter="list_add_a_cart"
+        />
+        <div class="add_proj_type_text_plus" @click="list_add_a_cart"></div>
+      </div>
 
-      <div class="proj_info_enter" @click="enter_project_btn">進入專案</div>
+      <div class="proj_info_enter" @click="enter_project_btn(proj_info_title)">
+        進入專案
+      </div>
     </div>
     <div class="main_body">
       <div class="bg">
@@ -189,6 +227,13 @@
             <el-alert
               v-if="alertNoSameName"
               title="請勿建立相同專案名稱"
+              type="error"
+              show-icon
+          /></Transition>
+          <Transition name="errorIn">
+            <el-alert
+              v-if="alertNoSameCartName"
+              title="專案名稱已存在"
               type="error"
               show-icon
           /></Transition>
@@ -458,7 +503,10 @@
                   @click="forever_delete_project"
                 />
                 <div class="box_container">
-                  <div v-for="(cart, index1) in trash_carts_in_month" :key="index1">
+                  <div
+                    v-for="(cart, index1) in trash_carts_in_month"
+                    :key="index1"
+                  >
                     <div
                       class="box"
                       v-for="(proj, index2) in cart.proj_box"
@@ -474,7 +522,10 @@
                 <p class="last_time">近一年</p>
                 <div class="time_subline"></div>
                 <div class="box_container">
-                  <div v-for="(cart, index1) in trash_carts_not_in_month" :key="index1">
+                  <div
+                    v-for="(cart, index1) in trash_carts_not_in_month"
+                    :key="index1"
+                  >
                     <div
                       class="box"
                       v-for="(proj, index2) in cart.proj_box"
@@ -562,9 +613,8 @@ import { useStore } from "vuex";
 import axios from "axios";
 import { Base64 } from "js-base64";
 import { useRoute } from "vue-router";
+import { UserInfo } from "../components/UserInfo.vue";
 import store from "../store/store.js";
-import UserInfo from '../components/UserInfo.vue';
-
 export default {
   name: "Personal_homepage",
   components: { UserInfo },
@@ -598,6 +648,8 @@ export default {
       //新增專案時未輸入名稱警告
       alertEnterName: false,
       alertNoSameName: false,
+      alertNoSameType: false,
+      alertNoSameCartName: false,
 
       // 所有專案(用在搜尋專案)
       all_proj: [],
@@ -664,6 +716,7 @@ export default {
       // console.log("按下新增專案");
       // let au = this.route.query.authorization;
       // console.log(this.$route.params.authorization);
+      this.project_info_show = false;
       this.add_proj_show = this.add_proj_show === false ? true : false;
       this.showOverlay = !this.showOverlay;
       this.proj_type = "選擇專案類型";
@@ -689,103 +742,112 @@ export default {
       //確認新增專案的名稱不是空值
       if (this.add_proj_name !== "") {
         let nameExist = this.checkNameExist(this.add_proj_name);
-        console.log("存在");
-        console.log(nameExist);
+        let typeExist = this.checkTypeExist(this.add_proj_type);
+
         if (!nameExist) {
-          if (this.proj_type === "選擇專案類型") {
-            this.proj_type = "未分類";
-          }
-          this.add_proj_show = this.add_proj_show === false ? true : false;
-          this.showOverlay = false;
-          this.middle_show_overview_page = true;
-          this.middle_show_over_page = false;
-          this.middle_show_trash_page = false;
-          this.selectOption = "option1";
-          this.show_add_proj_type_list = false;
-          this.proj_type_color = "#b6aeae";
-          const path = "http://35.201.168.185:5000/add_project";
-          const add_new_project = {
-            project_type: this.proj_type,
-            project_image: this.project_image,
-            project_name: this.add_proj_name,
-            project_trashcan: false,
-            project_ended: false,
-            project_isEdit: false,
-            project_isVisible: false,
-            project_isComment: false,
-          };
-
-          axios
-            .post(path, add_new_project, {
-              headers: {
-                authorization: JSON.parse(localStorage.getItem("auth")),
-              },
-              timeout: 5000,
-            })
-            .then((res) => {
-              this.token = res.data;
-              this.decode_token_json.status = this.decodeToken(this.token);
-              if (this.decode_token_json.status == "success") {
-                const list = this.decode_token_json.items;
-                console.log(list.message);
-              }
-            })
-            .catch((error) => {
-              console.error("Error: ", error);
-            });
-          if (this.add_proj_name !== "") {
-            if (
-              this.proj_type === "選擇專案類型" ||
-              this.proj_type === "未分類"
-            ) {
-              //歸類未分類
-              this.uncategorized_projs.push(this.add_proj_name);
-              this.add_proj_name = "";
-            } else if (
-              this.add_proj_type_options.includes(this.proj_type) === true
-            ) {
-              this.carts[
-                this.add_proj_type_options.indexOf(this.proj_type)
-              ].project_box.push(this.add_proj_name);
-              this.add_proj_name = "";
-            } else if (
-              this.add_proj_type_options.includes(this.proj_type) === false
-            ) {
-              const new_cart = {
-                title_word: this.proj_type,
-                project_box: [this.add_proj_name],
-              };
-              this.carts.push(new_cart);
-              this.add_proj_type_options.push(new_cart.title_word);
-
-              const path = "http://35.201.168.185:5000/add_type";
-              const add_type = {
-                project_ended: false,
-                project_type: this.proj_type,
-              };
-              axios
-                .post(path, add_type, {
-                  headers: {
-                    authorization: JSON.parse(localStorage.getItem("auth")),
-                  },
-                })
-                .then((res) => {
-                  this.token = res.data;
-                  this.decode_token_json = this.decodeToken(this.token);
-
-                  if (this.decode_token_json.status == "success") {
-                    console.log("新增類型成功");
-                    if (this.user_id === this.decode_token_json.user_id) {
-                      console.log(this.decode_token_json.proj_name);
-                    }
-                  }
-                });
+          if (!typeExist) {
+            if (this.proj_type === "選擇專案類型") {
+              this.proj_type = "未分類";
             }
+            this.add_proj_show = this.add_proj_show === false ? true : false;
+            this.showOverlay = false;
+            this.middle_show_overview_page = true;
+            this.middle_show_over_page = false;
+            this.middle_show_trash_page = false;
+            this.selectOption = "option1";
+            this.show_add_proj_type_list = false;
+            this.proj_type_color = "#b6aeae";
+            const path = "http://35.201.168.185:5000/add_project";
+            const add_new_project = {
+              project_type: this.proj_type,
+              project_image: this.project_image,
+              project_name: this.add_proj_name,
+              project_trashcan: false,
+              project_ended: false,
+              project_isEdit: false,
+              project_isVisible: false,
+              project_isComment: false,
+            };
+
+            axios
+              .post(path, add_new_project, {
+                headers: {
+                  authorization: JSON.parse(localStorage.getItem("auth")),
+                },
+                timeout: 5000,
+              })
+              .then((res) => {
+                this.token = res.data;
+                this.decode_token_json.status = this.decodeToken(this.token);
+                if (this.decode_token_json.status == "success") {
+                  const list = this.decode_token_json.items;
+                  console.log(list.message);
+                }
+              })
+              .catch((error) => {
+                console.error("Error: ", error);
+              });
+            if (this.add_proj_name !== "") {
+              if (
+                this.proj_type === "選擇專案類型" ||
+                this.proj_type === "未分類"
+              ) {
+                //歸類未分類
+                this.uncategorized_projs.push(this.add_proj_name);
+                this.add_proj_name = "";
+              } else if (
+                this.add_proj_type_options.includes(this.proj_type) === true
+              ) {
+                this.carts[
+                  this.add_proj_type_options.indexOf(this.proj_type)
+                ].project_box.push(this.add_proj_name);
+                this.add_proj_name = "";
+              } else if (
+                this.add_proj_type_options.includes(this.proj_type) === false
+              ) {
+                const new_cart = {
+                  title_word: this.proj_type,
+                  project_box: [this.add_proj_name],
+                };
+                this.carts.push(new_cart);
+                this.add_proj_type_options.push(new_cart.title_word);
+
+                const path = "http://35.201.168.185:5000/add_type";
+                const add_type = {
+                  project_ended: false,
+                  project_type: this.proj_type,
+                };
+                axios
+                  .post(path, add_type, {
+                    headers: {
+                      authorization: JSON.parse(localStorage.getItem("auth")),
+                    },
+                  })
+                  .then((res) => {
+                    this.token = res.data;
+                    this.decode_token_json = this.decodeToken(this.token);
+
+                    if (this.decode_token_json.status == "success") {
+                      console.log("新增類型成功");
+                      if (this.user_id === this.decode_token_json.user_id) {
+                        console.log(this.decode_token_json.proj_name);
+                      }
+                    }
+                  });
+              }
+            }
+            this.add_proj_type_text = "";
+            setTimeout(() => {
+              this.$router.go(0);
+            }, 500);
+          } else {
+            this.add_proj_show = false;
+            this.showOverlay = !this.showOverlay;
+            this.alertNoSameType = true;
+            setTimeout(() => {
+              this.alertNoSameType = false;
+            }, 1500);
           }
-          this.add_proj_type_text = "";
-          setTimeout(() => {
-            this.$router.go(0);
-          }, 500);
         } else {
           this.add_proj_show = false;
           this.showOverlay = !this.showOverlay;
@@ -817,6 +879,17 @@ export default {
         }
       });
       console.log(exist);
+      return exist;
+    },
+
+    checkTypeExist(name) {
+      console.log("check");
+      let exist = false;
+      this.all_proj.forEach((project) => {
+        if (project.project_type === name) {
+          exist = true;
+        }
+      });
       return exist;
     },
 
@@ -863,9 +936,13 @@ export default {
       this.isFocused = false;
       this.cart_title_input = "";
     },
+
     // 從新增專案的輸入框直接新增一個類型
     add_a_cart() {
-      if (this.cart_title_input !== "") {
+      let existingCart = this.carts.find(
+        (cart) => cart.title_word === this.cart_title_input
+      );
+      if (this.cart_title_input !== "" && !existingCart) {
         const new_cart = {
           title_word: this.cart_title_input,
           project_box: [],
@@ -873,6 +950,21 @@ export default {
         this.carts.push(new_cart);
         this.add_proj_type_options.push(this.cart_title_input);
         this.cart_title_input = "";
+        // const path = "http://35.201.168.185:5000/add_type";
+        // const insert_type = {
+        //   project_ended: false,
+        //   project_type: "課業＿高中",
+        // };
+        // axios.post(path, insert_type, {
+        //   headers: {
+        //     authorization: JSON.parse(localStorage.getItem("auth")),
+        //   },
+        // });
+      } else {
+        this.alertNoSameCartName = true;
+        setTimeout(() => {
+          this.alertNoSameCartName = false;
+        }, 1000);
       }
     },
     // 新增專案彈窗裡點擊選擇專案類型
@@ -883,7 +975,7 @@ export default {
         "url(../assets/dropdown_arrow/dropdown_arrow_down.svg) no-repeat center right;";
     },
 
-    // 新增專案彈窗裡的選擇專案類型選擇其中一個已有專案
+    // 新增專案彈窗裡的選擇專案類型選擇其中一個已有專案002
     type_choosen(option) {
       this.show_add_proj_type_list = false;
       this.proj_type = option;
@@ -907,6 +999,23 @@ export default {
       this.proj_type_color = "black";
       this.add_proj_type_text = "";
     },
+
+    // 修改專案 - 把專案類別修改到未分類
+    change_type_not_choose() {
+      this.show_add_proj_type_list = false;
+      this.proj_type = "未分類";
+      this.proj_type_color = "black";
+      this.add_proj_type_text = "";
+    },
+
+    // 修改專案 - 把專案類別修改到選取的類別
+    change_type_choosen(option) {
+      this.show_add_proj_type_list = false;
+      this.proj_type = option;
+      this.proj_type_color = "black";
+      this.add_proj_type_text = "";
+    },
+
     // 新增專案彈窗裡的選擇專案類型直接打字輸入新的專案
     list_add_a_cart() {
       if (this.add_proj_type_text !== "") {
@@ -993,9 +1102,18 @@ export default {
     },
 
     //在proj_info裡面點擊進入專案
-    enter_project_btn() {
-      this.store.commit("records/setProjectID", this.proj_info_id);
-      this.router.push({ name: "all" });
+    enter_project_btn(name) {
+      this.store.commit("setProjectID", this.proj_info_id);
+      this.store.commit("setProjectName", name);
+      console.log(this.store.getters.getProjectID);
+
+      //在跳轉時先拿取該專案的會議紀錄、垃圾桶會議記錄
+      store.dispatch("fetchAllRecords");
+      store.dispatch("fetchTrashRecords");
+
+      setTimeout(() => {
+        this.router.push({ name: "all" });
+      }, 150);
       //測試印出project/id
     },
 
@@ -1121,21 +1239,24 @@ export default {
       console.log("mouseTop:", this.mouseTop);
       console.log("mouseLeft:", this.mouseLeft);
     },
-    
 
     //恢復到進行中的專案
     un_terminate_project() {
       let projectId = 0;
-      this.all_proj.forEach((project) => {
-        if (
-          project.project_name ===
-          this.ended_carts[this.currentCartIndex].project_box[
-            this.currentProjectIndex
-          ].proj_name
-        ) {
-          projectId = project.id;
-        }
-      });
+      if (this.currentProjectId == 0) {
+        this.all_proj.forEach((project) => {
+          if (
+            project.project_name ===
+            this.ended_carts[this.currentCartIndex].project_box[
+              this.currentProjectIndex
+            ].proj_name
+          ) {
+            projectId = project.id;
+          }
+        });
+      } else {
+        projectId = this.currentProjectId;
+      }
 
       console.log("prid恢復", projectId);
 
@@ -1261,8 +1382,6 @@ export default {
       } else {
         projectId = this.currentProjectId;
       }
-      // 除的项目的 project_id
-
       console.log("prid", projectId);
 
       const path = "http://35.201.168.185:5000/to_trashcan";
@@ -1338,7 +1457,6 @@ export default {
             }, 500);
           }
         });
-
     },
 
     // 點擊垃圾桶裡的專案後又上兩個按鈕變色
@@ -1408,7 +1526,6 @@ export default {
     forever_delete_project() {
       this.forever_delete_confirm = true;
       this.showOverlay_trash = true;
-      
     },
     // 關閉永久刪除彈窗
     close_forever_delete_confirm() {
@@ -1433,72 +1550,35 @@ export default {
         });
       });
 
-    // 永久刪除專案
-   
-    projectIds.forEach((projectId) =>{
-      const path = "http://35.201.168.185:5000/permanent_delete";
-      const delete_record_permanent = {
-        project_id: projectId,
-      };
-      axios
-        .post(path, delete_record_permanent, {
-          headers: { authorization: JSON.parse(localStorage.getItem("auth")) },
-        })
-        .then((res) => {
-          if (res.data.status === "success") {
-            console.log("Projects deleted successfully");
-            setTimeout(() => {
-              this.$router.go(0);
-            }, 500);
-          } else {
-            console.error("刪除專案失敗");
-          }
-        })
-        .catch((error) => {
-          console.error("API呼叫失敗", error);
-        });
-    })
-  },
-    
- //個人資訊開頭
+      // 永久刪除專案
 
-    //永久刪除專案了
-    // forever_delete(){
-    //   this.forever_delete_confirm = false;
-    //   this.showOverlay_trash = false;
-    //   let projectId = 0;
-    //   this.all_proj.forEach((project) => {
-    //     if (
-    //       project.project_name ===
-    //       this.trash_carts_in_month[this.currentCartIndex].proj_box[
-    //         this.currentProjectIndex
-    //       ].proj_name
-    //     ) {
-    //       projectId = project.id;
-    //     }
-    //   });
-    //   //這裡寫從垃圾桶永久刪除api
+      projectIds.forEach((projectId) => {
+        const path = "http://35.201.168.185:5000/permanent_delete";
+        const delete_record_permanent = {
+          project_id: projectId,
+        };
+        axios
+          .post(path, delete_record_permanent, {
+            headers: {
+              authorization: JSON.parse(localStorage.getItem("auth")),
+            },
+          })
+          .then((res) => {
+            if (res.data.status === "success") {
+              console.log("Projects deleted successfully");
+              setTimeout(() => {
+                this.$router.go(0);
+              }, 500);
+            } else {
+              console.error("刪除專案失敗");
+            }
+          })
+          .catch((error) => {
+            console.error("API呼叫失敗", error);
+          });
+      });
+    },
 
-    //   const path = "http://35.201.168.185:5000/permanent_delete";
-    //   const delete_record_permanent = {
-    //     project_id: projectId,
-    //   };
-    //   axios
-    //     .post(path, delete_record_permanent, {
-    //       headers: { authorization: JSON.parse(localStorage.getItem("auth")) },
-    //     })
-    //     .then((res) => {
-    //       if (res.data.status == "success") {
-    //         console.log("lll")
-    //         setTimeout(() => {
-    //           this.$router.go(0);
-    //         }, 500);
-    //       }else{
-
-    //       }
-    //     });
-
-    // },
     handleClickOutside() {
       // 專案總覽右鍵彈窗
       if (
@@ -1666,8 +1746,7 @@ export default {
               const new_cart = {
                 title_word: this.proj_type,
                 project_box: [
-                  { proj_name: this.proj_name, 
-                    project_id: this.proj_id },
+                  { proj_name: this.proj_name, project_id: this.proj_id },
                 ],
               };
 
@@ -1703,13 +1782,12 @@ export default {
             const new_cart = {
               title_word: this.proj_type,
               proj_box: [
-                { proj_name: this.proj_name, 
-                  project_id: this.proj_id },
+                { proj_name: this.proj_name, project_id: this.proj_id },
               ],
             };
             this.projectsAll.push(this.proj_name);
             this.trash_carts_in_month.push(new_cart);
-          })
+          });
           const items_not_in_month = res.data.item.not_int_month;
           console.log(items_not_in_month);
           items_not_in_month.forEach((element) => {
@@ -1722,8 +1800,7 @@ export default {
             const new_cart = {
               title_word: this.proj_type,
               proj_box: [
-                { proj_name: this.proj_name, 
-                  project_id: this.proj_id },
+                { proj_name: this.proj_name, project_id: this.proj_id },
               ],
             };
             this.projectsAll.push(this.proj_name);
@@ -1776,6 +1853,7 @@ export default {
       }
     },
   },
+
   computed: {
     filterProducts() {
       const str = this.search_project.toLowerCase();
@@ -2198,16 +2276,33 @@ export default {
   z-index: 3;
   background-color: white;
 }
+
 .add_proj_type_option_container {
-  width: 214px;
+  width: 208px;
   height: 180px;
-  overflow: scroll;
-  color: white;
+  overflow-y: scroll;
+  position: relative;
+  border-radius: 10px;
+  /* border: 2px solid black; */
+  scrollbar-width: thin;
+  scrollbar-color: #d6d6d6 #f2eeee;
+  scrollbar-gutter: stable;
+}
+.add_proj_type_option_container::-webkit-scrollbar {
+  height: 4px;
+  border-radius: 10px;
+}
+.add_proj_type_option_container::-webkit-scrollbar-track {
+  background-color: #000000;
+  border-radius: 10px;
+  /* margin: 20px 130px; */
+}
+.add_proj_type_option_container::-webkit-scrollbar-thumb {
   border-radius: 10px;
 }
 
 .add_proj_type_option {
-  width: 100%;
+  width: 98%;
   height: 45px;
   line-height: 45px;
   font-size: 16px;
@@ -2642,12 +2737,14 @@ export default {
 .right_click_box_overview_option:hover {
   background-color: #f2eeee;
 }
+
+/* 刪除專案 */
 .delete_confirm {
   width: 412px;
   height: 372px;
-  position: absolute;
-  top: 20%;
-  left: 25%;
+  position: fixed;
+  top: 25%;
+  left: 45%;
   background-color: white;
   border: 1.5px solid #c7c2c2;
   box-shadow: 0px 0px 5px 1px rgba(65, 65, 65, 0.25);

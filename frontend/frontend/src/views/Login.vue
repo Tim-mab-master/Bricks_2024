@@ -135,19 +135,19 @@
           <p>或</p>
         </div>
         <div class="other_resource">
-          <a href="">
-            <div id="Google_login_btn" @click="googleLogin">
-              <img src="../assets/Google_login.svg" alt="" />
-              <p>Google 登入</p>
-            </div>
-          </a>
+          <!-- <a href=""> -->
+          <div id="Google_login_btn" @click="googleLogin">
+            <img src="../assets/Google_login.svg" alt="" />
+            <p>Google 登入</p>
+          </div>
+          <!-- </a> -->
 
-          <a href="">
-            <div id="FB_login_btn">
-              <img src="../assets/FB_login.svg" alt="" />
-              <p>Facebook 登入</p>
-            </div>
-          </a>
+          <!-- <a href=""> -->
+          <div id="FB_login_btn">
+            <img src="../assets/FB_login.svg" alt="" />
+            <p>Facebook 登入</p>
+          </div>
+          <!-- </a> -->
         </div>
         <div class="register">
           <p style="font-size: 16px; margin-top: 1.4px">還沒有帳戶？</p>
@@ -208,64 +208,6 @@ export default {
     const check_btn = () => {
       checked.value = !checked.value;
     };
-    // login的事件，目前這個用不到了
-    // const login = () => {
-    //   //前端部分先進行帳號密碼原則檢驗，還有其他條件式
-    //   if (password == "" || account == "") {
-    //     // this.$refs.account.style = "border-color : #e03939";
-    //     // this.$refs.password.style = "border-color : #e03939";
-    //     // this.$refs.wrong1.style = "display : block";
-    //     // this.$refs.wrong2.style = "display : block";
-    //     alertBlankInput.value = true; // this.errorTime = this.errorTime + 1;
-    //     error = true;
-    //   } else {
-    //     const path = "http://34.81.219.139:5000/bricks_login";
-    //     const user = {
-    //       user_email: account,
-    //       user_password: password,
-    //       isKeepLogin: checked,
-    //     };
-    //     console.log("user: ", user);
-    //     account = "";
-    //     password = "";
-    //     axios
-    //       .post(path, user)
-    //       .then((res) => {
-    //         // token 在 res.data裡面
-    //         token = res.data;
-    //         // 在Vue组件中的某个方法中执行解密操作
-    //         decode_token_json = decodeToken(token);
-    //         // 直接取出要的東西
-    //         if (decode_token_json.status == "success") {
-    //           errorTime = 0;
-
-    //           this.$router.push({
-    //             name: "PersonalHomepage",
-    //             // params: { user_email: this.decode_token_json.user_email },
-    //           });
-    //         } else {
-    //           // this.$refs.account.style = "border-color : #e03939";
-    //           // this.$refs.password.style = "border-color : #e03939";
-    //           // this.$refs.wrong1.style = "display : block";
-    //           // this.$refs.wrong2.style = "display : block";
-    //           // this.accountError = res.data.accountError;
-    //           // this.passwordError = res.data.passwordError;
-    //           errorTime = errorTime + 1;
-    //           if (errorTime >= 3) {
-    //             errorMessage = "如果登入時遇到困難，可點擊「忘記密碼」";
-    //             errorTime = errorTime + 1;
-    //           } else {
-    //             // 之後改成 this.decode_token_json.message
-    //             errorMessage = "您的帳號或密碼不正確，請再試一次";
-    //           }
-    //           error = true;
-    //         }
-    //       })
-    //       .catch((error) => {
-    //         console.log(error);
-    //       });
-    //   }
-    // };
 
     //登入
     const goToPersonalPage = () => {
@@ -278,7 +220,7 @@ export default {
         }, 2000);
       } else {
         axios
-          .post("http://34.81.219.139:5000/bricks_login", {
+          .post("http://35.201.168.185:5000/bricks_login", {
             user_email: account._value,
             user_password: password._value,
           })
@@ -298,18 +240,22 @@ export default {
                 }, 2000);
               }
             } else if (res.data.status === "success") {
+              console.log(res);
+
+              //刪去回傳的auth中不需要的部分
+              const cleanedToken = res.headers.authorization
+                .replace(/^Bearer b'/, "") // 去掉前面的 Bearer b'
+                .replace(/'$/, ""); // 去掉末尾的 '
+              const formattedToken = `Bearer ${cleanedToken}`;
+
+              alert(formattedToken);
               errorTime.value = 0;
-              authorization.value = res.headers.authorization;
+              authorization.value = formattedToken;
               console.log(authorization.value);
               router.push({
                 name: "personalHomepage",
               });
               setAuth(authorization.value);
-
-              // router.push({
-              //   name: "kerwin",
-              // params: { authorization: authorization.value },
-              // });
 
               if (checked.value) {
                 setCookie(account._value, password._value);
@@ -390,10 +336,15 @@ export default {
     const googleLogin = () => {
       // alert("callgoogle");
       axios
-        .get("http://34.81.219.139:5000/frontend/google_login")
+        .get("http://35.201.168.185:5000/frontend/google_login")
         .then((res) => {
           console.log(res);
+          // args_dict = request.args.to_dict();
         });
+    };
+
+    const submitForm = () => {
+      document.getElementById("redirectForm").submit();
     };
 
     onMounted(() => {
@@ -425,6 +376,7 @@ export default {
       // login,
       deleteCookie,
       googleLogin,
+      submitForm,
     };
   },
   created() {},
@@ -688,8 +640,8 @@ input::placeholder {
 }
 
 .other_resource div {
-  width: 128.25px;
-  height: 34.5px;
+  width: 44%;
+  height: 100%;
   border: 1px solid #b6aeae;
   border-radius: 14px;
   font-size: 13.5px;
@@ -702,6 +654,7 @@ input::placeholder {
   position: relative;
   text-indent: 33px;
   background-color: white;
+  cursor: pointer;
 }
 
 #FB_login_btn {
@@ -709,8 +662,8 @@ input::placeholder {
   float: right;
 }
 
-.other_resource a img {
-  width: 18px;
+.other_resource img {
+  width: 20px;
   position: absolute;
   top: 50%;
   transform: translate(0, -50%);

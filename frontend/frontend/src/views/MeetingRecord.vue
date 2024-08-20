@@ -1,7 +1,7 @@
 <template>
   <!-- <div class="all"> -->
   <side-bar class="sideBar"></side-bar>
-  <nav-bar-main class="navBar"></nav-bar-main>
+  <nav-bar-main class="navBar" :meetingName="recordInfo.name"></nav-bar-main>
 
   <div class="navAndCont" id="new">
     <div class="tag">
@@ -10,15 +10,17 @@
     </div>
 
     <div :class="meetingClass" v-if="showedInfo">
-      <meeting :recordInfo="recordInfo"></meeting>
+      <meeting @submit="reload" :recordInfo="recordInfo"></meeting>
       <div class="textBlock">
         <text-block
           v-for="block in blocks"
           :key="block.id"
-          @add_cart="add_block"
+          @click="setBlockNow(block)"
+          @add_cart="add_block(block)"
           :showAddBtn="showAddBtn"
-          @deleteCart="deleteCart"
+          @deleteCart="deleteCart(block)"
           :content="block.textBox_content"
+          :tags="block.Tag"
         />
       </div>
     </div>
@@ -32,7 +34,7 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { computed, ref } from "vue";
 // import axios from "axios";
 import SideBar from "../components/SideBar.vue";
@@ -45,80 +47,50 @@ import Ordering from "../components/SharonBricks/Ordering.vue";
 import sort from "../components/SharonBricks/Sort.vue";
 import DocumentWithInfo from "@/components/KerwinBricks/DCMwithDate.vue";
 import axios from "axios";
+import store from "../store/store.js";
 import { onMounted } from "vue";
-import { useStore } from "vuex";
 
-export default {
-  components: {
-    SideBar,
-    NavBarMain,
-    meeting,
-    TextBlock,
-    TagSearchArea,
-    sort,
-    Ordering,
-    DocumentWithInfo,
-  },
-  // props: {
-  //   record_id: Number,
-  // },
-  setup(props, { emit }) {
-    const meetingClass = ref("meeting");
-    const recordInfo = computed(() => store.getters["records/getCurrRecord"]);
-    const activeOption = ref(null);
-    const isShowed = ref(false);
-    const router = useRouter();
-    const currentActive = ref("1-1");
-    const showedInfo = ref(true);
-    const quantity = ref(1);
-    const recordID = ref("");
-    const showAddBtn = ref(false);
-    const store = useStore();
-    const blocks = computed(() => store.getters["records/getCurrTextBoxes"]);
+const meetingClass = ref("meeting");
+const recordInfo = computed(() => store.getters.getCurrRecord);
+const isShowed = ref(false);
+const router = useRouter();
+const showedInfo = ref(true);
+const quantity = ref(1);
+const recordID = ref("");
+const showAddBtn = ref(false);
+const blocks = computed(() => store.getters.getCurrTextBoxes);
 
-    const deleteCart = async () => {
-      try {
-        const response = await fetch(
-          "http://34.81.219.139:5000/delete_textBox",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              textBox_id: "16",
-            }),
-            credentials: "include",
-          }
-        );
-        console.log(response.data.message);
-      } catch (error) {
-        console.log("刪除失敗");
-      }
-
-      if (quantity > 1) {
-        quantity--;
-      }
-    };
-
-    const showInfo = (value) => {
-      showedInfo.value = value;
-    };
-    const add_block = () => {
-      blocks.value += 1;
-    };
-
-    const showBtn = () => {
-      showAddBtn.value = true;
-    };
-
-    onMounted(() => {
-      // if (route.path === '/cards/newRecord') {
-      store.dispatch("records/fetchOneRecord");
-      // }
-    });
-  },
+const reload = (value) => {
+  store.dispatch("fetchOneRecord");
 };
+
+const deleteCart = async (block) => {
+  store.commit("setBlockNow", block);
+  // console.log(store.state.records.blockNow);
+  store.dispatch("deleteBlock");
+};
+
+const showInfo = (value) => {
+  showedInfo.value = value;
+};
+
+const setBlockNow = (block) => {
+  store.commit("setBlockNow", block);
+};
+
+const add_block = () => {
+  store.dispatch("addBlock");
+};
+
+const showBtn = () => {
+  showAddBtn.value = true;
+};
+
+onMounted(async () => {
+  store.dispatch("fetchOneRecords");
+  await store.dispatch("fetchAllTags");
+  console.log("文字方塊是長這樣", blocks.value);
+});
 </script>
 
 <style scoped>
@@ -160,6 +132,7 @@ export default {
   padding-bottom: 10px;
   /* gap: 8px; */
   background-color: #f2f3f5;
+  margin-bottom: 16vh;
 }
 /* .textBlock :hover{
   left: -63px;

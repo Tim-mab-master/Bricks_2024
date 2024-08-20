@@ -59,7 +59,6 @@
             :key="index"
             >{{ option.label }}</el-tag
           >
-          <!-- <input type="attend" id="attend" v-model="attends" class="text-input" placeholder="-"> -->
         </td>
       </tr>
       <tr>
@@ -89,8 +88,6 @@
             :key="index"
             >{{ option.label }}</el-tag
           >
-
-          <!-- <input type="absent" id="absent" v-model="absents" class="text-input" placeholder="-"> -->
         </td>
       </tr>
       <tr>
@@ -105,7 +102,6 @@
             :key="index"
             >{{ option.label }}</el-tag
           >
-          <!-- <input type="record" id="record" v-model="recorder" class="text-input" placeholder="-"> -->
         </td>
       </tr>
     </table>
@@ -231,38 +227,38 @@
 </template>
 
 <script setup>
-import { useStore } from "vuex";
+import store from "../store/store.js";
 import { useRouter } from "vue-router";
 import axios from "axios";
 import { ref, reactive, onMounted, computed } from "vue";
-import { defineProps, defineEmits } from "vue";
+import { defineEmits } from "vue";
 import { ElNotification, ElMessage } from "element-plus";
 
-// 引用 store
-const store = useStore();
 const router = useRouter();
-// const props = defineProps(['recordInfo']);
 const emit = defineEmits(["submit"]);
+
+// 使用 store 的 getter 來獲取當前記錄
+const recordInfo = computed(() => store.getters.getCurrRecord);
 
 // 定義響應式數據
 const form = reactive({
   show: false,
   data: {
-    formName: "",
+    formName: recordInfo.value.record_name,
     date: new Date(),
     time: [new Date(), new Date(Date.now() + 60 * 60 * 1000)],
-    place: "",
+    place: recordInfo.value.record_place,
     // 其他表單項目
   },
 });
 
-const recordInfo = computed(() => store.getters["records/getCurrRecord"]);
-const meetingName = ref("");
-const time = ref("");
-const place = ref("");
+const meetingName = computed(() => recordInfo.value.record_name);
+const time = computed(() => recordInfo.value.record_update_time);
+const place = computed(() => recordInfo.value.record_place);
 const showOverlay = ref(false);
 const placeholder = ref("輸入會議名稱");
 
+// 初始化出席人員、缺席人員和記錄人員的選項
 const valueA = ref([]);
 const optionsA = ref([]);
 const valueB = ref([]);
@@ -270,6 +266,45 @@ const optionsB = ref([]);
 const valueC = ref([]);
 const optionsC = ref([]);
 
+// 方法來檢查和設置出席、缺席、紀錄人員的列表
+const checkNone = (input, values, options) => {
+  if (typeof input === "string" && input !== "None" && input !== "") {
+    const result = input.split(",");
+    result.forEach((person) => {
+      options.push({
+        value: person.trim(), // 確保去除前後空白
+        label: person.trim(),
+      });
+      values.push(person.trim());
+    });
+  } else {
+    values.length = 0; // 清空數組
+    options.length = 0; // 清空數組
+  }
+};
+
+// 組件掛載時初始化數據
+onMounted(() => {
+  if (recordInfo.value) {
+    checkNone(
+      recordInfo.value.record_attendees_name,
+      valueA.value,
+      optionsA.value
+    );
+    checkNone(
+      recordInfo.value.record_absentees_name,
+      valueB.value,
+      optionsB.value
+    );
+    checkNone(
+      recordInfo.value.record_recorder_name,
+      valueC.value,
+      optionsC.value
+    );
+  }
+});
+
+// 其餘的代碼保持不變
 const clearPlaceholder = () => {
   placeholder.value = "";
 };
@@ -353,42 +388,30 @@ const handleSelectChange = (selectedValues, options, value) => {
   }
 };
 
-const onSubmit = () => {
-  store.commit("setName", form.data.formName);
-  meetingName.value = form.data.formName;
-  place.value = form.data.place;
-
-  const date = form.data.date;
-  const year = date.getFullYear();
-  const month = (date.getMonth() + 1).toString().padStart(2, "0"); // 月份是從0開始的，所以需要加1
-  const day = date.getDate().toString().padStart(2, "0"); // 確保日期是兩位數
-  // const options = { year: 'numeric', month: 'short', day: '2-digit' };
-  const formattedDate = `${year}/${month}/${day}`;
-  const formatted = `${year}-${month}-${day}`;
-
-  const format = { hour: "2-digit", minute: "2-digit", hour12: false };
-  const formattedTime = form.data.time.map((date) =>
-    date.toLocaleTimeString("en-US", format)
-  );
-  const addTime = `${formattedTime[0].substring(
-    0,
-    5
-  )}-${formattedTime[1].substring(0, 5)}`;
-  time.value = `${formattedDate} ${addTime}`;
+const onSubmit = async () => {
   emit("submit");
-  emit("recordInfo", form.value);
 
   const editInfo = {
-    record_id: store.state.records.recordID,
-    record_name: meetingName.value,
-    record_date: formatted,
-    record_department: "",
-    record_host_name: optionsC.value[0].value,
-    record_place: place.value,
+    record_id: store.getters.getRecordID,
+    record_name: form.data.formName,
+    record_date: form.data.date,
+    record_attendees_name: valueA.value.join(","),
+    record_absentees_name: valueB.value.join(","),
+    record_recorder_name: valueC.value.join(","),
+    record_place: form.data.place,
   };
-  axios.post("http://34.81.186.58:5000/edit_record", editInfo).then((res) => {
-    console.log(res.data.message);
-  });
+
+  await axios
+    .post("http://35.201.168.185:5000/edit_record", editInfo, {
+      headers: {
+        authorization: JSON.parse(localStorage.getItem("auth")),
+      },
+    })
+    .then((res) => {
+      console.log(res.data.message);
+    });
+
+  store.dispatch("fetchOneRecord");
 
   ElMessage({
     message: "已儲存會議基本資訊",
@@ -396,24 +419,7 @@ const onSubmit = () => {
   });
   showOverlay.value = false;
   form.show = false;
-
-  store.dispatch("records/fetchAllRecords");
 };
-
-// 在組件掛載時執行初始化請求
-onMounted(() => {
-  store.dispatch("records/fetchOneRecord");
-  // recordInfo = computed(() => store.getters(["records/getCurrRecord"]));
-  console.log(recordInfo.value);
-  if (recordInfo[0]) {
-    meetingName.value = recordInfo[0].record_name;
-    time.value = recordInfo[0].record_creation_time;
-    place.value = recordInfo[0].record_place;
-    optionsA.value = recordInfo[0].record_attendees_name;
-    optionsB.value = recordInfo[0].record_absentees_name;
-    optionsC.value = recordInfo[0].record_recorder_name;
-  }
-});
 </script>
 
 <style scoped>
@@ -522,7 +528,6 @@ p {
   padding: 20px;
   border-radius: 4px;
   background-color: #ffffff;
-  border: 2px solid black;
 }
 .form .el-form-item {
   /* margin-bottom: 25px; */
