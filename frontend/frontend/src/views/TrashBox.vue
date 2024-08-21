@@ -42,7 +42,7 @@
     <div class="forever_delete_confirm" v-if="forever_delete_true">
       <div
         class="close_forever_delete_confirm"
-        @click="close_forever_delete"
+        @click="close_delete_forever_confirm"
       ></div>
       <h4 class="forever_delete_title">永久刪除會議記錄</h4>
       <p class="forever_delete_content">
@@ -110,13 +110,35 @@ export default {
 
     const close_delete_forever_confirm = () => {
       store.commit("setForeverDeleteRecord");
+      forever_delete_true.value = false;
+    };
+
+    // 確定永久刪除
+    const confirm_delete_forever_button = () => {
+      store.commit("setForeverDeleteRecord");
+      // 關閉確認永久刪除視窗
+      forever_delete_true.value = false;
+      // 永久刪除api
+      // const body = { record_id: record_id };
+      // axios
+      //   .post("http://35.201.168.185:5000//delete_record_permanent", body, {
+      //     headers: {
+      //       authorization: JSON.parse(localStorage.getItem("auth")),
+      //     },
+      //   })
+      //   .then((res) => {
+      //     ElMessage("您已永久刪除會議記錄");
+      //     setTimeout(() => {
+      //       unshown();
+      //       router.go(0);
+      //     }, 500);
+      //   });
     };
 
     //監控"永久刪除會議記錄"被點擊
     store.subscribe((mutation, state) => {
       if (mutation.type === "setForeverDeleteRecord") {
         if (store.getters.getForeverDeleteRecord === true) {
-          alert("deleterecords");
           // 跳出彈出視窗
           forever_delete_true.value = true;
         }
@@ -129,6 +151,7 @@ export default {
       forever_delete_true,
       close_forever_delete,
       close_delete_forever_confirm,
+      confirm_delete_forever_button,
     };
   },
 };
