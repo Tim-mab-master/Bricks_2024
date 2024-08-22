@@ -80,6 +80,7 @@ export default createStore({
     setTerminateConfirm(state) {
       state.terminate_confirm = !state.terminate_confirm;
     },
+    // 控制彈出視窗
     setForeverDeleteRecord(state) {
       state.forever_delete_record_confirm =
         !state.forever_delete_record_confirm;

@@ -86,6 +86,8 @@ import TrashCards from "../components/TrashCards.vue";
 import NavBarAll from "../components/NavBarAll.vue";
 import { ref, computed, onMounted, onBeforeMount, onBeforeUnmount } from "vue";
 import store from "../store/store.js";
+import axios from "axios";
+import { ElMessage } from "element-plus";
 import { useRoute, useRouter } from "vue-router";
 
 export default {
@@ -108,6 +110,9 @@ export default {
     };
     const cards = computed(() => store.getters.getTrashRecords);
 
+    let cardID = ref(0);
+    const router = useRouter();
+
     const close_delete_forever_confirm = () => {
       store.commit("setForeverDeleteRecord");
       forever_delete_true.value = false;
@@ -118,21 +123,21 @@ export default {
       store.commit("setForeverDeleteRecord");
       // 關閉確認永久刪除視窗
       forever_delete_true.value = false;
-      // 永久刪除api
-      // const body = { record_id: record_id };
-      // axios
-      //   .post("http://35.201.168.185:5000//delete_record_permanent", body, {
-      //     headers: {
-      //       authorization: JSON.parse(localStorage.getItem("auth")),
-      //     },
-      //   })
-      //   .then((res) => {
-      //     ElMessage("您已永久刪除會議記錄");
-      //     setTimeout(() => {
-      //       unshown();
-      //       router.go(0);
-      //     }, 500);
-      //   });
+
+      // 永久刪除api;
+      const body = { record_id: store.getters.getRecordID };
+      axios
+        .post("http://35.201.168.185:5000//delete_record_permanent", body, {
+          headers: {
+            authorization: JSON.parse(localStorage.getItem("auth")),
+          },
+        })
+        .then((res) => {
+          ElMessage("您已永久刪除會議記錄");
+          setTimeout(() => {
+            router.go(0);
+          }, 1000);
+        });
     };
 
     //監控"永久刪除會議記錄"被點擊
@@ -152,6 +157,7 @@ export default {
       close_forever_delete,
       close_delete_forever_confirm,
       confirm_delete_forever_button,
+      cardID,
     };
   },
 };
