@@ -99,13 +99,9 @@ export default createStore({
       return state.auth;
     },
     getAllRecords(state) {
-      console.log("值");
-      console.log(state.allRecords);
       return state.allRecords;
     },
     getTrashRecords(state) {
-      console.log("值");
-      console.log(state.trashRecords);
       return state.trashRecords;
     },
     getRecordID(state) {
@@ -145,13 +141,11 @@ export default createStore({
   },
   actions: {
     async fetchAllRecords({ state, commit }) {
-      console.log("fetchAllrecords");
       try {
         const body = {
           project_id: JSON.parse(localStorage.getItem("projectID")),
           // project_id: 94, //bricks
         };
-        console.log("projID" + JSON.parse(localStorage.getItem("projectID")));
         await axios
           .post("http://35.201.168.185:5000/get_record_index", body, {
             headers: {
@@ -162,7 +156,6 @@ export default createStore({
           .then((res) => {
             // console.log(JSON.parse(localStorage.getItem("auth"))); //確認auth是否正確
             commit("setAllRecords", res.data.record); //以array紀錄會議名稱
-            console.log("回復", res.data.record);
           });
       } catch (error) {
         console.log(error);
@@ -183,9 +176,7 @@ export default createStore({
           })
 
           .then((res) => {
-            // console.log(JSON.parse(localStorage.getItem("auth"))); //確認auth是否正確
             commit("setTrashRecords", res.data.item); //以array紀錄會議名稱
-            console.log("垃圾桶", res.data.item);
           });
       } catch (error) {
         console.log(error);
@@ -225,7 +216,6 @@ export default createStore({
         }
 
         commit("setCurrRecord", payload);
-        console.log("payload", payload);
       } catch (error) {
         console.log("無法獲得單個內容");
       }
@@ -245,7 +235,7 @@ export default createStore({
           },
         }
       );
-      console.log(response.data.message);
+      // console.log(response.data.message);
       await dispatch("fetchOneRecord");
     },
     async deleteBlock({ state, dispatch }) {

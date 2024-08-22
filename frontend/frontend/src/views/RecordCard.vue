@@ -40,8 +40,7 @@
       </div>
     </div>
 
-    <!-- 個人資訊開頭 -->
-    <div v-if="minuteExistMethod" class="navAndCont" id="cards">
+    <div v-if="minuteExistMethods" class="navAndCont" id="cards">
       <div class="cards">
         <meeting-cards
           v-for="card in cards"
@@ -53,7 +52,6 @@
           >card</meeting-cards
         >
       </div>
-      <!-- 個人資訊結尾 -->
 
       <div v-if="false" class="cover">
         <div></div>
@@ -91,18 +89,18 @@ import axios from "axios";
 const router = useRouter();
 // const store = useStore();
 
-const minuteExistMethod = () => {
-  if (store.state.allRecords.length != 0) {
-    minuteExist = true;
-  }
-  console.log("min", minuteExist, "結束");
-  return minuteExist;
-};
-
 onMounted(async () => {
   console.log("onMounted");
   store.dispatch("fetchAllRecords");
 });
+
+const minuteExistMethod = () => {
+  let minuteExist = true;
+  if (store.state.allRecords.length != 0) {
+    minuteExist = true;
+  }
+  return minuteExist;
+};
 
 const cards = computed(() => store.getters.getAllRecords);
 
