@@ -8,6 +8,13 @@ const localStoragePlugin = (store) => {
       window.localStorage.setItem("auth", JSON.stringify(auth));
     }
   });
+  // store.subscribe((mutation, { name }) => {
+  //   // 當執行 setProjectName 時才執行以下程式碼
+  //   if (mutation.type === "setProjectName") {
+  //     );
+  //     alert(JSON.parse(localStorage.getItem("projectName")));
+  //   }
+  // });
 };
 
 export default createStore({
@@ -42,6 +49,7 @@ export default createStore({
     },
     setProjectName(state, projectName) {
       state.projectName = projectName;
+      window.localStorage.setItem("projectName", JSON.stringify(projectName));
     },
     setAuth(state, authorization) {
       state.auth = authorization;
@@ -121,6 +129,9 @@ export default createStore({
     },
     getRecordID(state) {
       return state.recordID;
+    },
+    getProjectName(state) {
+      return JSON.parse(window.localStorage.getItem("projectName"));
     },
     getDeleteConfirm(state) {
       return state.delete_confirm;

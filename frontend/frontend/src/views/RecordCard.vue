@@ -81,6 +81,7 @@ import {
   onBeforeMount,
   onBeforeUnmount,
   watch,
+  onUnmounted,
 } from "vue";
 import { useRouter } from "vue-router";
 import store from "../store/store.js";
@@ -100,9 +101,7 @@ const minuteExistMethod = () => {
 
 onMounted(async () => {
   console.log("onMounted");
-  console.log("allRecords", store.getters.getAllRecords.length);
   store.dispatch("fetchAllRecords");
-  console.log("cardsAll", cards);
 });
 
 const cards = computed(() => store.getters.getAllRecords);

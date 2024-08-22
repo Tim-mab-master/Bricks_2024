@@ -73,7 +73,7 @@
 </template>
 
 <script>
-import { computed, ref } from "vue";
+import { computed, onUnmounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 import store from "../store/store.js";
@@ -89,7 +89,7 @@ export default {
     const active_color = ref("#fff");
     let shadowOn = ref(false);
     //專案名稱
-    const project_name = computed(() => store.state.projectName);
+    const project_name = computed(() => store.getters.getProjectName);
     const incolor = "#C91F2F";
     const activeOption = ref(null);
     const isClicked = ref(false);
@@ -102,6 +102,10 @@ export default {
     const menu_clicked = () => {
       active_color.value = "#FAE4E7";
     };
+
+    // onUnmounted(() => {
+    //   store.commit("setProjectName", store.getters.getProjectName);
+    // });
 
     // 提供父元件選擇的改變
     const selectedItem = (index) => {
