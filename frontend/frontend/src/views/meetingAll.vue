@@ -63,7 +63,7 @@ export default {
 }
 
 .shadow {
-  position: absolute;
+  position: fixed;
   top: 0;
   /* left: -100; */
   width: 100%;
