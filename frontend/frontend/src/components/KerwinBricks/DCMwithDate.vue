@@ -77,9 +77,6 @@ export default {
     };
     const showInput = () => {
       inputVisible.value = true;
-      // nextTick(() => {
-      //   InputRef.value.input.focus();
-      // });
     };
     const handleInputConfirm = () => {
       if (inputValue.value) {
@@ -254,7 +251,7 @@ line-height: 24px;
 
   @media screen and (min-width: 1024px) and (max-width: 1440px) {
     .cart_container{
-      width: 665px;
+      width: 680px;
     }
     .tags{
       width:98%;
