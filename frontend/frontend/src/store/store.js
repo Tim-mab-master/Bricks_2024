@@ -26,19 +26,13 @@ export default createStore({
     blockNow: {},
     delete_confirm: false,
     terminate_confirm: false,
-    newRecord: {},
     allTags: [],
+    saveMessage: "",
   },
 
   mutations: {
-    changePage(state, index) {
-      state.activeIndex = index;
-    },
     setMeetingName(state, meetingName) {
       state.meetingName = meetingName;
-    },
-    setNewRecord(state, newRecord) {
-      state.newRecord = newRecord;
     },
     setProjectName(state, projectName) {
       state.projectName = projectName;
@@ -56,10 +50,6 @@ export default createStore({
       state.currRecord = payload.record;
       state.currTextBoxes = payload.boxes;
       state.meetingName = payload.record.record_name;
-    },
-    setNewProject(state, newRecord){
-      state.newRecord = newRecord;
-      state.meetingName = newRecord.record_name;
     },
     setBlockNow(state, block) {
       state.blockNow = block;
@@ -83,6 +73,16 @@ export default createStore({
     setAllTags(state, tags){
       state.allTags = tags;
     },
+    resetRecord(state){
+      state.currRecord = {};
+      console.log("reseted");
+    },
+    setSaveMessage(state, message){
+      state.saveMessage = message;
+      setTimeout(() => {
+        state.saveMessage = "";
+      }, 3000)
+    }
   },
   getters: {
     getAuth(state) {
@@ -102,11 +102,7 @@ export default createStore({
       return state.recordID;
     },
     getCurrRecord(state) {
-      if(state.currRecord != {}){
-        return state.currRecord;
-      }else{
-        return state.newRecord;
-      }
+      return state.currRecord;
     },
     getCurrTextBoxes(state) {
       return state.currTextBoxes;
@@ -129,6 +125,9 @@ export default createStore({
     getAllTags(state){
       return state.allTags;
     },
+    getSaveMessage(state){
+      return state.saveMessage;
+    }
   },
   actions: {
     async fetchAllRecords({ state, commit }) {
@@ -182,7 +181,7 @@ export default createStore({
     async fetchOneRecord({ state, commit, dispatch }) {
       try {
         const body = {
-          project_id: state.projectID,
+          project_id: JSON.parse(localStorage.getItem("projectID")),
           record_id: state.recordID,
         };
 
@@ -232,7 +231,7 @@ export default createStore({
     async deleteBlock({ state, dispatch }) {
 
       const deleteBlock = {
-        "textBox_id": state.blockNow.textBox_id,
+        "textBox_id": (state.blockNow.TextBox_id).toString(),
       };
 
       const response = await axios.post(
@@ -247,7 +246,7 @@ export default createStore({
     },
     async fetchAllTags({state}){
       const project = {
-        project_id: state.projectID,
+        "project_id": JSON.parse(localStorage.getItem("projectID")),
       }
       const response = await axios.post("http://35.201.168.185:5000/tag_index", project, {
         headers: {

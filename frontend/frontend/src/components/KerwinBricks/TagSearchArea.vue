@@ -115,6 +115,7 @@ import { onMounted, ref, computed } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
 import store from '../../store/store';
+import { isNull } from 'lodash';
 
 export default {
   name: "TagSearchArea",
@@ -215,7 +216,7 @@ export default {
     };
 
     onMounted(() => {
-      if(Array.isArray(allTags)){
+      if(Array.isArray(allTags) && allTags.length > 0){
         allTags.forEach(element => {
           switch (element.tag_class){
             case "事項":{

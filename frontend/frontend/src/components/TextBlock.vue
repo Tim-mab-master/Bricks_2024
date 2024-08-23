@@ -18,6 +18,7 @@
             placeholder="請輸入內容"
             v-model="textValue"
             :disabled="isCartDisabled"
+            @keyup= "handleKeyup"
           ></resize-textarea>
           <!-- 顯示鎖定、刪除文字區塊按鈕 -->
           <el-button class="edit_textButton" @click="show"
@@ -28,8 +29,8 @@
         <div class="tags" :disabled="isCartDisabled">
           <el-tooltip :content="Tagclass" effect="light">
             <el-tag
-              v-for="(tag, index) in visibleTags"
-              :key="index"
+              v-for="tag in visibleTags"
+              :key="tag.Tag_id"
               class="tag"
               closable
               :disable-transitions="false"
@@ -108,12 +109,13 @@ import {
   nextTick,
   computed,
   defineEmits,
+  watch
 } from "vue";
-import { useEmit } from "@vueuse/core";
 import EditTextara from "./EditTextara.vue";
 import Unlock from "./Unlock.vue";
 import axios from "axios";
 import store from "../store/store";
+import debounce from 'lodash/debounce';
 
 const props = defineProps({
   isShowed: Boolean,
@@ -125,7 +127,35 @@ const props = defineProps({
 
 const emit = defineEmits(["add_cart", "deleteCart"]);
 
-const textValue = computed(() => props.content);
+const textValue = ref(props.content);
+
+const saveInput = debounce(async (value) => {
+      try {
+        await axios.post('http://35.201.168.185:5000/edit_textBox', { 
+          "textBox_id":blockNow.value.TextBox_id,
+          "textBox_content":textValue.value
+         },{
+          headers: {
+          authorization: JSON.parse(localStorage.getItem("auth")),
+        },
+        });
+        console.log('Data saved:', textValue.value);
+        store.commit('setSaveMessage', "文字方塊變動已儲存");
+      } catch (error) {
+        console.error('Error saving data:', error);
+        store.commit('setSaveMessage', "文字方塊儲存失敗");
+      } finally {
+        // store.commit('setSaveMessage', "");
+      }
+      console.log(store.getters.getSaveMessage);
+    }, 500); // 500 毫秒延遲
+
+    // 處理 keyup 事件
+const handleKeyup = (event) => {
+  saveInput(textValue.value);
+  // setTimeout(store.commit('setSaveMessage', ""), 1000)
+};
+
 const isUnlockShowed = ref(props.isUnlockShowed);
 const textarea1 = ref("");
 const inputVisible = ref(false);
@@ -148,8 +178,9 @@ const showHiddenTags = () => {
   window.removeEventListener("resize", calculateVisibleTags);
 };
 
+
 const calculateVisibleTags = () => {
-  nextTick(() => {
+  // nextTick(() => {
     const container = document.querySelector(".tags");
     if (!container) return;
 
@@ -157,24 +188,29 @@ const calculateVisibleTags = () => {
     const tagWidth = 75;
     const maxVisibleTags = Math.floor(containerWidth / tagWidth);
 
-    if (dynamicTags.value.length >= maxVisibleTags) {
-      visibleTags.value = dynamicTags.value.slice(0, maxVisibleTags);
-      hiddenTagCount.value =
-        dynamicTags.value.length - visibleTags.value.length;
-    } else {
-      visibleTags.value = dynamicTags.value;
-      hiddenTagCount.value = 0;
+    if(dynamicTags.value){
+      console.log("dynamicTags:", dynamicTags.value);
+      if (dynamicTags.value.length >= maxVisibleTags) {
+        visibleTags.value = dynamicTags.value.slice(0, maxVisibleTags);
+        hiddenTagCount.value = dynamicTags.value.length - visibleTags.value.length;
+      } else {
+        visibleTags.value = dynamicTags.value;
+        hiddenTagCount.value = 0;
+      }
     }
-  });
+    console.log('visibleTag:', visibleTags.value);
+    console.log('hiddenTag:', hiddenTagCount.value);
+  // })
+    
 };
 
 const handleClose = (tag) => {
   if (isCartDisabled.value == false) {
-    const index = dynamicTags.value.indexOf(tag);
-    if (index !== -1) {
-      dynamicTags.value.splice(index, 1);
+    // const index = dynamicTags.value.indexOf(tag);
+    // if (index !== -1) {
+      // dynamicTags.value.splice(index, 1);
       const deleteTag = {
-        "textBox_id": (blockNow.value.TextBox_id).toString(),
+        "textBox_id": blockNow.value.TextBox_id,
         "tag_id": (tag.Tag_id).toString(),
       };
       const response = axios.post("http://35.201.168.185:5000/delete_tag", deleteTag, {
@@ -184,8 +220,9 @@ const handleClose = (tag) => {
       })
       console.log(response)
     }
+    store.dispatch('fetchOneRecord');
     calculateVisibleTags();
-  }
+  // }
 };
 
 const showInput = (tagClass) => {
@@ -207,7 +244,7 @@ const handleInputConfirm = async () => {
         "tag_name": inputValue.value,
         "tag_class": TagClass.value
       }
-      const response = axios.post("http://35.201.168.185:5000/add_tag",newTag,{
+      const response = await axios.post("http://35.201.168.185:5000/add_tag",newTag,{
         headers: {
           authorization: JSON.parse(localStorage.getItem("auth")),
         },
@@ -218,6 +255,7 @@ const handleInputConfirm = async () => {
   inputVisible.value = false;
   inputValue.value = "";
   calculateVisibleTags();
+  console.log(dynamicTags.value);
   
 };
 

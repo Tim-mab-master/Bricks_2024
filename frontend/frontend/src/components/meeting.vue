@@ -230,7 +230,7 @@
 import store from "../store/store.js";
 import { useRouter } from "vue-router";
 import axios from "axios";
-import { ref, reactive, onMounted, computed } from "vue";
+import { ref, reactive, onMounted, computed, onUnmounted } from "vue";
 import { defineEmits } from "vue";
 import { ElNotification, ElMessage } from "element-plus";
 
@@ -285,6 +285,8 @@ const checkNone = (input, values, options) => {
 
 // 組件掛載時初始化數據
 onMounted(() => {
+  // store.dispatch('fetchOneRecord');
+  console.log("recordInfo：",recordInfo.value);
   if (recordInfo.value) {
     checkNone(
       recordInfo.value.record_attendees_name,
@@ -420,6 +422,10 @@ const onSubmit = async () => {
   showOverlay.value = false;
   form.show = false;
 };
+
+// onUnmounted(() =>{
+//   store.commit("setCurrRecord", {});
+// })
 </script>
 
 <style scoped>
