@@ -33,7 +33,7 @@
                 </template>
                 <el-menu-item index="1-1"
                   ><router-link to="/all/cards" class="menuText"
-                    >全部</router-link
+                    >總覽</router-link
                   ></el-menu-item
                 >
                 <el-menu-item index="1-2"

@@ -40,7 +40,7 @@
       </div>
     </div>
 
-    <div v-if="minuteExistMethods" class="navAndCont" id="cards">
+    <div v-if="true" class="navAndCont" id="cards">
       <div class="cards">
         <meeting-cards
           v-for="card in cards"
