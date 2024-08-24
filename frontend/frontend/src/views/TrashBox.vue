@@ -42,19 +42,22 @@
     <div class="forever_delete_confirm" v-if="forever_delete_true">
       <div
         class="close_forever_delete_confirm"
-        @click="close_forever_delete"
+        @click="close_delete_forever_confirm"
       ></div>
       <h4 class="forever_delete_title">永久刪除會議記錄</h4>
       <p class="forever_delete_content">
         確認結束此會議記錄？請注意，永久刪除後將無法復原
       </p>
       <div class="confirm_button_container">
-        <div class="confirm_button cb_cancle" @click="close_terminate_confirm">
+        <div
+          class="confirm_button cb_cancle"
+          @click="close_delete_forever_confirm"
+        >
           取消
         </div>
         <div
           class="confirm_button cb_confirm"
-          @click="confirm_terminate_button"
+          @click="confirm_delete_forever_button"
         >
           永久刪除
         </div>
@@ -83,6 +86,8 @@ import TrashCards from "../components/TrashCards.vue";
 import NavBarAll from "../components/NavBarAll.vue";
 import { ref, computed, onMounted, onBeforeMount, onBeforeUnmount } from "vue";
 import store from "../store/store.js";
+import axios from "axios";
+import { ElMessage } from "element-plus";
 import { useRoute, useRouter } from "vue-router";
 
 export default {
@@ -101,10 +106,59 @@ export default {
     const forever_delete_true = ref(false);
     const close_forever_delete = () => {
       forever_delete_true.value = !forever_delete_true.value;
+      store.commit("setForeverDeleteRecord");
     };
     const cards = computed(() => store.getters.getTrashRecords);
+
+    let cardID = ref(0);
+    const router = useRouter();
+
+    const close_delete_forever_confirm = () => {
+      store.commit("setForeverDeleteRecord");
+      forever_delete_true.value = false;
+    };
+
+    // 確定永久刪除
+    const confirm_delete_forever_button = () => {
+      store.commit("setForeverDeleteRecord");
+      // 關閉確認永久刪除視窗
+      forever_delete_true.value = false;
+
+      // 永久刪除api;
+      const body = { record_id: store.getters.getRecordID };
+      axios
+        .post("http://35.201.168.185:5000//delete_record_permanent", body, {
+          headers: {
+            authorization: JSON.parse(localStorage.getItem("auth")),
+          },
+        })
+        .then((res) => {
+          ElMessage("您已永久刪除會議記錄");
+          setTimeout(() => {
+            router.go(0);
+          }, 1000);
+        });
+    };
+
+    //監控"永久刪除會議記錄"被點擊
+    store.subscribe((mutation, state) => {
+      if (mutation.type === "setForeverDeleteRecord") {
+        if (store.getters.getForeverDeleteRecord === true) {
+          // 跳出彈出視窗
+          forever_delete_true.value = true;
+        }
+      }
+    });
+
     // const cards = store.getters.getTrashRecords;
-    return { cards, forever_delete_true, close_forever_delete };
+    return {
+      cards,
+      forever_delete_true,
+      close_forever_delete,
+      close_delete_forever_confirm,
+      confirm_delete_forever_button,
+      cardID,
+    };
   },
 };
 </script>
@@ -141,7 +195,7 @@ export default {
   border-radius: 14px;
   background-color: white;
   box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.4);
-  z-index: 6;
+  z-index: 12;
   left: 36%;
   top: 35%;
 }
