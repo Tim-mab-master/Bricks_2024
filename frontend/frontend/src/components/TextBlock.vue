@@ -18,6 +18,7 @@
             placeholder="請輸入內容"
             v-model="textValue"
             :disabled="isCartDisabled"
+            @keyup= "handleKeyup"
           ></resize-textarea>
           <!-- 顯示鎖定、刪除文字區塊按鈕 -->
           <el-button class="edit_textButton" @click="show"
@@ -26,17 +27,20 @@
         </div>
         <div class="split-line" style="width: 100%"></div>
         <div class="tags" :disabled="isCartDisabled">
-          <el-tag
-            v-for="(tag, index) in visibleTags"
-            :key="index"
-            class="tag"
-            closable
-            :disable-transitions="false"
-            :disabled="isCartDisabled"
-            @close="handleClose(tag)"
-          >
-            {{ tag }}
-          </el-tag>
+          <el-tooltip :content="Tagclass" effect="light">
+            <el-tag
+              v-for="tag in visibleTags"
+              :key="tag.Tag_id"
+              class="tag"
+              closable
+              :disable-transitions="false"
+              :disabled="isCartDisabled"
+              @close="handleClose(tag)"
+            >
+              {{ tag.Tag_name }}
+            </el-tag>
+          </el-tooltip>
+
           <el-tag
             v-if="hiddenTagCount > 0"
             class="tag"
@@ -58,7 +62,7 @@
             v-if="!inputVisible"
             class="button-new-tag ml-1 addTags"
             size="small"
-            @click="showInput"
+            @click="showInput('事項')"
             :disabled="isCartDisabled"
             @locked="isLocked"
             >+ 事項</el-button
@@ -67,7 +71,7 @@
             v-if="!inputVisible"
             class="button-new-tag ml-1 addTags"
             size="small"
-            @click="showInput"
+            @click="showInput('組別')"
             :disabled="isCartDisabled"
             @locked="isLocked"
             >+ 組別</el-button
@@ -105,10 +109,13 @@ import {
   nextTick,
   computed,
   defineEmits,
+  watch
 } from "vue";
-import { useEmit } from "@vueuse/core";
 import EditTextara from "./EditTextara.vue";
 import Unlock from "./Unlock.vue";
+import axios from "axios";
+import store from "../store/store";
+import debounce from 'lodash/debounce';
 
 const props = defineProps({
   isShowed: Boolean,
@@ -120,20 +127,50 @@ const props = defineProps({
 
 const emit = defineEmits(["add_cart", "deleteCart"]);
 
-const textValue = computed(() => props.content);
+const textValue = ref(props.content);
+
+const saveInput = debounce(async (value) => {
+      try {
+        await axios.post('http://35.201.168.185:5000/edit_textBox', { 
+          "textBox_id":blockNow.value.TextBox_id,
+          "textBox_content":textValue.value
+         },{
+          headers: {
+          authorization: JSON.parse(localStorage.getItem("auth")),
+        },
+        });
+        console.log('Data saved:', textValue.value);
+        store.commit('setSaveMessage', "文字方塊變動已儲存");
+      } catch (error) {
+        console.error('Error saving data:', error);
+        store.commit('setSaveMessage', "文字方塊儲存失敗");
+      } finally {
+        // store.commit('setSaveMessage', "");
+      }
+      console.log(store.getters.getSaveMessage);
+    }, 500); // 500 毫秒延遲
+
+    // 處理 keyup 事件
+const handleKeyup = (event) => {
+  saveInput(textValue.value);
+  // setTimeout(store.commit('setSaveMessage', ""), 1000)
+};
+
 const isUnlockShowed = ref(props.isUnlockShowed);
 const textarea1 = ref("");
 const inputVisible = ref(false);
 const inputValue = ref("");
 const tagArray = ref([]);
+const blockNow = computed(() => store.getters.getBlockNow)
 
-const dynamicTags = computed(() => tagArray.value);
+const dynamicTags = computed(() => props.tags);
 const isShowed = ref(false);
 const rightClickRef = ref(null);
 const isCartDisabled = ref(false);
 const hiddenTagCount = ref(0);
 const visibleTags = ref([]);
 const inputRef = ref(null);
+const TagClass = ref("");
 
 const showHiddenTags = () => {
   visibleTags.value = dynamicTags.value;
@@ -141,8 +178,9 @@ const showHiddenTags = () => {
   window.removeEventListener("resize", calculateVisibleTags);
 };
 
+
 const calculateVisibleTags = () => {
-  nextTick(() => {
+  // nextTick(() => {
     const container = document.querySelector(".tags");
     if (!container) return;
 
@@ -150,29 +188,46 @@ const calculateVisibleTags = () => {
     const tagWidth = 75;
     const maxVisibleTags = Math.floor(containerWidth / tagWidth);
 
-    if (dynamicTags.value.length >= maxVisibleTags) {
-      visibleTags.value = dynamicTags.value.slice(0, maxVisibleTags);
-      hiddenTagCount.value =
-        dynamicTags.value.length - visibleTags.value.length;
-    } else {
-      visibleTags.value = dynamicTags.value;
-      hiddenTagCount.value = 0;
+    if(dynamicTags.value){
+      console.log("dynamicTags:", dynamicTags.value);
+      if (dynamicTags.value.length >= maxVisibleTags) {
+        visibleTags.value = dynamicTags.value.slice(0, maxVisibleTags);
+        hiddenTagCount.value = dynamicTags.value.length - visibleTags.value.length;
+      } else {
+        visibleTags.value = dynamicTags.value;
+        hiddenTagCount.value = 0;
+      }
     }
-  });
+    console.log('visibleTag:', visibleTags.value);
+    console.log('hiddenTag:', hiddenTagCount.value);
+  // })
+    
 };
 
 const handleClose = (tag) => {
   if (isCartDisabled.value == false) {
-    const index = dynamicTags.value.indexOf(tag);
-    if (index !== -1) {
-      dynamicTags.value.splice(index, 1);
+    // const index = dynamicTags.value.indexOf(tag);
+    // if (index !== -1) {
+      // dynamicTags.value.splice(index, 1);
+      const deleteTag = {
+        "textBox_id": blockNow.value.TextBox_id,
+        "tag_id": (tag.Tag_id).toString(),
+      };
+      const response = axios.post("http://35.201.168.185:5000/delete_tag", deleteTag, {
+        headers: {
+          authorization: JSON.parse(localStorage.getItem("auth")),
+        },
+      })
+      console.log(response)
     }
+    store.dispatch('fetchOneRecord');
     calculateVisibleTags();
-  }
+  // }
 };
 
-const showInput = () => {
+const showInput = (tagClass) => {
   inputVisible.value = true;
+  TagClass.value = tagClass;
   nextTick(() => {
     if (inputRef.value) {
       inputRef.value.focus();
@@ -180,13 +235,28 @@ const showInput = () => {
   });
 };
 
-const handleInputConfirm = () => {
+const handleInputConfirm = async () => {
   if (inputValue.value) {
-    dynamicTags.value.push(inputValue.value);
+    // dynamicTags.value.push(inputValue.value);
+    // console.log("blockNow：",blockNow.value);
+    const newTag = {
+        "textBox_id": blockNow.value.TextBox_id,
+        "tag_name": inputValue.value,
+        "tag_class": TagClass.value
+      }
+      const response = await axios.post("http://35.201.168.185:5000/add_tag",newTag,{
+        headers: {
+          authorization: JSON.parse(localStorage.getItem("auth")),
+        },
+      })
+      console.log(response.message);
   }
+  await store.dispatch('fetchOneRecord');
   inputVisible.value = false;
   inputValue.value = "";
   calculateVisibleTags();
+  console.log(dynamicTags.value);
+  
 };
 
 const show = () => {

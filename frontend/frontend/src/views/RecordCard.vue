@@ -104,6 +104,13 @@ const minuteExistMethod = () => {
 
 const cards = computed(() => store.getters.getAllRecords);
 
+onMounted(async () => {
+  console.log("onMounted");
+  // console.log("allRecords", store.getters.getAllRecords.length);
+  await store.dispatch("fetchAllRecords");
+  console.log("cardsAll", cards);
+});
+
 const activeOption = ref(0);
 
 // 確認刪除視窗，之後要改成接收sidebar的點擊
@@ -182,6 +189,7 @@ store.subscribe((mutation, state) => {
 const toRecord = async (cardID) => {
   store.commit("setRecordID", cardID); // 等後端回傳
   await store.dispatch("fetchOneRecord");
+  // await store.dispatch('fetchAllTags');
   router.push("cards/meetingRecord");
 };
 </script>

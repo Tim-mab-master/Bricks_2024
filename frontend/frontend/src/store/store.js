@@ -35,17 +35,13 @@ export default createStore({
     terminate_confirm: false,
     forever_delete_record_confirm: false,
     newRecord: {},
+    allTags: [],
+    saveMessage: "",
   },
 
   mutations: {
-    changePage(state, index) {
-      state.activeIndex = index;
-    },
     setMeetingName(state, meetingName) {
       state.meetingName = meetingName;
-    },
-    setNewRecord(state, newRecord) {
-      state.newRecord = newRecord;
     },
     setProjectName(state, projectName) {
       state.projectName = projectName;
@@ -93,6 +89,19 @@ export default createStore({
       state.forever_delete_record_confirm =
         !state.forever_delete_record_confirm;
     },
+    setAllTags(state, tags) {
+      state.allTags = tags;
+    },
+    resetRecord(state) {
+      state.currRecord = {};
+      console.log("reseted");
+    },
+    setSaveMessage(state, message) {
+      state.saveMessage = message;
+      setTimeout(() => {
+        state.saveMessage = "";
+      }, 3000);
+    },
   },
   getters: {
     getAuth(state) {
@@ -107,16 +116,11 @@ export default createStore({
     getRecordID(state) {
       return state.recordID;
     },
+
+    // 需要確定
     getCurrRecord(state) {
-      if (state.currRecord != {}) {
-        return state.currRecord;
-      } else {
-        return state.newRecord;
-      }
+      return state.currRecord;
     },
-    // getNewRecord(state) {
-    //   return state.newRecord;
-    // },
     getCurrTextBoxes(state) {
       return state.currTextBoxes;
     },
@@ -137,6 +141,15 @@ export default createStore({
     },
     getForeverDeleteRecord(state) {
       return state.forever_delete_record_confirm;
+    },
+    getBlockNow(state) {
+      return state.blockNow;
+    },
+    getAllTags(state) {
+      return state.allTags;
+    },
+    getSaveMessage(state) {
+      return state.saveMessage;
     },
   },
   actions: {
@@ -183,10 +196,10 @@ export default createStore({
       }
     },
 
-    async fetchOneRecord({ state, commit }) {
+    async fetchOneRecord({ state, commit, dispatch }) {
       try {
         const body = {
-          project_id: state.projectID,
+          project_id: JSON.parse(localStorage.getItem("projectID")),
           record_id: state.recordID,
         };
 
@@ -206,11 +219,7 @@ export default createStore({
         };
 
         if (response.data.textBox.length == 0) {
-          payload.boxes.push({
-            record_id: state.recordID,
-            textBox_content: "",
-            Tag: [],
-          });
+          dispatch("addBlock");
         } else {
           payload.boxes = response.data.textBox;
         }
@@ -222,8 +231,8 @@ export default createStore({
     },
     async addBlock({ state, dispatch }) {
       const newBlock = {
-        record_id: state.blockNow.record_id,
-        textBox_content: state.blockNow.content,
+        record_id: state.recordID,
+        textBox_content: "",
       };
 
       const response = await axios.post(
@@ -240,20 +249,38 @@ export default createStore({
     },
     async deleteBlock({ state, dispatch }) {
       const deleteBlock = {
-        textBox_id: state.blockNow.id,
+        textBox_id: state.blockNow.TextBox_id.toString(),
       };
 
       const response = await axios.post(
-        "http://34.81.219.139:5000/delete_textBox",
-        deleteBlock
+        "http://35.201.168.185:5000/delete_textBox",
+        deleteBlock,
+        {
+          headers: {
+            authorization: JSON.parse(localStorage.getItem("auth")),
+          },
+        }
       );
       console.log(response.data.message);
       await dispatch("fetchOneRecord");
     },
+    async fetchAllTags({ state }) {
+      const project = {
+        project_id: JSON.parse(localStorage.getItem("projectID")),
+      };
+      const response = await axios
+        .post("http://35.201.168.185:5000/tag_index", project, {
+          headers: {
+            authorization: JSON.parse(localStorage.getItem("auth")),
+          },
+        })
+        .catch(console.log("wrong"));
+      // console.log(response.data.item);
+      state.commit("setAllTags", response.data.item);
+    },
   },
 
   plugins: [localStoragePlugin],
-  // modules: { records },
 });
 
 // export default store;

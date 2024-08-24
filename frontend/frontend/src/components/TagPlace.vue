@@ -20,15 +20,10 @@ export default {
         const showTags = () =>{
             // console.log(recordID);
             tagShowed.value = !tagShowed.value;
-            // if(tagShowed.value === true){
-            //     meetingClass.value = "showingClass";
-            // }
-            // else{
-            //     meetingClass.value = "meeting";
-            // }
         }
         const showInfo = (value) =>{
           emit('show', value);
+
         }
         return{
             showTags,

@@ -114,7 +114,7 @@ export default {
     };
 
     // 提供父元件點擊事件
-    const addClicked = (value) => {
+    const addClicked = async (value) => {
       const date = new Date();
 
       // 獲取年份、月份和日期
@@ -129,7 +129,7 @@ export default {
         project_id: JSON.parse(localStorage.getItem("projectID")),
         record_date: formattedDate,
       };
-      const response = axios.post(
+      const response = await axios.post(
         "http://35.201.168.185:5000/add_record",
         body,
         {
@@ -139,8 +139,13 @@ export default {
         }
       );
       value = true;
-      store.commit("setNewRecord", response);
+      store.commit("resetRecord");
+      await store.commit("setRecordID", response.data.record_id);
       router.push({ name: "newRecord" });
+    };
+
+    const click = () => {
+      // store.dispatch('fetchAllRecord');
     };
 
     const selected = () => {
@@ -189,6 +194,7 @@ export default {
       terminate_project,
       delete_project,
       shadowOn,
+      click,
     };
   },
 };

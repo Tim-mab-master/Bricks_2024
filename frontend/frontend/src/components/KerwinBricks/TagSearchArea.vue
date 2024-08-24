@@ -111,9 +111,11 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import { onMounted, ref, computed } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
+import store from '../../store/store';
+import { isNull } from 'lodash';
 
 export default {
   name: "TagSearchArea",
@@ -130,13 +132,15 @@ export default {
     const handleChange = (val) => {
       console.log(val);
     };
+    const allTags = computed(() => store.getters.getAllTags);
+
     const tagsDate = ref([
-      { label: "2021/10/12", checked: false },
-      { label: "2022/10/12", checked: false },
-      { label: "2023", checked: false },
-      { label: "10/13", checked: false },
-      { label: "10/14", checked: false },
-      { label: "1014/01/12", checked: false },
+      // { label: "2021/10/12", checked: false },
+      // { label: "2022/10/12", checked: false },
+      // { label: "2023", checked: false },
+      // { label: "10/13", checked: false },
+      // { label: "10/14", checked: false },
+      // { label: "1014/01/12", checked: false },
     ]);
     const tagsThing = ref([
       { label: "早餐", checked: false },
@@ -210,6 +214,29 @@ export default {
       console.log(tag.label);
       // goSearch();
     };
+
+    onMounted(() => {
+      if(Array.isArray(allTags) && allTags.length > 0){
+        allTags.forEach(element => {
+          switch (element.tag_class){
+            case "事項":{
+              element.tag_names.forEach(tags => {
+                tagsThing.push({ label: tags, checked: false });
+              })
+            }case "日期":{
+              element.tag_names.forEach(tags => {
+                tagsDate.push({ label: tags, checked: false });
+              })
+            }case "組別":{
+              element.tag_names.forEach(tags => {
+                tagsTeam.push({ label: tags, checked: false });
+              })
+            }        
+          }
+
+        });
+      }
+    })
     
 
     return {
