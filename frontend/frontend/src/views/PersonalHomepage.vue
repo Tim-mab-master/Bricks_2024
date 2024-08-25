@@ -49,19 +49,22 @@
             </li>
           </ul>
         </div>
+        
         <div class="clear_search" @click="clear_search_bar"></div>
-
+        
         <img src="../assets/search.svg" alt="" class="search" />
         <img src="../assets/Notice/Notice_Default.svg" alt="" class="notice" />
-        <img
+        <user-info :user_name="user_name" class="profile" id="userInfo" ></user-info>
+        <!-- <img
           src="../assets/Profile/Profile_Default.svg"
           alt=""
           class="profile" 
-        />
-        8/9
-        <user-info id="userInfo" ></user-info>
+        /> -->
+      
+        
         
       </div>
+      
     </div>
     <div class="left_bar">
       <div class="add_btn" @click="add_btn">新增專案</div>
@@ -75,6 +78,7 @@
           value="option1"
           v-model="selectOption"
         />
+
         <label for="overview" @click="change(1)">專案總覽</label>
         <img src="../assets/icon/icon_file.svg" style="top: 26px" />
         
@@ -605,9 +609,19 @@
       </div>
     </div>
   </div>
+  <tinycme-editor v-model="editorData"></tinycme-editor>
 </template>
 
 <script>
+import TinycmeEditor from '../components/tinymce.vue';
+import { reactive, ref, watch } from 'vue';
+
+const editorData = ref('<p>Content of the editor.</p>');
+
+watch(editorData, (newValue) => {
+  console.log(newValue);
+});
+
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import axios from "axios";
@@ -620,6 +634,7 @@ export default {
   components: { UserInfo },
   data() {
     return {
+      user_name: "",
       middle_show_overview_page: true,
       middle_show_over_page: false,
       middle_show_trash_page: false,
@@ -1344,7 +1359,6 @@ export default {
     click_trash_project(projectIndex, cartIndex) {
       this.currentCartIndex = cartIndex;
       this.currentProjectIndex = projectIndex;
-      console.log("currentProjectIndex",projectIndex)
       //存到array裡面
       if (!this.selectedProjects.includes(cartIndex)) {
       this.selectedProjects.push(cartIndex);
@@ -1356,7 +1370,6 @@ export default {
       this.selectedProjects.forEach((cartIndex) => {
       // console.log(cartIndex)
       });
-      console.log(this.trash_carts_in_month)
     },
     //刪除後的專案跑到垃圾桶
     delete_project_ing() {
@@ -1477,19 +1490,13 @@ export default {
 
     // 垃圾桶點擊還原專案
     recover_project() {
-      // this.recovered = true;
-      // setTimeout(() => {
-      //   this.recovered = false;
-      // }, 1000);
-      // this.recover = true;
-      // this.trashcan = true;
 
       let projectIds = [];
 
       // 遍歷所有選中的專案
       this.selectedProjects.forEach((cartIndex) => {
         console.log("cartIndex",cartIndex)
-        let projectName = this.trash_carts_in_month[cartIndex].proj_box[this.currentProjectIndex].proj_name;
+        let projectName = this.trash_carts_in_month[cartIndex].project_box[this.currentProjectIndex].proj_name;
         console.log("projectName",projectName)
         this.all_proj.forEach((project) => {
           if (project.project_name === projectName) {
@@ -1637,6 +1644,20 @@ export default {
     },
   },
   mounted() {
+    const show_info = "http://35.201.168.185:5000/show_info";
+    axios
+        .post(show_info, null,{
+            headers: { authorization: JSON.parse(localStorage.getItem("auth")) },
+        })
+        .then((res) => {
+            if (res.data.status === "success"){
+                this.user_name = res.data.user_info.user_name;
+                console.log("user_name",this.user_name)
+            }
+        })
+        .catch((error) => {
+          console.log("名字取得失敗",error)
+        })
     window.addEventListener("click", this.handleClickOutside);
     const path = "http://35.201.168.185:5000/project_index";
     const get_proj = {

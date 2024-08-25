@@ -1,14 +1,14 @@
 <template>
     <div>
       <el-input v-model="email" placeholder="請輸入你的新郵件地址"></el-input>
-      <el-input 
+      <!-- <el-input 
       v-model="password" 
       placeholder="請輸入你的新密碼" 
       :type="showPassword ? 'text' : 'password'" 
       style="margin-top: 10px;"
       suffix-icon="el-icon-view"
       @click-suffix="togglePasswordVisibility"
-    ></el-input>      
+    ></el-input>       -->
     <el-input v-model="user_name" placeholder="請輸入你的新名字" style="margin-top: 10px;"></el-input>
     </div>
   </template>
@@ -29,7 +29,7 @@ import axios from "axios";
       return {
         email: '',
         password: '',
-        user_name: this.user_name,
+        user_name: '',
         showPassword: false // 控制密碼顯示或隱藏
       };
     },
@@ -47,6 +47,7 @@ import axios from "axios";
         .then((res) => {
             if (res.data.status === "success"){
                 this.user_name = res.data.user_info.user_name;
+                this.email = res.data.user_info.user_email;
             }
         })
     }

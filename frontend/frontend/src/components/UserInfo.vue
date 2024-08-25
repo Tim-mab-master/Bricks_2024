@@ -56,6 +56,7 @@ import EditInfoForm from './EditInfoForm.vue';
 
 
 export default {
+  
     props: {
         user_name: {
             type: String,
@@ -115,13 +116,8 @@ export default {
         beforeClose: (action, instance, done) => {
           const form = EditInfoFormInstance.component.proxy;
           if (action === 'confirm') {
-            // 校验输入
             if (!form.email.match(/[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/)) {
-              instance.message = '信箱格式不正确';
-            } else if (form.password.length < 6) {
-              instance.message = '密碼至少需要6位字符';
-            // } else if (){
-
+              instance.message = '信箱格式不正確';
             }else{
               done();//回傳後端
             }
@@ -138,7 +134,7 @@ export default {
 
         // 更新
         console.log('Email:', form.email);
-        console.log('Password:', form.password);
+        // console.log('Password:', form.password);
         console.log('Name:', form.user_name);
 
       }).catch(() => {
@@ -152,16 +148,19 @@ export default {
     //呼叫後端api
         const edit_info = "http://35.201.168.185:5000/edit_info";
         const edited_info = {
-            user_name: "abc",
-	        user_email: "abc@gmail.com",
+          user_name: form.user_name,
+	        user_email: form.email,
         }
         axios
         .post(edit_info, edited_info,{
             headers: { authorization: JSON.parse(localStorage.getItem("auth")) },
         })
         .then((res) => {
+          console.log("更改結果",res.data)
             if (res.data.status === "success"){
-                console.log("haha")
+                console.log("更改個人資訊成功") 
+            }else{
+              console.log("更改個人資訊失敗")
             }
         })
     },
@@ -177,13 +176,16 @@ export default {
                 console.log("user_name",this.user_name)
             }
         })
+        .catch((error) => {
+          console.log("名字取得失敗",error)
+        })
     },
     // 個人資訊開頭
  }
 }
 </script>
 
-<style scoped>
+<style>
 /* #all {
   zoom:75%;
 } */
@@ -260,10 +262,23 @@ export default {
   padding-left: 14px;
 }
 
+/* 結果我發現不用v-deep也可以改樣式！！！ */
+.el-message-box__btns .el-button--primary {
+  background-color: #b82c30 !important;  
+  border-color: #b82c30 !important; 
+  color: white !important; 
+  border-radius: 15px;
+}
+.el-button{
+  border-radius: 20px;
+}
+.el-message-box__title{
+  text-align: center;    
+  font-weight: bold;     
+}
 .material-icons {
   font-size: 18px;
 }
-
 @media screen and (max-width: 1440px) and (min-width: 1240px) {
   /* #userInfoInside, .firstDrop, .dropDown, .userInfo, .firstDrop, #dropDown{
             transform: scale(0.8);
@@ -271,5 +286,5 @@ export default {
         } */
 
     }
-    
+  
 </style>

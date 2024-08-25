@@ -71,9 +71,9 @@ export default {
 
 <style scoped>
 #all {
-  transform-origin: top left;
+  /* transform-origin: top left;
         transform: scale(0.75); 
-   zoom:75%;
+   zoom:75%; */
 }
 .sideBar {
   position: absolute;
