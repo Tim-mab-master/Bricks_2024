@@ -506,6 +506,7 @@
                   style="cursor: pointer"
                   @click="forever_delete_project"
                 />
+                <!-- 近 30 天 -->
                 <div class="box_container">
                   <div
                     v-for="(cart, index1) in trash_carts_in_month"
@@ -516,6 +517,7 @@
                       v-for="(proj, index2) in cart.proj_box"
                       :key="index2"
                       @click="click_trash_project(index2, index1)"
+                      :class="{ selected: isSelected(index1, index2) }" 
                     >
                       {{ proj.proj_name }}
                     </div>
@@ -721,7 +723,7 @@ export default {
       proj_info_id: 0,
       router: useRouter(),
       store: useStore(),
-      //存多個專案
+      //存多個選中的專案
       selectedProjects: [],
     };
   },
@@ -1355,24 +1357,39 @@ export default {
           }
         });
     },
-
     click_trash_project(projectIndex, cartIndex) {
-      this.currentCartIndex = cartIndex;
-      this.currentProjectIndex = projectIndex;
-      console.log("currentProjectIndex",projectIndex)
-      //存到array裡面
-      if (!this.selectedProjects.includes(cartIndex)) {
-      this.selectedProjects.push(cartIndex);
-      }
-      // this.currentProjectIndex = projectIndex;
-      
-      console.log("selectedProjects", this.selectedProjects);
+      // 使用唯一标识符跟踪选中的 box
+      const identifier = `${cartIndex}-${projectIndex}`;
 
-      this.selectedProjects.forEach((cartIndex) => {
-      // console.log(cartIndex)
-      });
-      // console.log(this.trash_carts_in_month)
+      // 切換有選中或沒選中
+      if (this.selectedProjects.includes(identifier)) {
+        this.selectedProjects = this.selectedProjects.filter(item => item !== identifier);
+      } else {
+        this.selectedProjects.push(identifier);
+      }
+      console.log(this.selectedProjects)
     },
+    isSelected(cartIndex, projectIndex) {
+      return this.selectedProjects.includes(`${cartIndex}-${projectIndex}`);
+    },
+
+    // click_trash_project(projectIndex, cartIndex) {
+    //   this.currentCartIndex = cartIndex;
+    //   this.currentProjectIndex = projectIndex;
+    //   console.log("currentProjectIndex",projectIndex)
+    //   //存到array裡面
+    //   if (!this.selectedProjects.includes(cartIndex)) {
+    //   this.selectedProjects.push(cartIndex);
+    //   }
+    //   // this.currentProjectIndex = projectIndex;
+      
+    //   console.log("selectedProjects", this.selectedProjects);
+
+    //   this.selectedProjects.forEach((cartIndex) => {
+    //   // console.log(cartIndex)
+    //   });
+    //   // console.log(this.trash_carts_in_month)
+    // },
     //刪除後的專案跑到垃圾桶
     delete_project_ing() {
       console.log("this.currentCartIndex", this.currentCartIndex); //第幾個cart
@@ -1492,21 +1509,24 @@ export default {
 
     // 垃圾桶點擊還原專案
     recover_project() {
-
       let projectIds = [];
-      console.log(this.selectedProjects)
       // 遍歷所有選中的專案
-      this.selectedProjects.forEach((cartIndex) => {
-        console.log("cartIndex",cartIndex)
-        console.log(this.trash_carts_not_in_month)
-        let projectName = this.trash_carts_in_month[cartIndex].proj_box[0].proj_name;
-        console.log("projectName",projectName)
-        this.all_proj.forEach((project) => {
-          if (project.project_name === projectName) {
-            projectIds.push(project.id);
-          }
-        });
+    this.selectedProjects.forEach(identifier => {
+    // 解析 cartIndex 和 projectIndex
+    const [cartIndex, projectIndex] = identifier.split('-').map(Number);
+    const projectName = this.trash_carts_in_month[cartIndex]?.proj_box[projectIndex]?.proj_name;
+
+    if (projectName) {
+      console.log("Project Name:", projectName);
+      this.all_proj.forEach(project => {
+        if (project.project_name === projectName) {
+          projectIds.push(project.id);
+        }
       });
+    } else {
+      console.error("找不到");
+    }
+  });
       projectIds.forEach((projectId) =>{
       const path = "http://35.201.168.185:5000/trashcan_recover";
       const delete_record_permanent = {
@@ -1549,16 +1569,22 @@ export default {
       let projectIds = [];
 
     // 遍歷所有選中的專案
-      this.selectedProjects.forEach((cartIndex) => {
-        console.log("cartIndex",cartIndex)
-        let projectName = this.trash_carts_in_month[cartIndex].proj_box[this.currentProjectIndex].proj_name;
-        console.log("projectName",projectName)
-        this.all_proj.forEach((project) => {
-          if (project.project_name === projectName) {
-            projectIds.push(project.id);
-          }
-        });
+    this.selectedProjects.forEach(identifier => {
+    // 解析 cartIndex 和 projectIndex
+    const [cartIndex, projectIndex] = identifier.split('-').map(Number);
+    const projectName = this.trash_carts_in_month[cartIndex]?.proj_box[projectIndex]?.proj_name;
+
+    if (projectName) {
+      console.log("Project Name:", projectName);
+      this.all_proj.forEach(project => {
+        if (project.project_name === projectName) {
+          projectIds.push(project.id);
+        }
       });
+    } else {
+      console.error("找不到");
+    }
+  });
 
       // 永久刪除專案
 
@@ -2720,8 +2746,9 @@ export default {
   background-color: #e1dcdc;
   border-color: #503131;
 }
-.box :after {
-  background-color: #5b2323;
+.box.selected {
+  background-color: #b82c30; /* 深色背景，替换为你希望的颜色 */
+  color: white; /* 文字颜色，确保可读性 */
 }
 .cart_title_input {
   font-size: 16px;
