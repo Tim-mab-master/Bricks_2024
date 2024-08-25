@@ -1359,6 +1359,7 @@ export default {
     click_trash_project(projectIndex, cartIndex) {
       this.currentCartIndex = cartIndex;
       this.currentProjectIndex = projectIndex;
+      console.log("currentProjectIndex",projectIndex)
       //存到array裡面
       if (!this.selectedProjects.includes(cartIndex)) {
       this.selectedProjects.push(cartIndex);
@@ -1370,6 +1371,7 @@ export default {
       this.selectedProjects.forEach((cartIndex) => {
       // console.log(cartIndex)
       });
+      // console.log(this.trash_carts_in_month)
     },
     //刪除後的專案跑到垃圾桶
     delete_project_ing() {
@@ -1496,7 +1498,7 @@ export default {
       // 遍歷所有選中的專案
       this.selectedProjects.forEach((cartIndex) => {
         console.log("cartIndex",cartIndex)
-        let projectName = this.trash_carts_in_month[cartIndex].project_box[this.currentProjectIndex].proj_name;
+        let projectName = this.trash_carts_in_month[cartIndex].proj_box[this.currentProjectIndex].proj_name;
         console.log("projectName",projectName)
         this.all_proj.forEach((project) => {
           if (project.project_name === projectName) {
