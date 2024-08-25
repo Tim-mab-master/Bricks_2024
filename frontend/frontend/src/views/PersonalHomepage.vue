@@ -1494,11 +1494,12 @@ export default {
     recover_project() {
 
       let projectIds = [];
-
+      console.log(this.selectedProjects)
       // 遍歷所有選中的專案
       this.selectedProjects.forEach((cartIndex) => {
         console.log("cartIndex",cartIndex)
-        let projectName = this.trash_carts_in_month[cartIndex].proj_box[this.currentProjectIndex].proj_name;
+        console.log(this.trash_carts_not_in_month)
+        let projectName = this.trash_carts_in_month[cartIndex].proj_box[0].proj_name;
         console.log("projectName",projectName)
         this.all_proj.forEach((project) => {
           if (project.project_name === projectName) {
@@ -1831,6 +1832,7 @@ export default {
           });
         }
       });
+
   },
   beforeUnmount() {
     window.removeEventListener("click", this.handleClickOutside);
@@ -2712,6 +2714,7 @@ export default {
   letter-spacing: 1.25px;
   text-indent: 69.67px;
   user-select: none;
+  
 }
 .box:hover {
   background-color: #e1dcdc;
