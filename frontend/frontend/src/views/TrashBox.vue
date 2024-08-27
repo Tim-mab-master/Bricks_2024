@@ -1,7 +1,6 @@
 <template>
   <div>
     <side-bar></side-bar>
-    <nav-bar-all class="navBar"></nav-bar-all>
     <div class="terminate_confirm" v-if="close_terminate">
       <div
         class="close_terminate_delete_confirm"
@@ -64,7 +63,8 @@
       </div>
     </div>
     <div class="navAndCont" id="trash">
-      <trash-bar class="navBar"></trash-bar>
+      <nav-bar-trash class="navBar"></nav-bar-trash>
+      <!-- <trash-bar class="navBar"></trash-bar> -->
       <div class="cards">
         <trash-cards
           v-for="card in cards"
@@ -83,7 +83,7 @@
 import SideBar from "../components/SideBar.vue";
 import TrashBar from "../components/TrashBar.vue";
 import TrashCards from "../components/TrashCards.vue";
-import NavBarAll from "../components/NavBarAll.vue";
+import NavBarTrash from "../components/NavBarTrash.vue";
 import { ref, computed, onMounted, onBeforeMount, onBeforeUnmount } from "vue";
 import store from "../store/store.js";
 import axios from "axios";
@@ -96,7 +96,7 @@ export default {
     TrashBar,
     TrashCards,
     SideBar,
-    NavBarAll,
+    NavBarTrash,
   },
   setup() {
     onMounted(async () => {
