@@ -39,8 +39,12 @@
         </div>
       </div>
     </div>
-
-    <div v-if="true" class="navAndCont" id="cards">
+    <!-- store.state.allRecords.length != 0用以確認是否有會議記錄 -->
+    <div
+      v-if="store.state.allRecords.length != 0"
+      class="navAndCont"
+      id="cards"
+    >
       <div class="cards">
         <meeting-cards
           v-for="card in cards"
@@ -87,26 +91,12 @@ import { mapGetters } from "vuex";
 import axios from "axios";
 
 const router = useRouter();
-// const store = useStore();
-
-onMounted(async () => {
-  console.log("onMounted");
-  store.dispatch("fetchAllRecords");
-});
-
-const minuteExistMethod = () => {
-  let minuteExist = true;
-  if (store.state.allRecords.length != 0) {
-    minuteExist = true;
-  }
-  return minuteExist;
-};
-
 const cards = computed(() => store.getters.getAllRecords);
 
 onMounted(async () => {
   console.log("onMounted");
   // console.log("allRecords", store.getters.getAllRecords.length);
+  // await store.dispatch("fetchAllRecords");
   await store.dispatch("fetchAllRecords");
   console.log("cardsAll", cards);
 });
