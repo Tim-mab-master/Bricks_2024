@@ -39,6 +39,7 @@
         </div>
       </div>
     </div>
+
     <!-- store.state.allRecords.length != 0用以確認是否有會議記錄 -->
     <div
       v-if="store.state.allRecords.length != 0"
