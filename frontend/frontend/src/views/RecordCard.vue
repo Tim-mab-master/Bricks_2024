@@ -115,6 +115,7 @@ const close_terminate_confirm = () => {
   close_terminate.value = false;
   //把deleteConfirm改回false
   store.commit("setTerminateConfirm");
+  store.commit("setForeverDeleteRecord");
 };
 
 const open_delete_confirm = () => {
@@ -125,6 +126,7 @@ const close_delete_confirm = () => {
   close_delete.value = false;
   //把deleteConfirm改回false
   store.commit("setDeleteConfirm");
+  store.commit("setForeverDeleteRecord");
 };
 
 const confirm_terminate_button = () => {
@@ -209,7 +211,7 @@ const toRecord = async (cardID) => {
   border-radius: 14px;
   background-color: white;
   box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.4);
-  z-index: 6;
+  z-index: 12;
   left: calc((100vw - 344px + 234px) / 2);
   top: 35%;
 }
@@ -221,7 +223,7 @@ const toRecord = async (cardID) => {
   border-radius: 14px;
   background-color: white;
   box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.4);
-  z-index: 6;
+  z-index: 12;
   left: calc((100vw - 344px + 234px) / 2);
   top: 35%;
 }
