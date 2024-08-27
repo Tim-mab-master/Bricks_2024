@@ -162,7 +162,7 @@
         type="text"
         class="proj_info_name"
         v-model="proj_info_title"
-        disabled="disabled"
+        @change="rename(proj_info_title)"
       />
       <input
         type="text"
@@ -997,6 +997,23 @@ export default {
       this.proj_type = "未分類";
       this.proj_type_color = "black";
       this.add_proj_type_text = "";
+      const path = "http://35.201.168.185:5000/add_type";
+      const insert_type = {
+        project_id: this.proj_info_id,
+        project_type: this.proj_type,
+      };
+      axios
+        .post(path, insert_type, {
+          headers: {
+            authorization: JSON.parse(localStorage.getItem("auth")),
+          },
+        })
+        .then((res) => {
+          console.log(res);
+          setTimeout(() => {
+            this.$router.go(0);
+          }, 500);
+        });
     },
 
     // 修改專案 - 把專案類別修改到選取的類別
@@ -1005,6 +1022,24 @@ export default {
       this.proj_type = option;
       this.proj_type_color = "black";
       this.add_proj_type_text = "";
+      alert(option);
+      const path = "http://35.201.168.185:5000/add_type";
+      const insert_type = {
+        project_id: this.proj_info_id,
+        project_type: option,
+      };
+      axios
+        .post(path, insert_type, {
+          headers: {
+            authorization: JSON.parse(localStorage.getItem("auth")),
+          },
+        })
+        .then((res) => {
+          console.log(res);
+          setTimeout(() => {
+            this.$router.go(0);
+          }, 500);
+        });
     },
 
     // 新增專案彈窗裡的選擇專案類型直接打字輸入新的專案
@@ -1052,7 +1087,7 @@ export default {
       });
     },
 
-    //點擊進入專案、觀看專案資訊718/719
+    //點擊進入專案、觀看專案資訊
     ended_proj_info(index1, index2) {
       this.project_info_show = true;
       this.proj_info_type = "類型: " + this.ended_carts[index1].title_word;
@@ -1106,6 +1141,25 @@ export default {
         this.router.push({ name: "all" });
       }, 150);
       //測試印出project/id
+    },
+
+    rename(new_project_name) {
+      const path = "http://35.201.168.185:5000/edit_project_name";
+      const query = {
+        project_id: this.proj_info_id,
+        project_name: new_project_name,
+      };
+      axios
+        .post(path, query, {
+          headers: { authorization: JSON.parse(localStorage.getItem("auth")) },
+        })
+        .then((res) => {
+          console.log("修改名稱回復", res.data.message);
+          // 彈出已修改視窗
+          setTimeout(() => {
+            this.$router.go(0);
+          }, 500);
+        });
     },
 
     close_proj_info() {

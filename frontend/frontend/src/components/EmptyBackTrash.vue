@@ -4,7 +4,7 @@
       <el-empty
         :image-size="200"
         description="目前沒有會議記錄在垃圾桶"
-        :root="--el - empty - fill - color - 0"
+        :root="--el - empty - fill - color - 5"
       >
         <el-button id="addBtn" @click="addClicked">
           <div id="buttonContent">
