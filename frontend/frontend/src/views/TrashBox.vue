@@ -77,7 +77,7 @@
       </div>
     </div>
     <div v-else class="navAndCont" id="empty">
-      <empty-back class="content" @showAdd="show"></empty-back>
+      <empty-back-trash class="content" @showAdd="show"></empty-back-trash>
     </div>
   </div>
 </template>
@@ -87,7 +87,7 @@ import SideBar from "../components/SideBar.vue";
 import TrashBar from "../components/TrashBar.vue";
 import TrashCards from "../components/TrashCards.vue";
 import NavBarTrash from "../components/NavBarTrash.vue";
-import EmptyBack from "../components/EmptyBack.vue";
+import EmptyBackTrash from "../components/EmptyBackTrash.vue";
 import { ref, computed, onMounted, onBeforeMount, onBeforeUnmount } from "vue";
 import store from "../store/store.js";
 import axios from "axios";
@@ -101,7 +101,7 @@ export default {
     TrashCards,
     SideBar,
     NavBarTrash,
-    EmptyBack,
+    EmptyBackTrash,
   },
   setup() {
     onMounted(async () => {
@@ -303,6 +303,12 @@ export default {
   width: auto;
   top: 50px;
   right: 0;
+}
+
+.content {
+  position: absolute;
+  top: 20%;
+  left: 40%;
 }
 
 @media screen and (max-width: 1440px) and (min-width: 1024px) {
