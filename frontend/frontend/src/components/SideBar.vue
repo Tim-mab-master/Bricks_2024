@@ -154,9 +154,11 @@ export default {
 
     const terminate_project = () => {
       store.commit("setTerminateConfirm");
+      store.commit("setForeverDeleteRecord");
     };
 
     const delete_project = () => {
+      store.commit("setForeverDeleteRecord");
       store.commit("setDeleteConfirm");
     };
 
