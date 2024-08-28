@@ -18,7 +18,7 @@
             placeholder="請輸入內容"
             v-model="textValue"
             :disabled="isCartDisabled"
-            @keyup= "handleKeyup"
+            @keyup="handleKeyup"
           ></resize-textarea>
           <!-- 顯示鎖定、刪除文字區塊按鈕 -->
           <el-button class="edit_textButton" @click="show"
@@ -109,13 +109,13 @@ import {
   nextTick,
   computed,
   defineEmits,
-  watch
+  watch,
 } from "vue";
 import EditTextara from "./EditTextara.vue";
 import Unlock from "./Unlock.vue";
 import axios from "axios";
 import store from "../store/store";
-import debounce from 'lodash/debounce';
+import debounce from "lodash/debounce";
 
 const props = defineProps({
   isShowed: Boolean,
@@ -130,27 +130,31 @@ const emit = defineEmits(["add_cart", "deleteCart"]);
 const textValue = ref(props.content);
 
 const saveInput = debounce(async (value) => {
-      try {
-        await axios.post('http://35.201.168.185:5000/edit_textBox', { 
-          "textBox_id":blockNow.value.TextBox_id,
-          "textBox_content":textValue.value
-         },{
-          headers: {
+  try {
+    await axios.post(
+      "http://35.201.168.185:5000/edit_textBox",
+      {
+        textBox_id: blockNow.value.TextBox_id,
+        textBox_content: textValue.value,
+      },
+      {
+        headers: {
           authorization: JSON.parse(localStorage.getItem("auth")),
         },
-        });
-        console.log('Data saved:', textValue.value);
-        store.commit('setSaveMessage', "文字方塊變動已儲存");
-      } catch (error) {
-        console.error('Error saving data:', error);
-        store.commit('setSaveMessage', "文字方塊儲存失敗");
-      } finally {
-        // store.commit('setSaveMessage', "");
       }
-      console.log(store.getters.getSaveMessage);
-    }, 500); // 500 毫秒延遲
+    );
+    console.log("Data saved:", textValue.value);
+    store.commit("setSaveMessage", "文字方塊變動已儲存");
+  } catch (error) {
+    console.error("Error saving data:", error);
+    store.commit("setSaveMessage", "文字方塊儲存失敗");
+  } finally {
+    // store.commit('setSaveMessage', "");
+  }
+  console.log(store.getters.getSaveMessage);
+}, 500); // 500 毫秒延遲
 
-    // 處理 keyup 事件
+// 處理 keyup 事件
 const handleKeyup = (event) => {
   saveInput(textValue.value);
   // setTimeout(store.commit('setSaveMessage', ""), 1000)
@@ -161,7 +165,7 @@ const textarea1 = ref("");
 const inputVisible = ref(false);
 const inputValue = ref("");
 const tagArray = ref([]);
-const blockNow = computed(() => store.getters.getBlockNow)
+const blockNow = computed(() => store.getters.getBlockNow);
 
 const dynamicTags = computed(() => props.tags);
 const isShowed = ref(false);
@@ -178,50 +182,53 @@ const showHiddenTags = () => {
   window.removeEventListener("resize", calculateVisibleTags);
 };
 
-
 const calculateVisibleTags = () => {
   // nextTick(() => {
-    const container = document.querySelector(".tags");
-    if (!container) return;
+  const container = document.querySelector(".tags");
+  if (!container) return;
 
-    const containerWidth = container.clientWidth;
-    const tagWidth = 75;
-    const maxVisibleTags = Math.floor(containerWidth / tagWidth);
+  const containerWidth = container.clientWidth;
+  const tagWidth = 75;
+  const maxVisibleTags = Math.floor(containerWidth / tagWidth);
 
-    if(dynamicTags.value){
-      console.log("dynamicTags:", dynamicTags.value);
-      if (dynamicTags.value.length >= maxVisibleTags) {
-        visibleTags.value = dynamicTags.value.slice(0, maxVisibleTags);
-        hiddenTagCount.value = dynamicTags.value.length - visibleTags.value.length;
-      } else {
-        visibleTags.value = dynamicTags.value;
-        hiddenTagCount.value = 0;
-      }
+  if (dynamicTags.value) {
+    console.log("dynamicTags:", dynamicTags.value);
+    if (dynamicTags.value.length >= maxVisibleTags) {
+      visibleTags.value = dynamicTags.value.slice(0, maxVisibleTags);
+      hiddenTagCount.value =
+        dynamicTags.value.length - visibleTags.value.length;
+    } else {
+      visibleTags.value = dynamicTags.value;
+      hiddenTagCount.value = 0;
     }
-    console.log('visibleTag:', visibleTags.value);
-    console.log('hiddenTag:', hiddenTagCount.value);
+  }
+  console.log("visibleTag:", visibleTags.value);
+  console.log("hiddenTag:", hiddenTagCount.value);
   // })
-    
 };
 
 const handleClose = (tag) => {
   if (isCartDisabled.value == false) {
     // const index = dynamicTags.value.indexOf(tag);
     // if (index !== -1) {
-      // dynamicTags.value.splice(index, 1);
-      const deleteTag = {
-        "textBox_id": blockNow.value.TextBox_id,
-        "tag_id": (tag.Tag_id).toString(),
-      };
-      const response = axios.post("http://35.201.168.185:5000/delete_tag", deleteTag, {
+    // dynamicTags.value.splice(index, 1);
+    const deleteTag = {
+      textBox_id: blockNow.value.TextBox_id,
+      tag_id: tag.Tag_id.toString(),
+    };
+    const response = axios.post(
+      "http://35.201.168.185:5000/delete_tag",
+      deleteTag,
+      {
         headers: {
           authorization: JSON.parse(localStorage.getItem("auth")),
         },
-      })
-      console.log(response)
-    }
-    store.dispatch('fetchOneRecord');
-    calculateVisibleTags();
+      }
+    );
+    console.log(response);
+  }
+  store.dispatch("fetchOneRecord");
+  calculateVisibleTags();
   // }
 };
 
@@ -240,23 +247,26 @@ const handleInputConfirm = async () => {
     // dynamicTags.value.push(inputValue.value);
     // console.log("blockNow：",blockNow.value);
     const newTag = {
-        "textBox_id": blockNow.value.TextBox_id,
-        "tag_name": inputValue.value,
-        "tag_class": TagClass.value
-      }
-      const response = await axios.post("http://35.201.168.185:5000/add_tag",newTag,{
+      textBox_id: blockNow.value.TextBox_id,
+      tag_name: inputValue.value,
+      tag_class: TagClass.value,
+    };
+    const response = await axios.post(
+      "http://35.201.168.185:5000/add_tag",
+      newTag,
+      {
         headers: {
           authorization: JSON.parse(localStorage.getItem("auth")),
         },
-      })
-      console.log(response.message);
+      }
+    );
+    console.log(response.message);
   }
-  await store.dispatch('fetchOneRecord');
+  await store.dispatch("fetchOneRecord");
   inputVisible.value = false;
   inputValue.value = "";
   calculateVisibleTags();
   console.log(dynamicTags.value);
-  
 };
 
 const show = () => {
@@ -303,11 +313,12 @@ const add_cart = () => {
 
 onMounted(() => {
   calculateVisibleTags();
-  if(props.tags){
+  if (props.tags) {
     tagArray.value = props.tags.map((element) => element.Tag_name);
   }
   window.addEventListener("resize", calculateVisibleTags);
   document.addEventListener("click", handleClickOutside);
+  console.log("tags", visibleTags.value);
 });
 
 onUnmounted(() => {
