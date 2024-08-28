@@ -64,7 +64,7 @@
         </div>
       </div>
     </div>
-    <div v-if="cards._value != null" class="navAndCont" id="trash">
+    <div v-if="cards !== null" class="navAndCont" id="trash">
       <div class="cards">
         <trash-cards
           v-for="card in cards"
@@ -107,7 +107,7 @@ export default {
     onMounted(async () => {
       store.dispatch("fetchTrashRecords");
       console.log("allRecordsTrash", store.getters.getTrashRecords);
-      console.log(cards._value.length);
+      console.log(cards._value[0] == null);
     });
     const forever_delete_true = ref(false);
     const close_forever_delete = () => {
