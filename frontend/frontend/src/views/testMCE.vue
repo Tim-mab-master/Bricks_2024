@@ -4,7 +4,7 @@
 </template>
 
 <script setup>
-import TinycmeEditor from './tinymce.vue';
+// import TinycmeEditor from './tinymce.vue';
 import { reactive, ref, watch } from 'vue';
 
 const editorData = ref('<p>Content of the editor.</p>');

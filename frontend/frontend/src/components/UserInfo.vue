@@ -118,9 +118,12 @@ export default {
           if (action === 'confirm') {
             if (!form.email.match(/[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/)) {
               instance.message = '信箱格式不正確';
-            }else{
-              done();//回傳後端
-            }
+            } else {
+            // 调用 done 方法后继续执行
+            done(() => {
+              this.done(form);
+            });
+          }
           } else {
             done();
           }
@@ -144,8 +147,9 @@ export default {
         });
       });
     },
-    done(){
+    done(form){
     //呼叫後端api
+    console.log("done api")
         const edit_info = "http://35.201.168.185:5000/edit_info";
         const edited_info = {
           user_name: form.user_name,
