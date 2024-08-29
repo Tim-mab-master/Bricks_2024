@@ -71,7 +71,6 @@ export default {
             squareUrl: "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
         };
     },
-    // 個人資訊開頭
     methods:{
       log_out() {
         this.$confirm('確定登出專案？登出後需重新輸入帳號密碼才可登入', '是否登出', {
@@ -105,8 +104,8 @@ export default {
         });
       },
       editInfo() {
-        const EditInfoFormInstance = h(EditInfoForm);
-        
+      const EditInfoFormInstance = h(EditInfoForm);
+
       this.$msgbox({
         title: '修改個人檔案',
         message: EditInfoFormInstance,
@@ -116,57 +115,62 @@ export default {
         beforeClose: (action, instance, done) => {
           const form = EditInfoFormInstance.component.proxy;
           if (action === 'confirm') {
-            if (!form.email.match(/[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/)) {
+            if (!this.validateEmail(form.email)) {
+              console.log("信箱格式不正確")
               instance.message = '信箱格式不正確';
+              // done(false);
             } else {
-            // 调用 done 方法后继续执行
-            done(() => {
-              this.done(form);
-            });
-          }
+              this.submitForm(form);
+              done(() => {
+                console.log("修改中")
+              });
+            }
           } else {
             done();
           }
         }
-      }).then(() => {
-        const form = EditInfoFormInstance.component.proxy;
+      })
+      .then(() => {
         this.$message({
           type: 'success',
           message: '修改完成！'
         });
-
-        // 更新
-        console.log('Email:', form.email);
-        // console.log('Password:', form.password);
-        console.log('Name:', form.user_name);
-
-      }).catch(() => {
+      })
+      .catch(() => {
         this.$message({
           type: 'info',
           message: '取消修改'
         });
       });
     },
-    done(form){
-    //呼叫後端api
-    console.log("done api")
-        const edit_info = "http://35.201.168.185:5000/edit_info";
-        const edited_info = {
-          user_name: form.user_name,
-	        user_email: form.email,
+
+    validateEmail(email) {
+      const emailRegex = /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/;
+      return emailRegex.test(email);
+    },
+
+    submitForm(form) {
+      console.log("edit api")
+      const edit_info = "http://35.201.168.185:5000/edit_info";
+      const edited_info = {
+        user_name: form.user_name,
+        user_email: form.email,
+      };
+
+      axios.post(edit_info, edited_info, {
+        headers: { authorization: JSON.parse(localStorage.getItem("auth")) },
+      })
+      .then((res) => {
+        console.log("更改結果", res.data);
+        if (res.data.status === "success") {
+          console.log("更改個人資訊成功");
+        } else {
+          console.log("更改個人資訊失敗");
         }
-        axios
-        .post(edit_info, edited_info,{
-            headers: { authorization: JSON.parse(localStorage.getItem("auth")) },
-        })
-        .then((res) => {
-          console.log("更改結果",res.data)
-            if (res.data.status === "success"){
-                console.log("更改個人資訊成功") 
-            }else{
-              console.log("更改個人資訊失敗")
-            }
-        })
+      })
+      .catch((error) => {
+        console.error("API呼叫失敗", error);
+      });
     },
     mounted(){
         const show_info = "http://35.201.168.185:5000/show_info";
@@ -181,7 +185,7 @@ export default {
             }
         })
         .catch((error) => {
-          console.log("名字取得失敗",error)
+          console.log("名字或信箱取得失敗",error)
         })
     },
     // 個人資訊開頭
