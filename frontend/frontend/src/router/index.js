@@ -26,6 +26,11 @@ const routes = [
     component: () => import("../views/Calender.vue"),
   },
   {
+    path: "/testMCE",
+    name: "testMCE",
+    component: () => import("../views/testMCE.vue"),
+  },
+  {
     path: "/tim",
     name: "tim",
     component: () => import("../views/Tim.vue"),
