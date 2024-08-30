@@ -278,7 +278,7 @@ export default {
   border-radius: 15px;
 }
 .el-button{
-  border-radius: 20px;
+  border-radius: 15px  !important;
 }
 .el-message-box__title{
   text-align: center;    

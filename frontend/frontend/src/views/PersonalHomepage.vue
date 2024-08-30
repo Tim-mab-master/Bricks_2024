@@ -2781,8 +2781,10 @@ export default {
   border-color: #503131;
 }
 .box.selected {
-  background-color: #b82c30; /* 深色背景，替换为你希望的颜色 */
-  color: white; /* 文字颜色，确保可读性 */
+  background-color: #E1DCDC;
+  color: black;
+  border-color: #503131;
+
 }
 .cart_title_input {
   font-size: 16px;
