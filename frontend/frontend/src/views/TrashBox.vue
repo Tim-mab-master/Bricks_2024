@@ -1,7 +1,5 @@
 <template>
   <div>
-    <!-- <side-bar></side-bar>
-    <nav-bar-all class="navBar"></nav-bar-all> -->
     <div class="terminate_confirm" v-if="close_terminate">
       <div
         class="close_terminate_delete_confirm"
