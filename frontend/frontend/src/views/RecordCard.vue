@@ -40,8 +40,7 @@
       </div>
     </div>
 
-    <!-- 個人資訊開頭 -->
-    <div v-if="minuteExistMethod" class="navAndCont" id="cards">
+    <div v-if="true" class="navAndCont" id="cards">
       <div class="cards">
         <meeting-cards
           v-for="card in cards"
@@ -53,7 +52,6 @@
           >card</meeting-cards
         >
       </div>
-      <!-- 個人資訊結尾 -->
 
       <div v-if="false" class="cover">
         <div></div>
@@ -74,7 +72,15 @@ import EmptyBack from "../components/EmptyBack.vue";
 import NavBarAll from "../components/NavBarAll.vue";
 import SideBar from "../components/SideBar.vue";
 import MeetingCards from "../components/MeetingCards.vue";
-import { ref, computed, onMounted } from "vue";
+import {
+  ref,
+  computed,
+  onMounted,
+  onBeforeMount,
+  onBeforeUnmount,
+  watch,
+  onUnmounted,
+} from "vue";
 import { useRouter } from "vue-router";
 import store from "../store/store.js";
 import { mapGetters } from "vuex";
@@ -83,22 +89,27 @@ import axios from "axios";
 const router = useRouter();
 // const store = useStore();
 
+onMounted(async () => {
+  console.log("onMounted");
+  store.dispatch("fetchAllRecords");
+});
+
 const minuteExistMethod = () => {
+  let minuteExist = true;
   if (store.state.allRecords.length != 0) {
     minuteExist = true;
   }
-  console.log("min", minuteExist, "結束");
   return minuteExist;
 };
 
+const cards = computed(() => store.getters.getAllRecords);
+
 onMounted(async () => {
   console.log("onMounted");
-  console.log("allRecords", store.getters.getAllRecords.length);
-  store.dispatch("fetchAllRecords");
+  // console.log("allRecords", store.getters.getAllRecords.length);
+  await store.dispatch("fetchAllRecords");
   console.log("cardsAll", cards);
 });
-
-const cards = computed(() => store.getters.getAllRecords);
 
 const activeOption = ref(0);
 
@@ -178,7 +189,7 @@ store.subscribe((mutation, state) => {
 const toRecord = async (cardID) => {
   store.commit("setRecordID", cardID); // 等後端回傳
   await store.dispatch("fetchOneRecord");
-  await store.dispatch("fetchAllTags");
+  // await store.dispatch('fetchAllTags');
   router.push("cards/meetingRecord");
 };
 </script>

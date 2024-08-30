@@ -33,7 +33,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from "vue";
+import { computed, ref, onMounted } from "vue";
 // import axios from "axios";
 import SideBar from "../components/SideBar.vue";
 import NavBarMain from "../components/NavBarMain.vue";
@@ -80,6 +80,10 @@ const add_block = (block) => {
   // console.log(store.state.records.blockNow);
   store.dispatch("addBlock");
 };
+
+onMounted(() => {
+  store.dispatch('fetchOneRecord');
+})
 
 </script>
 

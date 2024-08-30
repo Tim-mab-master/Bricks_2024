@@ -24,28 +24,23 @@
         />
       </div>
     </div>
-    <div class="result" v-else>
-      <div class="toolBar">
-        <ordering />
-        <sort />
-      </div>
-      <document-with-info v-for="item in 10" :key="item" />
+    <div v-else>
+      <tag-search-content class="searchResult"></tag-search-content>
     </div>
   </div>
+    
 </template>
 
 <script setup>
-import { computed, ref } from "vue";
+import { computed, ref, onUnmounted } from "vue";
 // import axios from "axios";
 import SideBar from "../components/SideBar.vue";
 import NavBarMain from "../components/NavBarMain.vue";
+import TagSearchContent from "@/components/TagSearchContent.vue";
 import meeting from "../components/meeting.vue";
 import TextBlock from "@/components/TextBlock.vue";
 import TagPlace from "../components/TagPlace.vue";
 import { useRouter } from "vue-router";
-import Ordering from "../components/SharonBricks/Ordering.vue";
-import sort from "../components/SharonBricks/Sort.vue";
-import DocumentWithInfo from "@/components/KerwinBricks/DCMwithDate.vue";
 import axios from "axios";
 import store from "../store/store.js";
 import { onMounted } from "vue";
@@ -65,13 +60,15 @@ const reload = (value) => {
 };
 
 const deleteCart = async (block) => {
-  store.commit("setBlockNow", block);
+  await store.commit("setBlockNow", block);
+  console.log("blockNow:",store.state.blockNow);
   // console.log(store.state.records.blockNow);
   store.dispatch("deleteBlock");
 };
 
 const showInfo = (value) => {
   showedInfo.value = value;
+
 };
 
 const setBlockNow = (block) => {
@@ -87,10 +84,14 @@ const showBtn = () => {
 };
 
 onMounted(async () => {
-  store.dispatch("fetchOneRecords");
-  await store.dispatch("fetchAllTags");
+  // store.dispatch("fetchOneRecords");
+  // await store.dispatch("fetchAllTags");
   console.log("文字方塊是長這樣", blocks.value);
 });
+
+onUnmounted(() =>{
+  store.commit("resetRecord");
+})
 </script>
 
 <style scoped>
@@ -145,10 +146,6 @@ onMounted(async () => {
   margin-bottom: 20px;
   left: 10%;
   width: calc(100vw - 200px - 15%);
-  /* background-color: #F2F3F5; */
-  /* width:200px;  */
-  /* right:0; */
-  /* width: auto; */
   padding-bottom: 10px;
   background-color: none;
 }
@@ -159,22 +156,6 @@ onMounted(async () => {
   /* right: 430px; */
   left: 66px;
 }
-
-.result {
-  position: absolute;
-  display: grid;
-  /* flex-direction: row; */
-  /* flex-wrap: wrap; */
-  row-gap: 8px;
-  top: 20px;
-  /* margin-top: 128px; */
-  /* width: 572px; */
-  left: 46px;
-}
-
-/* .backtop{
-    position: fixed;
- } */
 
 #backtop {
   background-color: var(--el-bg-color-overlay);
@@ -205,6 +186,9 @@ onMounted(async () => {
   right: 32px;
   /* top: 68px; */
   z-index: 5;
+}
+.searchResult{
+  left: 10%;
 }
 
 @media screen and (min-width: 1024px) and (max-width: 1440px) {

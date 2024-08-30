@@ -1,15 +1,17 @@
+//
 <template>
-    <tinycme-editor v-model="editorData"></tinycme-editor>
-    jss
+  <!-- <tinycme-editor v-model="editorData"></tinycme-editor> // jss  -->
 </template>
 
+//
 <script setup>
-// import TinycmeEditor from './tinymce.vue';
-import { reactive, ref, watch } from 'vue';
+// // import TinycmeEditor from './tinymce.vue';
+// import { reactive, ref, watch } from 'vue';
 
-const editorData = ref('<p>Content of the editor.</p>');
+// const editorData = ref('<p>Content of the editor.</p>');
 
-watch(editorData, (newValue) => {
-console.log(newValue);
-});
+// watch(editorData, (newValue) => {
+// console.log(newValue);
+// });
+//
 </script>

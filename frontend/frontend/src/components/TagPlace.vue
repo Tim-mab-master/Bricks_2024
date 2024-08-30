@@ -23,6 +23,7 @@ export default {
         }
         const showInfo = (value) =>{
           emit('show', value);
+
         }
         return{
             showTags,

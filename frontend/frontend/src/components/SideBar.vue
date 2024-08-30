@@ -1,5 +1,7 @@
 <template>
   <div id="sidebar">
+    <div class="shadow" v-if="shadowOn"></div>
+
     <div id="container">
       <div id="title" @click="menu_clicked">
         <el-icon id="logo" :color="incolor"><elementPlus /></el-icon>
@@ -30,8 +32,8 @@
                   <span>會議紀錄</span>
                 </template>
                 <el-menu-item index="1-1"
-                  ><router-link to="/all/cards" class="menuText" @click = "click"
-                    >全部</router-link
+                  ><router-link to="/all/cards" class="menuText"
+                    >總覽</router-link
                   ></el-menu-item
                 >
                 <el-menu-item index="1-2"
@@ -71,7 +73,7 @@
 </template>
 
 <script>
-import { computed, ref } from "vue";
+import { computed, onUnmounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 import store from "../store/store.js";
@@ -85,9 +87,9 @@ export default {
 
   setup(props, { emit }) {
     const active_color = ref("#fff");
-
+    let shadowOn = ref(false);
     //專案名稱
-    const project_name = computed(() => store.state.projectName);
+    const project_name = computed(() => store.getters.getProjectName);
     const incolor = "#C91F2F";
     const activeOption = ref(null);
     const isClicked = ref(false);
@@ -101,6 +103,10 @@ export default {
       active_color.value = "#FAE4E7";
     };
 
+    // onUnmounted(() => {
+    //   store.commit("setProjectName", store.getters.getProjectName);
+    // });
+
     // 提供父元件選擇的改變
     const selectedItem = (index) => {
       activeOption.value = index;
@@ -108,7 +114,7 @@ export default {
     };
 
     // 提供父元件點擊事件
-    const addClicked = (value) => {
+    const addClicked = async (value) => {
       const date = new Date();
 
       // 獲取年份、月份和日期
@@ -123,7 +129,7 @@ export default {
         project_id: JSON.parse(localStorage.getItem("projectID")),
         record_date: formattedDate,
       };
-      const response = axios.post(
+      const response = await axios.post(
         "http://35.201.168.185:5000/add_record",
         body,
         {
@@ -133,12 +139,13 @@ export default {
         }
       );
       value = true;
-      store.commit("setNewRecord", response);
+      store.commit("resetRecord");
+      await store.commit("setRecordID", response.data.record_id);
       router.push({ name: "newRecord" });
     };
 
-    const click = () =>{
-      store.dispatch('fetchOneRecord');
+    const click = () => {
+      // store.dispatch('fetchAllRecord');
     };
 
     const selected = () => {
@@ -152,6 +159,23 @@ export default {
     const delete_project = () => {
       store.commit("setDeleteConfirm");
     };
+
+    //監控"永久刪除會議記錄"被點擊，跳出背景陰影
+    store.subscribe((mutation, state) => {
+      if (mutation.type === "setForeverDeleteRecord") {
+        if (store.getters.getForeverDeleteRecord === true) {
+          shadowOn.value = true;
+        }
+      }
+    });
+    //監控"關閉永久刪除會議記錄視窗"被點擊，關閉
+    store.subscribe((mutation, state) => {
+      if (mutation.type === "setForeverDeleteRecord") {
+        if (store.getters.getForeverDeleteRecord === false) {
+          shadowOn.value = false;
+        }
+      }
+    });
 
     return {
       project_name,
@@ -169,13 +193,25 @@ export default {
       selected,
       terminate_project,
       delete_project,
-      click
+      shadowOn,
+      click,
     };
   },
 };
 </script>
 
 <style scoped>
+.shadow {
+  position: absolute;
+  top: 0;
+  /* left: -100; */
+  width: 100.5%;
+  height: 100%;
+  background-color: grey;
+  z-index: 10;
+  opacity: 0.7;
+}
+
 #sidebar {
   z-index: 100;
   display: flex;

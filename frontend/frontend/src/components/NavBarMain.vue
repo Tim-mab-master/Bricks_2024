@@ -6,6 +6,11 @@
             <el-breadcrumb-item id="now">全部</el-breadcrumb-item>
             </el-breadcrumb>
         </div>
+        <transition name="ease">
+            <div class="save">
+                <span>{{ savedMessage }}</span>
+            </div>
+        </transition>
         <div id="meetingName">
             <input type="text" id="name" placeholder="未命名會議紀錄" :value="meetingName" :readonly="readOnly" ref="meetingInput" @keydown.enter="saveEdit">
             <el-icon id="edit" @click="edit"><edit-pen/></el-icon>
@@ -27,7 +32,7 @@ import UserInfo from './UserInfo.vue';
 import SearchBar from './SearchBar.vue';
 import NotificationMenu from './NotificationMenu.vue';
 import { useStore } from 'vuex';
-import { ref, watchEffect, onBeforeMount, computed } from 'vue';
+import { ref, watch, onBeforeMount, computed } from 'vue';
 import store from '../store/store';
 import axios from 'axios';
 export default {
@@ -40,25 +45,22 @@ export default {
     setup(props, {emit}){
         const meetingName = computed(() => store.state.meetingName)
         const readOnly = ref(true);
+        const saved = computed(() => store.state.isMeetingSaved)
+        const savedMessage = computed(() => store.getters.getSaveMessage)
         const edit = () =>{
             readOnly.value = false;
-            // if (!readOnly.value) {
-            //     this.refs.meetingInput.focus();
-            // }
         }
         const saveEdit = () =>{
             readOnly.value = true;
             store.commit('setName', meetingName);
         }
-        // onBeforeMount(() => {
-        //     meetingName.value = store.state.
-        // })
         
         return{
             readOnly,
             edit,
             saveEdit,
             meetingName,
+            savedMessage,
         };
     }
 }
@@ -82,9 +84,24 @@ export default {
         box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.12);
     }
 
+    .save{
+        /* display: flex; */
+        font-size: 12px;
+        width: auto;
+        float: left;
+        left: -40px;
+    }
+
+    .fade-enter-active, .fade-leave-active {
+        transition: opacity 0.5s;
+    }
+    .fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
+        opacity: 0;
+    }
     #breadCrumb{
         display: flex;
         position: absolute;
+        float: left;
         left: 0;
         top: 0;
         padding: 12px 0 12px 16px;
@@ -110,7 +127,7 @@ export default {
         justify-content: center;
         align-items: center;
         /* position: absolute; */
-        margin-left: 30%;
+        /* margin-left: 30%; */
     }
 
     #meetingName #edit{
