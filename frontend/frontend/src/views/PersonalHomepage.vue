@@ -12,6 +12,7 @@
           @keyup="keyboardEvent"
           @blur="clear_search_bar"
         />
+        
         <!-- show_his_search_list是壞分子，讓his_search_choosen -->
         <div class="his_search_list" v-show="show_his_search_list">
           <div
@@ -48,16 +49,23 @@
             </li>
           </ul>
         </div>
+        
         <div class="clear_search" @click="clear_search_bar"></div>
-
+        
         <img src="../assets/search.svg" alt="" class="search" />
         <img src="../assets/Notice/Notice_Default.svg" alt="" class="notice" />
-        <img
+        <user-info :user_name="user_name" class="profile" id="userInfo" ></user-info>
+        <!-- <router-view></router-view> -->
+        <!-- <img
           src="../assets/Profile/Profile_Default.svg"
           alt=""
-          class="profile"
-        />
+          class="profile" 
+        /> -->
+      
+        
+        
       </div>
+      
     </div>
     <div class="left_bar">
       <div class="add_btn" @click="add_btn">新增專案</div>
@@ -71,8 +79,10 @@
           value="option1"
           v-model="selectOption"
         />
+
         <label for="overview" @click="change(1)">專案總覽</label>
         <img src="../assets/icon/icon_file.svg" style="top: 26px" />
+        
         <input
           type="radio"
           id="over"
@@ -94,6 +104,7 @@
         <label for="trash" @click="change(3)">垃圾桶</label>
         <img src="../assets/icon/icon_trashcan.svg" style="top: 178px" />
       </div>
+        
     </div>
     <div class="add_proj_box" v-show="add_proj_show">
       <div
@@ -103,6 +114,7 @@
           close_add_proj();
         "
       ></div>
+      
       <p class="add_proj_title">新增專案</p>
       <div class="add_proj_pic">
         <img src="../assets/add_proj_pic_plus.svg" class="add_proj_pic_plus" />
@@ -495,6 +507,7 @@
                   style="cursor: pointer"
                   @click="forever_delete_project"
                 />
+                <!-- 近 30 天 -->
                 <div class="box_container">
                   <div
                     v-for="(cart, index1) in trash_carts_in_month"
@@ -504,7 +517,8 @@
                       class="box"
                       v-for="(proj, index2) in cart.proj_box"
                       :key="index2"
-                      @click="click_trash_project(index2, index1)"
+                      @click="click_trash_project_in_month(index2, index1)"
+                      :class="{ selected: isSelected_in_month(index1, index2) }" 
                     >
                       {{ proj.proj_name }}
                     </div>
@@ -523,7 +537,8 @@
                       class="box"
                       v-for="(proj, index2) in cart.proj_box"
                       :key="index2"
-                      @click="click_trash_project(index2, index1)"
+                      @click="click_trash_project_not_in_month(index2, index1)"
+                      :class="{ selected: isSelected_not_in_month(index1, index2) }" 
                     >
                       {{ proj.proj_name }}
                     </div>
@@ -598,9 +613,20 @@
       </div>
     </div>
   </div>
+  <tinycme-editor v-model="editorData"></tinycme-editor>
 </template>
 
 <script>
+import UserInfo from '../components/UserInfo.vue';
+import TinycmeEditor from '../components/tinymce.vue';
+import { reactive, ref, watch } from 'vue';
+
+// const editorData = ref('<p>Content of the editor.</p>');
+
+// watch(editorData, (newValue) => {
+//   console.log(newValue);
+// });
+
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import axios from "axios";
@@ -609,9 +635,16 @@ import { useRoute } from "vue-router";
 import store from "../store/store.js";
 export default {
   name: "Personal_homepage",
-
+  components: { UserInfo },
+  props: {
+    user_name: {
+      type: String,
+      required: true,
+    },
+  },
   data() {
     return {
+      user_name: "",
       middle_show_overview_page: true,
       middle_show_over_page: false,
       middle_show_trash_page: false,
@@ -697,8 +730,10 @@ export default {
       proj_info_type: "",
       proj_info_id: 0,
       router: useRouter(),
-      // store: useStore(),
-      store: store,
+      store: useStore(),
+      //存多個選中的專案,30天,1年內
+      selectedProjectsInMonth: [],
+      selectedProjectsNotInMonth: [],
     };
   },
   methods: {
@@ -1385,13 +1420,37 @@ export default {
           }
         });
     },
+    click_trash_project_in_month(projectIndex, cartIndex) {
+      // 使用唯一标识符跟踪选中的 box
+      const identifier = `${cartIndex}-${projectIndex}`;
 
-    click_trash_project(projectIndex, cartIndex) {
-      this.currentCartIndex = cartIndex;
-      this.currentProjectIndex = projectIndex;
-      console.log("currentCartIndex", this.currentCartIndex);
-      console.log("urrentProjectIndex", this.currentProjectIndex);
+      // 切換有選中或沒選中
+      if (this.selectedProjectsInMonth.includes(identifier)) {
+        this.selectedProjectsInMonth = this.selectedProjectsInMonth.filter(item => item !== identifier);
+      } else {
+        this.selectedProjectsInMonth.push(identifier);
+      }
+      console.log(this.selectedProjectsInMonth)
     },
+    isSelected_in_month(cartIndex, projectIndex) {
+      return this.selectedProjectsInMonth.includes(`${cartIndex}-${projectIndex}`);
+    },
+    click_trash_project_not_in_month(projectIndex, cartIndex) {
+      // 使用唯一标识符跟踪选中的 box
+      const identifier = `${cartIndex}-${projectIndex}`;
+
+      // 切換有選中或沒選中
+      if (this.selectedProjectsNotInMonth.includes(identifier)) {
+        this.selectedProjectsNotInMonth = this.selectedProjectsNotInMonth.filter(item => item !== identifier);
+      } else {
+        this.selectedProjectsNotInMonth.push(identifier);
+      }
+      console.log(this.selectedProjectsNotInMonth)
+    },
+    isSelected_not_in_month(cartIndex, projectIndex) {
+      return this.selectedProjectsNotInMonth.includes(`${cartIndex}-${projectIndex}`);
+    },
+
     //刪除後的專案跑到垃圾桶
     delete_project_ing() {
       console.log("this.currentCartIndex", this.currentCartIndex); //第幾個cart
@@ -1506,57 +1565,69 @@ export default {
         this.trashcan = false;
       }
     },
+
+    //個人資訊開頭
+
     // 垃圾桶點擊還原專案
     recover_project() {
-      // this.recovered = true;
-      // setTimeout(() => {
-      //   this.recovered = false;
-      // }, 1000);
-      // this.recover = true;
-      // this.trashcan = true;
-
       let projectIds = [];
+      // 遍歷所有選中的專案30天內
+    this.selectedProjectsInMonth.forEach(identifier => {
+    // 解析 cartIndex 和 projectIndex
+    const [cartIndex, projectIndex] = identifier.split('-').map(Number);
+    const projectName = this.trash_carts_in_month[cartIndex]?.proj_box[projectIndex]?.proj_name;
 
-      // 遍歷所有選中的專案
-      this.selectedProjects.forEach((cartIndex) => {
-        console.log("cartIndex", cartIndex);
-        let projectName =
-          this.trash_carts_in_month[cartIndex].proj_box[
-            this.currentProjectIndex
-          ].proj_name;
-        console.log("projectName", projectName);
-        this.all_proj.forEach((project) => {
-          if (project.project_name === projectName) {
-            projectIds.push(project.id);
+    if (projectName) {
+      console.log("Project Name (In Month):", projectName);
+      this.all_proj.forEach(project => {
+        if (project.project_name === projectName) {
+          projectIds.push(project.id);
+        }
+      });
+    } else {
+      console.error("找不到 (In Month)");
+    }
+  });
+  // 處理近一年的專案
+  this.selectedProjectsNotInMonth.forEach(identifier => {
+    const [cartIndex, projectIndex] = identifier.split('-').map(Number);
+    const projectName = this.trash_carts_not_in_month[cartIndex]?.proj_box[projectIndex]?.proj_name;
+
+    if (projectName) {
+      console.log("Project Name (Not In Month):", projectName);
+      this.all_proj.forEach(project => {
+        if (project.project_name === projectName) {
+          projectIds.push(project.id);
+        }
+      });
+    } else {
+      console.error("找不到 (Not In Month)");
+    }
+  });
+      projectIds.forEach((projectId) =>{
+      const path = "http://35.201.168.185:5000/trashcan_recover";
+      const delete_record_permanent = {
+        project_id: projectId,
+      };
+      axios
+        .post(path, delete_record_permanent, {
+          headers: { authorization: JSON.parse(localStorage.getItem("auth")) },
+        })
+        .then((res) => {
+          if (res.data.status === "success") {
+            console.log("Projects deleted successfully");
+            setTimeout(() => {
+              this.$router.go(0);
+            }, 500);
+          } else {
+            console.error("刪除專案失敗");
           }
+        })
+        .catch((error) => {
+          console.error("API呼叫失敗", error);
         });
-      });
-      projectIds.forEach((projectId) => {
-        const path = "http://35.201.168.185:5000/trashcan_recover";
-        const delete_record_permanent = {
-          project_id: projectId,
-        };
-        axios
-          .post(path, delete_record_permanent, {
-            headers: {
-              authorization: JSON.parse(localStorage.getItem("auth")),
-            },
-          })
-          .then((res) => {
-            if (res.data.status === "success") {
-              console.log("Projects deleted successfully");
-              setTimeout(() => {
-                this.$router.go(0);
-              }, 500);
-            } else {
-              console.error("刪除專案失敗");
-            }
-          })
-          .catch((error) => {
-            console.error("API呼叫失敗", error);
-          });
-      });
-      //個人資訊開頭
+    })
+     //個人資訊開頭
     },
     // 垃圾桶點選永久刪除
     forever_delete_project() {
@@ -1569,25 +1640,44 @@ export default {
       this.showOverlay_trash = false;
     },
 
-    //個人資訊開頭
+     //個人資訊開頭
 
-    forever_delete() {
+    forever_delete(){
       let projectIds = [];
 
-      // 遍歷所有選中的專案
-      this.selectedProjects.forEach((cartIndex) => {
-        console.log("cartIndex", cartIndex);
-        let projectName =
-          this.trash_carts_in_month[cartIndex].proj_box[
-            this.currentProjectIndex
-          ].proj_name;
-        console.log("projectName", projectName);
-        this.all_proj.forEach((project) => {
-          if (project.project_name === projectName) {
-            projectIds.push(project.id);
-          }
-        });
+    // 遍歷所有選中的專案30天內
+    this.selectedProjectsInMonth.forEach(identifier => {
+    // 解析 cartIndex 和 projectIndex
+    const [cartIndex, projectIndex] = identifier.split('-').map(Number);
+    const projectName = this.trash_carts_in_month[cartIndex]?.proj_box[projectIndex]?.proj_name;
+
+    if (projectName) {
+      console.log("Project Name (In Month):", projectName);
+      this.all_proj.forEach(project => {
+        if (project.project_name === projectName) {
+          projectIds.push(project.id);
+        }
       });
+    } else {
+      console.error("找不到 (In Month)");
+    }
+  });
+  // 處理近一年的專案
+  this.selectedProjectsNotInMonth.forEach(identifier => {
+    const [cartIndex, projectIndex] = identifier.split('-').map(Number);
+    const projectName = this.trash_carts_not_in_month[cartIndex]?.proj_box[projectIndex]?.proj_name;
+
+    if (projectName) {
+      console.log("Project Name (Not In Month):", projectName);
+      this.all_proj.forEach(project => {
+        if (project.project_name === projectName) {
+          projectIds.push(project.id);
+        }
+      });
+    } else {
+      console.error("找不到 (Not In Month)");
+    }
+  });
 
       // 永久刪除專案
 
@@ -1676,6 +1766,20 @@ export default {
     },
   },
   mounted() {
+    const show_info = "http://35.201.168.185:5000/show_info";
+    axios
+        .post(show_info, null,{
+            headers: { authorization: JSON.parse(localStorage.getItem("auth")) },
+        })
+        .then((res) => {
+            if (res.data.status === "success"){
+                this.user_name = res.data.user_info.user_name;
+                console.log("user_name",this.user_name)
+            }
+        })
+        .catch((error) => {
+          console.log("名字取得失敗",error)
+        })
     window.addEventListener("click", this.handleClickOutside);
     const path = "http://35.201.168.185:5000/project_index";
     const get_proj = {
@@ -1847,6 +1951,7 @@ export default {
           });
         }
       });
+
   },
   beforeUnmount() {
     window.removeEventListener("click", this.handleClickOutside);
@@ -1995,20 +2100,15 @@ export default {
 }
 
 .profile {
+  top:-11px;
   position: absolute;
-  right: 0px;
+  right: -25px;
   cursor: pointer;
   -webkit-user-drag: none;
   user-select: none;
 }
 
-.profile:hover {
-  content: url(../assets/Profile/Profile_Hover.svg);
-}
 
-.profile:active {
-  content: url(../assets/Profile/Profile_Active.svg);
-}
 
 /* navigation bar的部分 終點 */
 
@@ -2728,13 +2828,17 @@ export default {
   letter-spacing: 1.25px;
   text-indent: 69.67px;
   user-select: none;
+  
 }
 .box:hover {
   background-color: #e1dcdc;
-  border-color: #c7c2c2;
+  border-color: #503131;
 }
 .box.selected {
-  background-color: #e1dcdc;
+  background-color: #E1DCDC;
+  color: black;
+  border-color: #503131;
+
 }
 .cart_title_input {
   font-size: 16px;
@@ -3135,8 +3239,10 @@ export default {
   left: 92%;
 }
 
-router-link {
+.router-link {
   color: black;
 }
 /* 垃圾桶的部分 終點 */
+
+
 </style>

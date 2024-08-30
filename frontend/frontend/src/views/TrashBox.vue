@@ -1,8 +1,5 @@
 <template>
   <div>
-    <side-bar></side-bar>
-    <nav-bar-trash class="navBar"></nav-bar-trash>
-
     <div class="terminate_confirm" v-if="close_terminate">
       <div
         class="close_terminate_delete_confirm"
