@@ -154,9 +154,11 @@ export default {
 
     const terminate_project = () => {
       store.commit("setTerminateConfirm");
+      store.commit("setForeverDeleteRecord");
     };
 
     const delete_project = () => {
+      store.commit("setForeverDeleteRecord");
       store.commit("setDeleteConfirm");
     };
 
@@ -236,7 +238,7 @@ export default {
 
 #title {
   display: flex;
-  width: 100%;
+  width: 83%;
   padding: 0px 16px;
   justify-content: left;
   align-items: center;
@@ -301,7 +303,7 @@ export default {
   font-style: normal;
   font-weight: 400;
   line-height: 24px;
-  widows: 100%;
+  width: 100%;
   /* border: 2px solid black; */
 }
 

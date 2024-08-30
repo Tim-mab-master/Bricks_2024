@@ -61,8 +61,7 @@
         </div>
       </div>
     </div>
-    <div class="navAndCont" id="trash">
-      <trash-bar class="navBar"></trash-bar>
+    <div v-if="cards !== null" class="navAndCont" id="trash">
       <div class="cards">
         <trash-cards
           v-for="card in cards"
@@ -74,6 +73,9 @@
         >
       </div>
     </div>
+    <div v-else class="navAndCont" id="empty">
+      <empty-back-trash class="content" @showAdd="show"></empty-back-trash>
+    </div>
   </div>
 </template>
 
@@ -81,7 +83,8 @@
 import SideBar from "../components/SideBar.vue";
 import TrashBar from "../components/TrashBar.vue";
 import TrashCards from "../components/TrashCards.vue";
-import NavBarAll from "../components/NavBarAll.vue";
+import NavBarTrash from "../components/NavBarTrash.vue";
+import EmptyBackTrash from "../components/EmptyBackTrash.vue";
 import { ref, computed, onMounted, onBeforeMount, onBeforeUnmount } from "vue";
 import store from "../store/store.js";
 import axios from "axios";
@@ -94,12 +97,14 @@ export default {
     TrashBar,
     TrashCards,
     SideBar,
-    NavBarAll,
+    NavBarTrash,
+    EmptyBackTrash,
   },
   setup() {
     onMounted(async () => {
       store.dispatch("fetchTrashRecords");
       console.log("allRecordsTrash", store.getters.getTrashRecords);
+      console.log(cards._value[0] == null);
     });
     const forever_delete_true = ref(false);
     const close_forever_delete = () => {
@@ -295,6 +300,12 @@ export default {
   width: auto;
   top: 50px;
   right: 0;
+}
+
+.content {
+  position: absolute;
+  top: 20%;
+  left: 40%;
 }
 
 @media screen and (max-width: 1440px) and (min-width: 1024px) {
