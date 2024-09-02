@@ -5,7 +5,7 @@
         <span class="el-dropdown-link">
             <div id="userInfo">
                 <el-avatar shape="square" :size="size" :src=squareUrl id="avatar" />
-                <p>{{ user_name }}</p>
+                <!-- <p>{{ user_name }}</p> -->
             </div>
         </span>
         <template  #dropdown >
@@ -286,6 +286,12 @@ export default {
 }
 .material-icons {
   font-size: 18px;
+}
+
+.el-input__wrapper{
+
+  border-radius: 15px  !important;
+
 }
 @media screen and (max-width: 1440px) and (min-width: 1240px) {
   /* #userInfoInside, .firstDrop, .dropDown, .userInfo, .firstDrop, #dropDown{
