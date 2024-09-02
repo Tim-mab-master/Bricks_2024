@@ -40,8 +40,12 @@
       </div>
     </div>
 
-    <!-- 個人資訊開頭 -->
-    <div v-if="minuteExistMethod" class="navAndCont" id="cards">
+    <!-- store.state.allRecords.length != 0用以確認是否有會議記錄 -->
+    <div
+      v-if="store.state.allRecords.length != 0"
+      class="navAndCont"
+      id="cards"
+    >
       <div class="cards">
         <meeting-cards
           v-for="card in cards"
@@ -53,7 +57,6 @@
           >card</meeting-cards
         >
       </div>
-      <!-- 個人資訊結尾 -->
 
       <div v-if="false" class="cover">
         <div></div>
@@ -74,33 +77,30 @@ import EmptyBack from "../components/EmptyBack.vue";
 import NavBarAll from "../components/NavBarAll.vue";
 import SideBar from "../components/SideBar.vue";
 import MeetingCards from "../components/MeetingCards.vue";
-import { ref, computed, onMounted } from "vue";
+import {
+  ref,
+  computed,
+  onMounted,
+  onBeforeMount,
+  onBeforeUnmount,
+  watch,
+  onUnmounted,
+} from "vue";
 import { useRouter } from "vue-router";
 import store from "../store/store.js";
 import { mapGetters } from "vuex";
 import axios from "axios";
 
 const router = useRouter();
-// const store = useStore();
-
-const minuteExistMethod = () => {
-  if (store.state.allRecords.length != 0) {
-    minuteExist = true;
-  }
-  console.log("min", minuteExist, "結束");
-  return minuteExist;
-};
-
 const cards = computed(() => store.getters.getAllRecords);
 
 onMounted(async () => {
   console.log("onMounted");
   // console.log("allRecords", store.getters.getAllRecords.length);
+  // await store.dispatch("fetchAllRecords");
   await store.dispatch("fetchAllRecords");
   console.log("cardsAll", cards);
 });
-
-
 
 const activeOption = ref(0);
 
@@ -116,6 +116,7 @@ const close_terminate_confirm = () => {
   close_terminate.value = false;
   //把deleteConfirm改回false
   store.commit("setTerminateConfirm");
+  store.commit("setForeverDeleteRecord");
 };
 
 const open_delete_confirm = () => {
@@ -126,6 +127,7 @@ const close_delete_confirm = () => {
   close_delete.value = false;
   //把deleteConfirm改回false
   store.commit("setDeleteConfirm");
+  store.commit("setForeverDeleteRecord");
 };
 
 const confirm_terminate_button = () => {
@@ -210,7 +212,7 @@ const toRecord = async (cardID) => {
   border-radius: 14px;
   background-color: white;
   box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.4);
-  z-index: 6;
+  z-index: 12;
   left: calc((100vw - 344px + 234px) / 2);
   top: 35%;
 }
@@ -222,7 +224,7 @@ const toRecord = async (cardID) => {
   border-radius: 14px;
   background-color: white;
   box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.4);
-  z-index: 6;
+  z-index: 12;
   left: calc((100vw - 344px + 234px) / 2);
   top: 35%;
 }
