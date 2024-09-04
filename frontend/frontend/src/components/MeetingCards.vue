@@ -6,7 +6,7 @@
             <img src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png">
             <div id="namePart">
                 <span id="name">{{ record_name }}</span>
-                <button @click.stop="show" ><i class="material-icons">&#xe5d2</i></button>
+                <button @click.stop="show" @blur.stop="unShow" ><i class="material-icons">&#xe5d2</i></button>
                 <!-- @click.stop -->
             </div>
             <div id="tagPart" >
@@ -16,7 +16,7 @@
             </div>
         
         </el-card>
-        <div v-if="isShowed" id="rightClick" ref = "rightClick" @click="unShow"><card-right-click  /></div>
+        <div v-if="isShowed" id="rightClick" ref = "rightClick" @click="unShow" @blur="unShow"><card-right-click  /></div>
 
     </div>
 </template>
@@ -62,8 +62,9 @@ export default{
         };
 
         const unShow = () => {
-            isShowed.value = !isShowed.value;
-            // console.log(value);
+            setTimeout(() => {
+                isShowed.value = !isShowed.value;
+            }, 250);
         };
 
 

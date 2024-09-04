@@ -76,7 +76,6 @@ export default {
         "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
     };
   },
-  // 個人資訊開頭
   methods: {
     log_out() {
       this.$confirm(
@@ -127,18 +126,15 @@ export default {
         beforeClose: (action, instance, done) => {
           const form = EditInfoFormInstance.component.proxy;
           if (action === "confirm") {
-            // 校验输入
-            if (
-              !form.email.match(
-                /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/
-              )
-            ) {
-              instance.message = "信箱格式不正确";
-            } else if (form.password.length < 6) {
-              instance.message = "密碼至少需要6位字符";
-              // } else if (){
+            if (!this.validateEmail(form.email)) {
+              console.log("信箱格式不正確");
+              instance.message = "信箱格式不正確";
+              // done(false);
             } else {
-              done(); //回傳後端
+              this.submitForm(form);
+              done(() => {
+                console.log("修改中");
+              });
             }
           } else {
             done();
@@ -146,16 +142,10 @@ export default {
         },
       })
         .then(() => {
-          const form = EditInfoFormInstance.component.proxy;
           this.$message({
             type: "success",
             message: "修改完成！",
           });
-
-          // 更新
-          console.log("Email:", form.email);
-          console.log("Password:", form.password);
-          console.log("Name:", form.user_name);
         })
         .catch(() => {
           this.$message({
@@ -164,21 +154,35 @@ export default {
           });
         });
     },
-    done() {
-      //呼叫後端api
+
+    validateEmail(email) {
+      const emailRegex =
+        /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/;
+      return emailRegex.test(email);
+    },
+
+    submitForm(form) {
+      console.log("edit api");
       const edit_info = "http://35.201.168.185:5000/edit_info";
       const edited_info = {
-        user_name: "abc",
-        user_email: "abc@gmail.com",
+        user_name: form.user_name,
+        user_email: form.email,
       };
+
       axios
         .post(edit_info, edited_info, {
           headers: { authorization: JSON.parse(localStorage.getItem("auth")) },
         })
         .then((res) => {
+          console.log("更改結果", res.data);
           if (res.data.status === "success") {
-            console.log("haha");
+            console.log("更改個人資訊成功");
+          } else {
+            console.log("更改個人資訊失敗");
           }
+        })
+        .catch((error) => {
+          console.error("API呼叫失敗", error);
         });
     },
     mounted() {
@@ -192,6 +196,9 @@ export default {
             this.user_name = res.data.user_info.user_name;
             console.log("user_name", this.user_name);
           }
+        })
+        .catch((error) => {
+          console.log("名字或信箱取得失敗", error);
         });
     },
     // 個人資訊開頭
@@ -200,9 +207,9 @@ export default {
 </script>
 
 <style scoped>
-#all {
-  /* zoom:75%; */
-}
+/* #all {
+  zoom:75%;
+} */
 #userInfo {
   display: flex;
   /* padding: 0px 0px; */
@@ -276,10 +283,23 @@ export default {
   padding-left: 14px;
 }
 
+/* 結果我發現不用v-deep也可以改樣式！！！ */
+.el-message-box__btns .el-button--primary {
+  background-color: #b82c30 !important;
+  border-color: #b82c30 !important;
+  color: white !important;
+  border-radius: 15px;
+}
+.el-button {
+  border-radius: 15px !important;
+}
+.el-message-box__title {
+  text-align: center;
+  font-weight: bold;
+}
 .material-icons {
   font-size: 18px;
 }
-
 @media screen and (max-width: 1440px) and (min-width: 1240px) {
   /* #userInfoInside, .firstDrop, .dropDown, .userInfo, .firstDrop, #dropDown{
             transform: scale(0.8);

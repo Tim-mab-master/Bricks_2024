@@ -248,7 +248,6 @@ export default {
                 .replace(/'$/, ""); // 去掉末尾的 '
               const formattedToken = `Bearer ${cleanedToken}`;
 
-              alert(formattedToken);
               errorTime.value = 0;
               authorization.value = formattedToken;
               console.log(authorization.value);

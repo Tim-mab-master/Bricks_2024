@@ -371,7 +371,6 @@ export default {
                 .replace(/^Bearer b'/, "") // 去掉前面的 Bearer b'
                 .replace(/'$/, ""); // 去掉末尾的 '
               const formattedToken = `Bearer ${cleanedToken}`;
-              alert(formattedToken);
               this.setAuth(formattedToken);
 
               this.$router.push({
