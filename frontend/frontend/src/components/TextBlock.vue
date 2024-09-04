@@ -27,7 +27,7 @@
         </div>
         <div class="split-line" style="width: 100%"></div>
         <div class="tags" :disabled="isCartDisabled">
-          <el-tooltip :content="Tagclass" effect="light">
+          
             <el-tag
               v-for="tag in visibleTags"
               :key="tag.Tag_id"
@@ -37,9 +37,10 @@
               :disabled="isCartDisabled"
               @close="handleClose(tag)"
             >
-              {{ tag.Tag_name }}
+              <el-tooltip :content="tag.Tag_class" effect="light">
+                {{ tag.Tag_name }}
+              </el-tooltip>
             </el-tag>
-          </el-tooltip>
 
           <el-tag
             v-if="hiddenTagCount > 0"
@@ -123,6 +124,7 @@ const props = defineProps({
   showAddbtn: Boolean,
   content: String,
   tags: Array,
+  blockID: Number,
 });
 
 const emit = defineEmits(["add_cart", "deleteCart"]);
@@ -132,7 +134,7 @@ const textValue = ref(props.content);
 const saveInput = debounce(async (value) => {
       try {
         await axios.post('http://35.201.168.185:5000/edit_textBox', { 
-          "textBox_id":blockNow.value.TextBox_id,
+          "textBox_id":props.blockID,
           "textBox_content":textValue.value
          },{
           headers: {
@@ -204,25 +206,18 @@ const calculateVisibleTags = () => {
     
 };
 
-const handleClose = (tag) => {
+const handleClose = async (tag) => {
   if (isCartDisabled.value == false) {
-    // const index = dynamicTags.value.indexOf(tag);
-    // if (index !== -1) {
-      // dynamicTags.value.splice(index, 1);
-      const deleteTag = {
-        "textBox_id": blockNow.value.TextBox_id,
-        "tag_id": (tag.Tag_id).toString(),
-      };
-      const response = axios.post("http://35.201.168.185:5000/delete_tag", deleteTag, {
-        headers: {
-          authorization: JSON.parse(localStorage.getItem("auth")),
-        },
+    const index = dynamicTags.value.indexOf(tag);
+    if (index !== -1) {
+      dynamicTags.value.splice(index, 1);
+      store.dispatch('deleteTag',{
+        blockID: props.blockID,
+        tagID: (tag.Tag_id).toString(),
       })
-      console.log(response)
     }
-    store.dispatch('fetchOneRecord');
     calculateVisibleTags();
-  // }
+  }
 };
 
 const showInput = (tagClass) => {
@@ -235,23 +230,16 @@ const showInput = (tagClass) => {
   });
 };
 
-const handleInputConfirm = async () => {
+const handleInputConfirm = () => {
   if (inputValue.value) {
-    // dynamicTags.value.push(inputValue.value);
-    // console.log("blockNow：",blockNow.value);
-    const newTag = {
-        "textBox_id": blockNow.value.TextBox_id,
-        "tag_name": inputValue.value,
-        "tag_class": TagClass.value
-      }
-      const response = await axios.post("http://35.201.168.185:5000/add_tag",newTag,{
-        headers: {
-          authorization: JSON.parse(localStorage.getItem("auth")),
-        },
-      })
-      console.log(response.message);
+    dynamicTags.value.push(inputValue.value);
+    store.dispatch('addTag', {
+      blockID: props.blockID, 
+      inputValue: inputValue.value, 
+      tagClass: TagClass.value
+    })
   }
-  await store.dispatch('fetchOneRecord');
+  // await store.dispatch('fetchOneRecord');
   inputVisible.value = false;
   inputValue.value = "";
   calculateVisibleTags();

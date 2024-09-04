@@ -10,7 +10,8 @@
 
 <script>
 import TagSearchArea from '../components/KerwinBricks/TagSearchArea.vue';
-import { ref } from "vue";
+import { ref, computed } from "vue";
+import store from "../store/store.js";
 export default {
     components:{
         TagSearchArea,

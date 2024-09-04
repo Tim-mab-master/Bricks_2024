@@ -84,7 +84,7 @@
               v-for="(tag, idx) in tagsTeam"
               :key="`tag3_${idx}`"
               :checked="tag.checked"
-              @change="onChange( 'tag', idx)"
+              @change="onChange('tag', idx)"
               :class="{ tagChecked: tag.checked, tagUnchecked: !tag.checked }"
             >
               {{ tag.label }}
@@ -115,7 +115,7 @@ import { onMounted, ref, computed } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
 import store from '../../store/store';
-import { isNull } from 'lodash';
+import { indexOf, isNull } from 'lodash';
 
 export default {
   name: "TagSearchArea",
@@ -132,41 +132,26 @@ export default {
     const handleChange = (val) => {
       console.log(val);
     };
-    const allTags = computed(() => store.getters.getAllTags);
 
-    const tagsDate = ref([
-      // { label: "2021/10/12", checked: false },
-      // { label: "2022/10/12", checked: false },
-      // { label: "2023", checked: false },
-      // { label: "10/13", checked: false },
-      // { label: "10/14", checked: false },
-      // { label: "1014/01/12", checked: false },
-    ]);
-    const tagsThing = ref([
-      { label: "早餐", checked: false },
-      { label: "午餐", checked: false },
-      { label: "開會", checked: false },
-      { label: "事項", checked: false },
-      { label: "重要", checked: false },
-      { label: "非常重要", checked: false },
-    ]);
-    const tagsTeam = ref([
-      { label: "前端", checked: false },
-      { label: "後端", checked: false },
-      { label: "美宣", checked: false },
-      { label: "設計", checked: false },
-      { label: "場佈", checked: false },
-      { label: "視覺", checked: false },
-    ]);
-
-    const onChange = (tag, idx) => {
-      goSearch();
+    const tagsDate = computed(() => store.getters.getTagsDate);
+    const tagsThing = computed(() => store.getters.getTagsThing);
+    const tagsTeam = computed(() => store.getters.getTagsTeam);
+    const searchQuery = {
+      date: [],
+      things: [],
+      team: [],        
+    }
+    
+    const onChange = async (tag, idx) => {
       if(tag === "tagD"){
         const tagNow = tagsDate.value[idx];
         tagNow.checked = !tagsDate.value[idx].checked;
         tagsDate.value.sort((a,b) => b.checked - a.checked);
         if(tagNow.checked){
           selectedOptions.value.push(tagNow);
+          searchQuery.date.push(tagNow.label);
+        }else{
+          searchQuery.date.splice(searchQuery.date.indexOf(tagNow),1);
         }
       }
       else if(tag === "tag2"){
@@ -175,6 +160,9 @@ export default {
         tagsThing.value.sort((a,b) => b.checked - a.checked);
         if(tagNow.checked){
           selectedOptions.value.push(tagNow);
+          searchQuery.things.push(tagNow.label);
+        }else{
+          searchQuery.things.splice(searchQuery.things.indexOf(tagNow),1);
         }
       }
       else{
@@ -184,15 +172,54 @@ export default {
         // tagsTeam.value.sort((a,b) => b.checked - a.checked);
         if(tagNow.checked){
           selectedOptions.value.push(tagNow);
+          searchQuery.team.push(tagNow.label);
+        }else{
+          searchQuery.team.splice(searchQuery.team.indexOf(tagNow),1);
         }
       }
       arrayFilter();
+      console.log("searchQuery", searchQuery);
+      goSearch();
     };
     
-    const goSearch = () => {
+    const goSearch = async () => {
       if(selectedOptions.value != null) {
-      // router.push('/searching');
         emit('showBlock',false);
+        const searchCont = {
+          "日期": searchQuery.date.join(','),
+          "事項":[
+              {
+                "tag_name": searchQuery.things.join(','),
+              }
+          ],
+          "組別":[
+            {
+                "tag_name": searchQuery.team.join(','),
+              }
+          ],
+          "project_id": store.getters.getProjectID,
+        }
+
+        const response = await axios.post("http://35.201.168.185:5000/tag_search", searchCont, {
+          headers: {
+            authorization: JSON.parse(localStorage.getItem("auth")),
+          },
+        })
+        const concated = response.data.item.date_match.concat(response.data.item.date_unmatch)
+        console.log(concated);
+        // const keyWords = [...searchQuery.date, ...searchQuery.things, ...searchQuery.team]
+        // const filterred = concated.filter((item) =>{
+        //   item.Tag.some(tagArray =>
+        //     // 遍历每个 Tag 对象
+        //     tagArray.some(tag =>
+        //     // 检查 Tag_name 是否包含关键字
+        //       keyWords.some(keyword => tag.Tag_name.includes(keyword))
+        //     )
+        //   )
+        // })
+        // console.log("filter:",filterred);
+        // console.log("keywords:",keyWords);
+        store.commit("setTagSearchResult",response.data.item);
       }
       else{
         emit('showBlock',true);
@@ -212,31 +239,8 @@ export default {
       // arraySorter();  //刪除後想要重新排序內部
       arrayFilter();
       console.log(tag.label);
-      // goSearch();
+      goSearch();
     };
-
-    onMounted(() => {
-      if(Array.isArray(allTags) && allTags.length > 0){
-        allTags.forEach(element => {
-          switch (element.tag_class){
-            case "事項":{
-              element.tag_names.forEach(tags => {
-                tagsThing.push({ label: tags, checked: false });
-              })
-            }case "日期":{
-              element.tag_names.forEach(tags => {
-                tagsDate.push({ label: tags, checked: false });
-              })
-            }case "組別":{
-              element.tag_names.forEach(tags => {
-                tagsTeam.push({ label: tags, checked: false });
-              })
-            }        
-          }
-
-        });
-      }
-    })
     
 
     return {

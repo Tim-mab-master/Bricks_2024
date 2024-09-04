@@ -14,17 +14,18 @@
       <div class="textBlock">
         <text-block
           v-for="block in blocks"
-          :key="block.id"
+          :key="block.TextBox_id"
           @click="setBlockNow(block)"
           @add_cart="add_block(block)"
           :showAddBtn="showAddBtn"
           @deleteCart="deleteCart(block)"
           :content="block.textBox_content"
           :tags="block.Tag"
+          :blockID="block.TextBox_id"
         />
       </div>
     </div>
-    <div v-else>
+    <div class="searchResult" v-else>
       <tag-search-content class="searchResult"></tag-search-content>
     </div>
   </div>
@@ -60,10 +61,10 @@ const reload = (value) => {
 };
 
 const deleteCart = async (block) => {
-  await store.commit("setBlockNow", block);
-  console.log("blockNow:",store.state.blockNow);
+  // await store.commit("setBlockNow", block);
+  // console.log("blockNow:",store.state.blockNow);
   // console.log(store.state.records.blockNow);
-  store.dispatch("deleteBlock");
+  store.dispatch("deleteBlock", block.TextBox_id);
 };
 
 const showInfo = (value) => {
@@ -84,9 +85,7 @@ const showBtn = () => {
 };
 
 onMounted(async () => {
-  // store.dispatch("fetchOneRecords");
-  // await store.dispatch("fetchAllTags");
-  console.log("文字方塊是長這樣", blocks.value);
+  await store.dispatch("fetchAllTags");
 });
 
 onUnmounted(() =>{
@@ -155,6 +154,7 @@ onUnmounted(() =>{
   top: 20px;
   /* right: 430px; */
   left: 66px;
+  padding-bottom: 20vh;
 }
 
 #backtop {

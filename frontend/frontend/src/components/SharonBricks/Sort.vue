@@ -5,21 +5,22 @@
         </span>
         <template #dropdown>
           <el-dropdown-menu class="menu">
-            <el-dropdown-item ><span class="dropdownMenu">本日</span ></el-dropdown-item>
-            <el-dropdown-item ><span class="dropdownMenu">3 天</span></el-dropdown-item>
-            <el-dropdown-item><span class="dropdownMenu">7 天</span></el-dropdown-item>
-            <el-dropdown-item><span class="dropdownMenu">1 個月</span></el-dropdown-item>
-            <el-dropdown-item><span class="dropdownMenu">6 個月</span></el-dropdown-item>
-            <el-dropdown-item><span class="dropdownMenu">近 1 年</span></el-dropdown-item>
-            <el-dropdown-item><span class="dropdownMenu">近 3 年</span></el-dropdown-item>
+            <el-dropdown-item ><span class="dropdownMenu" @click="handleCommand('today')">本日</span ></el-dropdown-item>
+            <el-dropdown-item ><span class="dropdownMenu" @click="handleCommand('threeDays')">3 天</span></el-dropdown-item>
+            <el-dropdown-item><span class="dropdownMenu" @click="handleCommand('sevenDays')">7 天</span></el-dropdown-item>
+            <el-dropdown-item><span class="dropdownMenu" @click="handleCommand('oneMonth')">1 個月</span></el-dropdown-item>
+            <el-dropdown-item><span class="dropdownMenu" @click="handleCommand('sixMonth')">6 個月</span></el-dropdown-item>
+            <el-dropdown-item><span class="dropdownMenu" @click="handleCommand('oneYear')">近 1 年</span></el-dropdown-item>
+            <el-dropdown-item><span class="dropdownMenu" @click="handleCommand('threeYear')">近 3 年</span></el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
 </template>
 
-<script>
-export default {
-
+<script setup>
+const emit = defineEmits(['Selection']);
+const handleCommand = (status) =>{
+  emit('Selection',status);
 }
 </script>
 

@@ -5,17 +5,20 @@
           </span>
           <template #dropdown>
             <el-dropdown-menu class="menu">
-              <el-dropdown-item ><span class="dropdownMenu">最近</span ></el-dropdown-item>
-              <el-dropdown-item ><span class="dropdownMenu">最遠</span></el-dropdown-item>
+              <el-dropdown-item ><span class="dropdownMenu" @click="handleCommand('recently')">最近</span ></el-dropdown-item>
+              <el-dropdown-item ><span class="dropdownMenu" @click="handleCommand('loneTime')">最遠</span></el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>
   </template>
   
-  <script>
-  export default {
-  
+  <script setup>
+
+  const emit = defineEmits([Selection]);
+  const handleCommand = (command) =>{
+    emit('Selection', command)
   }
+  
   </script>
   
   <style scoped>

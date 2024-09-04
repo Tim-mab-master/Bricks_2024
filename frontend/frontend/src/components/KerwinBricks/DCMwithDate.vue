@@ -9,7 +9,7 @@
           </div>
           <div class="split-line" style="width: 100%;"></div>
           <div class="textarea-container">
-            <resize-textarea class="textArea" placeholder="請輸入內容" v-model="textValue">{{ content }}</resize-textarea>
+            <resize-textarea class="textArea" placeholder="請輸入內容" :value="text"></resize-textarea>
             <!-- :maxHeight="150" -->
             <button class="edit_textButton" type="button" @click="edit_textArea"><el-icon><MoreFilled /></el-icon></button>
           </div>
@@ -17,14 +17,14 @@
           <div class="tags">
             <el-tag
               v-for="tag in dynamicTags"
-              :key="tag"
+              :key="tag.Tag_id"
               size="large"
               type="danger"
               closable
               :disable-transitions="false"
               @close="handleClose(tag)"
             >
-            <span class="tag">{{ tag }}</span>
+            <span class="tag">{{ tag.Tag_name }}</span>
             </el-tag>
             <el-input
               v-if="inputVisible"
@@ -48,31 +48,51 @@
         </div>
       </div>
 </template>
-<script>
-import { nextTick, ref } from "vue";
+<script setup>
+import { nextTick, ref, onMounted } from "vue";
 import { ElInput } from "element-plus";
+import store from '@/store/store.js';
 
-export default {
-  name: "DCM",
-  setup() {
-    const textarea1 = ref("");
-    const dateInfo = ref("2023/11/22");
-    const timeInfo = ref("15:00~16:00");
-    const textValue = ref("請輸入內容請輸入內容請輸入內容請輸入內容請輸入內容請輸入內容請輸入內容請輸入內容請輸入內容請輸入內容請輸入內容請輸入內容請輸入內容請輸入內容請輸入內容請輸入內容請輸入內容請輸入內容請輸入內容請輸入內容請輸入內容請輸入內容請輸入內容請輸入內容請輸入內容請輸入內容請輸入內容請輸入內容請輸入內容請輸入內容請輸入內容請輸入內容請輸入內容請輸入");
+    const props = defineProps({
+        textValue: String,
+        Tags: Array,
+        date: String,
+        blockID: Number,
+    });
+    const text = ref(props.textValue);
+      const formatTime = (date) =>{
+      const dateInput = new Date(date);
+      const year = dateInput.getFullYear();
+      const month = String(dateInput.getMonth() + 1).padStart(2, '0');
+      const day = String(dateInput.getDate()).padStart(2, '0');
+      
+      return `${year}/${month}/${day}`;
+    }
+    const getHour = (date) =>{
+      const input = new Date(date);
+      const hours = input.getHours().toString().padStart(2, '0');
+      const minutes = input.getMinutes().toString().padStart(2, '0');
+      const seconds = input.getSeconds().toString().padStart(2, '0');
+
+      return `${hours}:${minutes}:${seconds}`
+    }
+    const dateInfo = ref(formatTime(props.date));
+    const timeInfo = ref(getHour(props.date));
 
     const handleCommand = (command) => {
       inputVisible.value = true;
-      // nextTick(() => {
-      //   InputRef.value.input.focus();
-      // });
     };
 
     //tags
     const inputValue = ref("");
-    const dynamicTags = ref(["Tag1", "Tag2", "Tag3"]);
+    const dynamicTags = ref(props.Tags[0]);
     const inputVisible = ref(false);
     // const InputRef = ref < InstanceType < typeof ElInput >> new ElInput();
     const handleClose = (tag) => {
+      store.dispatch('deleteTag',{
+        blockID: props.blockID,
+        tagID: tag.Tag_id,
+      })
       dynamicTags.value.splice(dynamicTags.value.indexOf(tag), 1);
     };
     const showInput = () => {
@@ -81,28 +101,11 @@ export default {
     const handleInputConfirm = () => {
       if (inputValue.value) {
         dynamicTags.value.push(inputValue.value);
+        
       }
       inputVisible.value = false;
       inputValue.value = "";
     };
-
-    return {
-      textarea1,
-      handleCommand,
-      inputValue,
-      dynamicTags,
-      inputVisible,
-      // InputRef,
-      handleClose,
-      showInput,
-      handleInputConfirm,
-      ElInput,
-      dateInfo,
-      timeInfo,
-      textValue,
-    };
-  },
-};
 </script>
 
 <style scoped>
