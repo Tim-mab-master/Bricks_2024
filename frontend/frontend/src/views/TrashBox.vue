@@ -61,7 +61,7 @@
         </div>
       </div>
     </div>
-    <div v-if="cards !== null" class="navAndCont" id="trash">
+    <div v-if="cards === null" class="navAndCont" id="trash">
       <div class="cards">
         <trash-cards
           v-for="card in cards"
