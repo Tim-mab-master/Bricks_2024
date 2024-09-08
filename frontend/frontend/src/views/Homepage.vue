@@ -482,7 +482,7 @@ export default {
   height: 28px;
   line-height: 28px;
   color: #b6aeae;
-  font-size: 2vw;
+  font-size: 1.6vw;
   font-weight: 700;
 }
 
@@ -500,7 +500,8 @@ export default {
   height: 100px;
   color: #252525;
   font-size: 1.6vw;
-  font-weight: 400;
+  font-weight: 500;
+  line-height: 30px;
 }
 
 .mid_try_btn {
@@ -548,10 +549,11 @@ export default {
 
 .end_sec_area {
   font-size: 1.8vw;
-  font-weight: 400;
+  font-weight: 600;
   text-align: center;
   position: relative;
   top: 104px;
+  line-height: 36px;
 }
 
 .end_try_btn {
