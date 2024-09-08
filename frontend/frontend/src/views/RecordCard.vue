@@ -96,9 +96,8 @@ const cards = computed(() => store.getters.getAllRecords);
 
 onMounted(async () => {
   console.log("onMounted");
-  // console.log("allRecords", store.getters.getAllRecords.length);
-  // await store.dispatch("fetchAllRecords");
   await store.dispatch("fetchAllRecords");
+  await store.dispatch("fetchAllTags");
   console.log("cardsAll", cards);
 });
 
