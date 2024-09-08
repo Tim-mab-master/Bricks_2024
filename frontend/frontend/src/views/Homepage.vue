@@ -260,7 +260,7 @@ export default {
   justify-content: space-around;
   display: flex;
   letter-spacing: 16px;
-  top: 14%;
+  top: 20%;
 }
 
 .third_line {
@@ -272,7 +272,7 @@ export default {
   justify-content: space-around;
   left: 50%;
   transform: translate(-51%);
-  top: 50%;
+  top: 52%;
 }
 
 .try_now_first {
@@ -281,7 +281,7 @@ export default {
   background-color: #b82c30;
   border-radius: 14px;
   position: absolute;
-  bottom: 5vh;
+  top: 78%;
   left: 50%;
   transform: translate(-50%);
   text-decoration: none;
