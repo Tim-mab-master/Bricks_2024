@@ -3,8 +3,8 @@
     <div id="center">
       <el-empty
         :image-size="200"
-        description="點選新增建立新的會議紀錄"
-        :root="--el - empty - fill - color - 0"
+        description="目前沒有會議記錄在垃圾桶"
+        :root="--el - empty - fill - color - 5"
       >
         <el-button id="addBtn" @click="addClicked">
           <div id="buttonContent">

@@ -16,9 +16,8 @@
                 <ordering/>
                 <sort/>
             </div>
-            
-                <!-- <text-block v-for="item in 10" :key="item"/> -->
-                <document-with-info v-for="item in 10" :key="item"/>
+                <!-- <document-with-info v-for="block in getResult" :key="block.TextBox_id" :textValue="block.textBox_content" :Tags="block.Tag"></document-with-info> -->
+                <div v-for="block in getResult" :key="block.TextBox_id">{{ block.textBox_content }}</div>
             </div>
       
       
@@ -28,51 +27,34 @@
   
 </template>
 
-<script>
-import { ref } from 'vue';
+<script setup>
+import { computed, ref, onMounted } from 'vue';
 import TagSearchArea from '../components/KerwinBricks/TagSearchArea.vue';
 import NavBarMain from '../components/NavBarMain.vue';
 import SideBar from '../components/SideBar.vue';
-import DocumentWithInfo from '../components/KerwinBricks/DCMwithDate.vue';
+import DCMwithDate from '@/components/KerwinBricks/DCMwithDate.vue';
 import Sort from '../components/SharonBricks/Sort.vue';
 // import Ordering from '../components/SharonBricks/Ordering.vue';
 import Ordering from '@/components/SharonBricks/Ordering.vue';
-import TextBlock from '@/components/TextBlock.vue';
+import store from '../store/store.js';
 
-export default {
-    name : 'searching',
-    components:{
-        TagSearchArea,
-        NavBarMain,
-        SideBar,
-        DocumentWithInfo,
-        Sort,
-        Ordering,
-        TextBlock,
+    const getResult = computed(() => store.getters.getTagSearchResult);
 
-    },
-    setup(){
-        const tagShowed = ref(false);
-        const meetingClass = ref("meeting");
+    const tagShowed = ref(false);
+    const meetingClass = ref("meeting");
 
-        const showTags = () =>{
-            tagShowed.value = !tagShowed.value;
-            if(tagShowed.value === true){
-                meetingClass.value = "showingClass";
-            }
-            else{
-                meetingClass.value = "meeting";
-            }
-        };
+    const showTags = () =>{
+        tagShowed.value = !tagShowed.value;
+        if(tagShowed.value === true){
+            meetingClass.value = "showingClass";
+        }
+        else{
+            meetingClass.value = "meeting";
+        }
+    };
+
+    
         
-        return{
-            tagShowed,
-            showTags,
-
-        };
-    },
-
-}
 </script>
 
 <style scoped>

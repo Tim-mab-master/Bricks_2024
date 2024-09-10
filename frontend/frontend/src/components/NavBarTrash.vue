@@ -6,7 +6,7 @@
           >個人首頁</el-breadcrumb-item
         >
         <el-breadcrumb-item id="now" :color="normal"
-          >會議紀錄（總覽）</el-breadcrumb-item
+          >會議紀錄（垃圾桶）</el-breadcrumb-item
         >
       </el-breadcrumb>
     </div>
