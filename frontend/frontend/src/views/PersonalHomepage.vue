@@ -2100,9 +2100,9 @@ export default {
 }
 
 .profile {
-  top:-11px;
+  top:-3px;
   position: absolute;
-  right: -25px;
+  right: -3px;
   cursor: pointer;
   -webkit-user-drag: none;
   user-select: none;
