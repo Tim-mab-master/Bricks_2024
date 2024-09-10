@@ -542,7 +542,7 @@ export default {
 }
 
 .end_first_line {
-  font-size: 45px;
+  font-size: 41px;
   height: 56px;
   line-height: 56px;
   font-weight: 700;

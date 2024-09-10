@@ -456,6 +456,7 @@ export default {
 
 .title {
   width: 100%;
+  margin-top: 4px;
   height: 36px;
   font-size: 24px;
   text-align: center;
@@ -804,12 +805,17 @@ input::placeholder {
   }
 }
 
+/* 機房螢幕大小 */
 @media screen and (min-width: 1600px) {
+  .title {
+    font-size: 36px;
+  }
+
   .middle {
     width: 470px;
     height: 402px;
     position: absolute;
-    top: 108.75px;
+    top: 26vh;
     left: 50%;
     transform: translate(-50%);
   }
