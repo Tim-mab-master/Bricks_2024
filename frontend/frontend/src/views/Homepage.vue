@@ -235,7 +235,7 @@ export default {
   position: relative;
   left: 50%;
   transform: translate(-50%);
-  top: 28vh;
+  top: 28%;
   font-family: "Noto Sans TC";
 }
 
@@ -254,25 +254,25 @@ export default {
 
 .second_line {
   font-size: 520%;
-  font-weight: 700;
+  font-weight: 600;
   width: 100%;
   position: absolute;
   justify-content: space-around;
   display: flex;
   letter-spacing: 16px;
-  top: 20%;
+  top: 74px;
 }
 
 .third_line {
   font-size: 176%;
-  font-weight: 400;
+  font-weight: 550;
   width: 100%;
   position: absolute;
   display: flex;
   justify-content: space-around;
   left: 50%;
   transform: translate(-51%);
-  top: 52%;
+  top: 186px;
 }
 
 .try_now_first {
@@ -281,7 +281,7 @@ export default {
   background-color: #b82c30;
   border-radius: 14px;
   position: absolute;
-  top: 78%;
+  top: 280px;
   left: 50%;
   transform: translate(-50%);
   text-decoration: none;
@@ -660,6 +660,14 @@ export default {
 @media screen and (min-width: 1600px) {
   .bg {
     height: 100vh;
+  }
+
+  .slogan {
+    top: 34%;
+  }
+
+  .third_line {
+    top: 186px;
   }
 
   .privacy {
