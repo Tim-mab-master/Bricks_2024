@@ -116,6 +116,7 @@ import axios from "axios";
 import { useRouter } from "vue-router";
 import store from '../../store/store';
 import { indexOf, isNull } from 'lodash';
+import { watchEffect,nextTick } from "vue";
 
 export default {
   name: "TagSearchArea",
@@ -153,6 +154,7 @@ export default {
           searchQuery.date.push(tagNow.label);
         }else{
           searchQuery.date.splice(searchQuery.date.indexOf(tagNow),1);
+          tagsDate.value.splice(tagsDate.value.indexOf(tagNow),1);
         }
       }
       else if(tag === "tag2"){
@@ -164,6 +166,7 @@ export default {
           searchQuery.things.push(tagNow.label);
         }else{
           searchQuery.things.splice(searchQuery.things.indexOf(tagNow),1);
+          tagsThing.value.splice(tagsThing.value.indexOf(tagNow),1);
         }
       }
       else{
@@ -176,17 +179,16 @@ export default {
           searchQuery.team.push(tagNow.label);
         }else{
           searchQuery.team.splice(searchQuery.team.indexOf(tagNow),1);
+          tagsTeam.value.splice(tagsTeam.value.indexOf(tagNow),1);
         }
       }
       arrayFilter();
       console.log("searchQuery", searchQuery);
       goSearch();
     };
-
     
     const concated = ref([]);
     const keywords = ref([]);
-    
     const goSearch = async () => {
       if(selectedOptions.value.length > 0) {
         emit('showBlock',false);
@@ -214,7 +216,7 @@ export default {
         console.log(concated);
         keywords.value = [...searchQuery.date, ...searchQuery.things, ...searchQuery.team];
 
-        store.dispatch('resultFilter', {
+        await store.dispatch('resultFilter', {
           concated:concated.value,
           keywords: keywords.value,
         })
@@ -224,9 +226,14 @@ export default {
       }
     };
 
-    // watchEffect(() => {
+    watchEffect(() => {
+      store.dispatch('resultFilter', {
+        concated:concated.value,
+        keywords: keywords.value,
+      })
+      // await store.commit('resetSearchResult');
       
-    // });
+    });
 
     const arraySorter = (arrayGroup) => {
       arrayGroup.value.sort((a,b) => b.checked - a.checked);
@@ -247,6 +254,13 @@ export default {
       }
       goSearch();
     };
+
+    onMounted(() =>{
+      store.dispatch('resultFilter', {
+        concated:concated.value,
+        keywords: keywords.value,
+      })
+    })
 
     return {
       selectedOptions,

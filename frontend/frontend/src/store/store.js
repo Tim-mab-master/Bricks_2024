@@ -100,6 +100,9 @@ export default createStore({
     },
     setTagSearchResult(state, result){
       state.tagSearchResult = result;
+    },
+    resetSearchResult(state){
+      state.tagSearchResult = [];
     }
   },
   getters: {
@@ -158,13 +161,14 @@ export default createStore({
       return formatted;
     },
     getTagSearchResult(state){
-      console.log('result',state.tagSearchResult);
+      // console.log('result',state.tagSearchResult);
       return state.tagSearchResult;
-    }
+    },
+    
 
   },
   actions: {
-    resultFilter({commit},payload){
+    async resultFilter({commit},payload){
       const filtered = payload.concated.filter(item => 
         item.Tag.some(tagArray => 
           tagArray.some(tag => 
@@ -172,9 +176,10 @@ export default createStore({
           )
         )
       );
-      console.log("filter:",filtered);
-      console.log("keywords:",payload.keywords);
+      
       commit("setTagSearchResult",filtered);
+      console.log("filterResult:",filtered);
+      console.log("keywords:",payload.keywords);
     },
     async fetchAllRecords({ state, commit }) {
       console.log("fetchAllrecords");
@@ -253,7 +258,7 @@ export default createStore({
         }
 
         commit("setCurrRecord", payload);
-        await dispatch('fetchAllTags');
+        // await dispatch('fetchAllTags');
       } catch (error) {
         console.log("無法獲得單個內容");
       }
@@ -312,8 +317,8 @@ export default createStore({
           authorization: JSON.parse(localStorage.getItem("auth")),
         },
       })
-      await dispatch('fetchOneRecord');
-      // await dispatch('fetchAllTags');
+      // await dispatch('fetchOneRecord');
+      await dispatch('fetchAllTags');
   
     },
     async deleteTag({dispatch},payload){
@@ -327,8 +332,8 @@ export default createStore({
         },
       })
       console.log(response)
-      await dispatch('fetchOneRecord');
-      // await dispatch('fetchAllTags');
+      // await dispatch('fetchOneRecord');
+      await dispatch('fetchAllTags');
     }
   },
   

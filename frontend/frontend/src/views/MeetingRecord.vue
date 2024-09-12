@@ -82,7 +82,8 @@ const showBtn = () => {
 };
 
 onMounted(async () => {
-  await store.dispatch("fetchAllTags");
+  // await store.dispatch("fetchAllTags");
+  await store.dispatch('fetchOneRecord');
 });
 
 onUnmounted(() =>{
