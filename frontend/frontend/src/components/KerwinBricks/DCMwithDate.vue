@@ -9,7 +9,7 @@
           </div>
           <div class="split-line" style="width: 100%;"></div>
           <div class="textarea-container">
-            <resize-textarea class="textArea" placeholder="請輸入內容" :value="text"></resize-textarea>
+            <resize-textarea class="textArea" placeholder="請輸入內容" v-model="text" @keyup="handleKeyup"></resize-textarea>
             <!-- :maxHeight="150" -->
             <button class="edit_textButton" type="button" @click="edit_textArea"><el-icon><MoreFilled /></el-icon></button>
           </div>
@@ -52,6 +52,8 @@
 import { nextTick, ref, onMounted } from "vue";
 import { ElInput } from "element-plus";
 import store from '@/store/store.js';
+import debounce from 'lodash/debounce';
+import axios from "axios";
 
     const props = defineProps({
         textValue: String,
@@ -106,6 +108,34 @@ import store from '@/store/store.js';
       inputVisible.value = false;
       inputValue.value = "";
     };
+
+    const saveInput = debounce(async (value) => {
+      try {
+        await axios.post('http://35.201.168.185:5000/edit_textBox', { 
+          "textBox_id":props.blockID,
+          "textBox_content": text.value
+         },{
+          headers: {
+            authorization: JSON.parse(localStorage.getItem("auth")),
+          },
+          });
+        console.log('Data saved:', value);
+        store.commit('setSaveMessage', "文字方塊變動已儲存");
+      } catch (error) {
+        console.error('Error saving data:', error);
+        store.commit('setSaveMessage', "文字方塊儲存失敗");
+      } finally {
+        // store.commit('setSaveMessage', "");
+      }
+      console.log(store.getters.getSaveMessage);
+    }, 500); // 500 毫秒延遲
+
+    // 處理 keyup 事件
+    const handleKeyup = (event) => {
+      saveInput(text.value);
+      // setTimeout(store.commit('setSaveMessage', ""), 1000)
+    };
+
 </script>
 
 <style scoped>

@@ -43,7 +43,7 @@ export default {
         record_host_name: "",
         record_place: "",
       };
-      axios.post("http://35.201.168.185:5000/add_record", body);
+      axios.post("http://34.81.219.139:5000/add_record", body);
       router.push("cards/newRecord");
     };
 

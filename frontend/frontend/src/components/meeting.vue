@@ -423,9 +423,6 @@ const onSubmit = async () => {
   form.show = false;
 };
 
-// onUnmounted(() =>{
-//   store.commit("setCurrRecord", {});
-// })
 </script>
 
 <style scoped>
@@ -602,7 +599,7 @@ p {
     padding: auto 9px;
   }
   .button {
-    font-size: 12px;
+    /* font-size: 12px; */
   }
 }
 </style>

@@ -18,20 +18,30 @@ import store from "@/store/store.js";
 import { now } from "lodash";
 
 const getResult = computed(() => store.getters.getTagSearchResult);
-const results = ref(getResult);
+const results = ref(getResult.value);
+
+const sorting = ref(false);
+const ordering = ref(false);
 
 const orderMode = (status) =>{
+  // ordering.value = true;
   results.value = orderingData(status, getResult.value);
+  
 }
 
 const sortMode = (status) => {
+  // sorting.value = true;
   results.value = sortingData(status, getResult.value);
+  
 }
 
 
 
 const orderingData = (orderMode,data) => {
-  
+  // if(sorting.value){
+  //   sortingData(orderMode,results.value);
+  //   // sorting.value = false;
+  // }
   data.sort((a, b) => {
 
     const dateA = new Date(a.upload_time);
@@ -45,32 +55,80 @@ const orderingData = (orderMode,data) => {
 }
 
 const formatDate = (date) =>{
-  const input = new Date(date).getDate();
+  if(date.isString){
+    const input = date.slice(4,16);
+    return input;
+  }
+  const input = date.toString().slice(4,16);
   return input;
 }
 
 const sortingData = (sortingMode, data) => {
   const now = new Date(); 
+  console.log(`dateNow: ${now}`);
 
-  if (sortingMode === "today") {
-    const todayStart = new Date(now.setHours(0, 0, 0, 0));
-    const todayEnd = new Date(todayStart).setDate(todayStart.getDate() + 1);
+    switch(sortingMode){
+      case 'today':
+        const todayDate = new Date().toLocaleDateString(); // 获取今天的日期字符串
 
-    return data.filter((item) => {
-      const uploadDate = new Date(item.upload_time);
-      return uploadDate >= todayStart && uploadDate < todayEnd;
-    });
-  } else if (sortingMode === "threeDays") {
-    const threeDaysAgo = new Date();
-    threeDaysAgo.setDate(now.getDate() - 3);
+        const today = data.filter((block) => {
+          const blockDate = new Date(block.upload_time).toLocaleDateString(); // 获取记录的日期字符串
+          return blockDate === todayDate; // 只比较日期部分
+        });
+        console.log('today:', today);
+        return today;
+      case 'threeDays':
+        const threeDaysAgo = new Date();
+        threeDaysAgo.setDate(now.getDate() - 3);
 
-    return data.filter((item) => {
-      const uploadDate = new Date(item.upload_time);
-      return uploadDate >= threeDaysAgo && uploadDate <= now;
-    });
-  } else {
-    return data; // 默认返回原始数据
-  }
+        const threeDays = data.filter((block) => {
+          const blockTime = new Date(block.upload_time);
+          return blockTime >= threeDaysAgo && blockTime <= now;
+        });
+        return threeDays;
+      case 'sevenDays':
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(now.getDate() - 7);
+        const sevenDays = data.filter((block) => {
+          const blockTime = new Date(block.upload_time);
+          return blockTime >= sevenDaysAgo && blockTime <= now;
+        });
+        return sevenDays;
+      case 'oneMonth':
+        const oneMonthAgo = new Date();
+        oneMonthAgo.setMonth(now.getMonth() - 1);
+        const oneMonth = data.filter((block) => {
+          const blockTime = new Date(block.upload_time);
+          return blockTime >= oneMonthAgo && blockTime <= now;
+        });
+        return oneMonth;
+      case 'sixMonth':
+        const sixMonthAgo = new Date();
+        sixMonthAgo.setMonth(now.getMonth() - 6);
+        const sixMonth = data.filter((block) => {
+          const blockTime = new Date(block.upload_time);
+          return blockTime >= sixMonthAgo && blockTime <= now;
+        });
+        return sixMonth;
+      case 'oneYear':
+        const oneYearAgo = new Date();
+        oneYearAgo.setFullYear(now.getFullYear() - 1);
+        const oneYear = data.filter((block) => {
+          const blockTime = new Date(block.upload_time);
+          return blockTime >= oneYearAgo && blockTime <= now;
+        });
+        return oneYear;
+      case 'threeYear':
+        const threeYearAgo = new Date();
+        threeYearAgo.setFullYear(now.getFullYear() - 3);
+        const threeYear = data.filter((block) => {
+          const blockTime = new Date(block.upload_time);
+          return blockTime >= threeYearAgo && blockTime <= now;
+        });
+        return threeYear;
+      default: 
+        return data;
+    }
 };
 
 
@@ -82,6 +140,7 @@ const sortingData = (sortingMode, data) => {
   display: grid;
   row-gap: 8px;
   top: 20px;
+  padding-bottom: 7%;
   /* left: 46px; */
 }
 

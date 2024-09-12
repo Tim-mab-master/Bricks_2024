@@ -1,5 +1,7 @@
 import { createStore } from "vuex";
 import axios from "axios";
+import createPersistedState from 'vuex-persistedstate';
+import debounce from 'lodash/debounce';
 
 const localStoragePlugin = (store) => {
   store.subscribe((mutation, { auth }) => {
@@ -8,13 +10,6 @@ const localStoragePlugin = (store) => {
       window.localStorage.setItem("auth", JSON.stringify(auth));
     }
   });
-  // store.subscribe((mutation, { name }) => {
-  //   // 當執行 setProjectName 時才執行以下程式碼
-  //   if (mutation.type === "setProjectName") {
-  //     );
-  //     alert(JSON.parse(localStorage.getItem("projectName")));
-  //   }
-  // });
 };
 
 export default createStore({
@@ -46,7 +41,6 @@ export default createStore({
     },
     setProjectName(state, projectName) {
       state.projectName = projectName;
-      window.localStorage.setItem("projectName", JSON.stringify(projectName));
     },
     setAuth(state, authorization) {
       state.auth = authorization;
@@ -62,10 +56,6 @@ export default createStore({
       state.currTextBoxes = payload.boxes;
       state.meetingName = payload.record.record_name;
     },
-    setNewProject(state, newRecord) {
-      state.newRecord = newRecord;
-      state.meetingName = newRecord.record_name;
-    },
     setBlockNow(state, block) {
       state.blockNow = block;
     },
@@ -75,6 +65,7 @@ export default createStore({
     },
     setRecordID(state, ID) {
       state.recordID = ID;
+      window.localStorage.setItem("recordID", ID);
     },
     setUserID(state, ID) {
       state.userID = ID;
@@ -97,11 +88,11 @@ export default createStore({
         }
       })
     },
-    resetRecord(state) {
+    resetRecord(state){
       state.currRecord = {};
       console.log("reseted");
     },
-    setSaveMessage(state, message) {
+    setSaveMessage(state, message){
       state.saveMessage = message;
       setTimeout(() => {
         state.saveMessage = "";
@@ -116,34 +107,22 @@ export default createStore({
       return state.auth;
     },
     getAllRecords(state) {
-      // console.log("值");
-      // console.log(state.allRecords);
       return state.allRecords;
     },
     getTrashRecords(state) {
-      // console.log("值");
-      // console.log(state.trashRecords);
       return state.trashRecords;
     },
-    getRecordID() {
+    getProjectID() {
       return localStorage.getItem("projectID");
     },
-
-    // 需要確定
     getCurrRecord(state) {
       return state.currRecord;
     },
     getCurrTextBoxes(state) {
       return state.currTextBoxes;
     },
-    getProjectID(state) {
-      return state.projectID;
-    },
-    getRecordID(state) {
+    getRecordID(state){
       return state.recordID;
-    },
-    getProjectName(state) {
-      return JSON.parse(window.localStorage.getItem("projectName"));
     },
     getDeleteConfirm(state) {
       return state.delete_confirm;
@@ -151,16 +130,13 @@ export default createStore({
     getTerminateConfirm(state) {
       return state.terminate_confirm;
     },
-    getForeverDeleteRecord(state) {
-      return state.forever_delete_record_confirm;
-    },
-    getBlockNow(state) {
+    getBlockNow(state){
       return state.blockNow;
     },
-    getAllTags(state) {
+    getAllTags(state){
       return state.allTags;
     },
-    getSaveMessage(state) {
+    getSaveMessage(state){
       return state.saveMessage;
     },
     getTagsDate(state){
@@ -182,18 +158,32 @@ export default createStore({
       return formatted;
     },
     getTagSearchResult(state){
-      const result = state.tagSearchResult.date_unmatch;
-      return result;
+      console.log('result',state.tagSearchResult);
+      return state.tagSearchResult;
     }
 
   },
   actions: {
+    resultFilter({commit},payload){
+      const filtered = payload.concated.filter(item => 
+        item.Tag.some(tagArray => 
+          tagArray.some(tag => 
+            payload.keywords.some(keyword => tag.Tag_name.includes(keyword))
+          )
+        )
+      );
+      console.log("filter:",filtered);
+      console.log("keywords:",payload.keywords);
+      commit("setTagSearchResult",filtered);
+    },
     async fetchAllRecords({ state, commit }) {
+      console.log("fetchAllrecords");
       try {
         const body = {
           project_id: JSON.parse(localStorage.getItem("projectID")),
           // project_id: 94, //bricks
         };
+        console.log("projID" + JSON.parse(localStorage.getItem("projectID")));
         await axios
           .post("http://35.201.168.185:5000/get_record_index", body, {
             headers: {
@@ -204,6 +194,7 @@ export default createStore({
           .then((res) => {
             // console.log(JSON.parse(localStorage.getItem("auth"))); //確認auth是否正確
             commit("setAllRecords", res.data.record); //以array紀錄會議名稱
+            console.log("回復", res.data.record);
           });
       } catch (error) {
         console.log(error);
@@ -224,7 +215,9 @@ export default createStore({
           })
 
           .then((res) => {
+            // console.log(JSON.parse(localStorage.getItem("auth"))); //確認auth是否正確
             commit("setTrashRecords", res.data.item); //以array紀錄會議名稱
+            console.log("垃圾桶", res.data.item);
           });
       } catch (error) {
         console.log(error);
@@ -235,7 +228,7 @@ export default createStore({
       try {
         const body = {
           project_id: JSON.parse(localStorage.getItem("projectID")),
-          record_id: state.recordID,
+          record_id: JSON.parse(localStorage.getItem('recordID')),
         };
 
         const response = await axios.post(
@@ -254,16 +247,18 @@ export default createStore({
         };
 
         if (response.data.textBox.length == 0) {
-          dispatch("addBlock");
+          dispatch('addBlock');
         } else {
           payload.boxes = response.data.textBox;
         }
 
         commit("setCurrRecord", payload);
+        await dispatch('fetchAllTags');
       } catch (error) {
         console.log("無法獲得單個內容");
       }
     },
+
     async addBlock({ state, dispatch }) {
       const newBlock = {
         record_id: state.recordID,
@@ -271,15 +266,13 @@ export default createStore({
       };
 
       const response = await axios.post(
-        "http://35.201.168.185:5000/add_textBox",
-        newBlock,
-        {
+        "http://35.201.168.185:5000/add_textBox",newBlock,{
           headers: {
             authorization: JSON.parse(localStorage.getItem("auth")),
           },
         }
       );
-      // console.log(response.data.message);
+      console.log(response.data.message);
       await dispatch("fetchOneRecord");
     },
     async deleteBlock({ state, dispatch }, blockID) {
@@ -288,9 +281,7 @@ export default createStore({
       };
 
       const response = await axios.post(
-        "http://35.201.168.185:5000/delete_textBox",
-        deleteBlock,
-        {
+        "http://35.201.168.185:5000/delete_textBox",deleteBlock,{
           headers: {
             authorization: JSON.parse(localStorage.getItem("auth")),
           },
@@ -322,6 +313,7 @@ export default createStore({
         },
       })
       await dispatch('fetchOneRecord');
+      // await dispatch('fetchAllTags');
   
     },
     async deleteTag({dispatch},payload){
@@ -336,10 +328,15 @@ export default createStore({
       })
       console.log(response)
       await dispatch('fetchOneRecord');
+      // await dispatch('fetchAllTags');
     }
   },
   
-  plugins: [localStoragePlugin],
+  plugins: [
+    createPersistedState({
+      storage: window.localStorage, // 可以是 localStorage 或 sessionStorage
+    }),
+  ],
 });
 
 // export default store;

@@ -19,15 +19,13 @@
           :showAddBtn="showAddBtn"
           @deleteCart="deleteCart(block)"
           :content="block.textBox_content"
+          :tags="block.Tag"
+          :blockID="block.TextBox_id"
         />
       </div>
     </div>
-    <div class="result" v-else>
-      <div class="toolBar">
-        <ordering />
-        <sort />
-      </div>
-      <document-with-info v-for="item in 10" :key="item" />
+    <div class="searchResult" v-else>
+      <tag-search-content class="searchResult"></tag-search-content>
     </div>
   </div>
 </template>
@@ -41,43 +39,29 @@ import meeting from "../components/meeting.vue";
 import TextBlock from "@/components/TextBlock.vue";
 import TagPlace from "../components/TagPlace.vue";
 import { useRouter } from "vue-router";
-import Ordering from "../components/SharonBricks/Ordering.vue";
-import sort from "../components/SharonBricks/Sort.vue";
-import DocumentWithInfo from "@/components/KerwinBricks/DCMwithDate.vue";
 import axios from "axios";
 import store from "../store/store.js";
+import TagSearchContent from '@/components/TagSearchContent.vue';
 
 const meetingClass = ref("meeting");
 const recordInfo = ref({});
 const showedInfo = ref(true);
 const showAddBtn = ref(false);
-const newRecordInfo = computed(() => store.getters.getNewRecord)
-const blocks = ref([
-  {
-    "Tag": [],
-    "TextBox_id": 0,
-    "record_id": store.state.recordID,
-    "textBox_content": "",
-    "textBox_update_time": "",
-  }
-]);
+// const newRecordInfo = computed(() => store.getters.getNewRecord)
+const blocks = computed(() => store.getters.getCurrTextBoxes);
 
 const submit = () => {
   console.log("recordInfo：" + recordInfo);
 };
 
 const deleteCart = async (block) => {
-  store.commit("setBlockNow", block);
-  // console.log(store.state.records.blockNow);
-  store.dispatch("deleteBlock");
+  store.dispatch("deleteBlock", block.TextBox_id);
 };
 
 const showInfo = (value) => {
   showedInfo.value = value;
 };
 const add_block = (block) => {
-  store.commit("setBlockNow", block);
-  // console.log(store.state.records.blockNow);
   store.dispatch("addBlock");
 };
 
