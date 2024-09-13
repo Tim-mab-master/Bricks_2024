@@ -4,12 +4,14 @@
         <ordering @Selection="orderMode"/>
         <sort @Selection="sortMode"/>
       </div>
-      <div v-if="ordered || sorted">
-        <document-with-info v-for="block in results" :key="block.TextBox_id" :Tags="block.Tag" :textValue="block.textBox_content" :date="block.upload_time" :blockID="block.TextBox_id"/>
-      </div>
-      <div v-else>
-        <document-with-info v-for="block in getResult" :key="block.TextBox_id" :Tags="block.Tag" :textValue="block.textBox_content" :date="block.upload_time" :blockID="block.TextBox_id"/>
-      </div>
+      <transition name="fade" appear>
+        <div v-if="ordered || sorted" class="results">
+          <document-with-info v-for="block in results" :key="block.TextBox_id" :Tags="block.Tag" :textValue="block.textBox_content" :date="block.upload_time" :blockID="block.TextBox_id"/>
+        </div>
+        <div v-else class="results">
+          <document-with-info v-for="block in getResult" :key="block.TextBox_id" :Tags="block.Tag" :textValue="block.textBox_content" :date="block.upload_time" :blockID="block.TextBox_id"/>
+        </div>
+      </transition>
     </div>
   
 </template>
@@ -166,6 +168,20 @@ onUnmounted(() =>{
   justify-content: right;
   text-align: right;
   /* width: 1fr; */
+}
+
+.results{
+  display: grid;
+  grid-template-rows: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: transform 0.5s ease;
+}
+
+.fade-enter, .fade-leave-to {
+  opacity: 0;
 }
 
 </style>

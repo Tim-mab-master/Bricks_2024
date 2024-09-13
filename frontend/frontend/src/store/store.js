@@ -168,18 +168,26 @@ export default createStore({
 
   },
   actions: {
-    async resultFilter({commit},payload){
-      const filtered = payload.concated.filter(item => 
-        item.Tag.some(tagArray => 
-          tagArray.some(tag => 
-            payload.keywords.some(keyword => tag.Tag_name.includes(keyword))
-          )
-        )
-      );
-      
-      commit("setTagSearchResult",filtered);
-      console.log("filterResult:",filtered);
-      console.log("keywords:",payload.keywords);
+    async resultFilter({ commit }, payload) {
+      const filtered = payload.concated
+        .map(item => {
+          // 计算每个 item 中 Tag_name 符合关键词的数量
+          const matchCount = item.Tag.reduce((count, tagArray) => {
+            return count + tagArray.reduce((innerCount, tag) => {
+              return innerCount + payload.keywords.reduce((keywordCount, keyword) => {
+                return keywordCount + (tag.Tag_name.includes(keyword) ? 1 : 0);
+              }, 0);
+            }, 0);
+          }, 0);
+    
+          return { ...item, matchCount }; // 添加匹配计数
+        })
+        .filter(item => item.matchCount > 0)  // 保留至少符合一个关键字的项
+        .sort((a, b) => b.matchCount - a.matchCount); // 根据匹配计数降序排列
+    
+      commit("setTagSearchResult", filtered);
+      console.log("filterResult:", filtered);
+      console.log("keywords:", payload.keywords);
     },
     async fetchAllRecords({ state, commit }) {
       console.log("fetchAllrecords");

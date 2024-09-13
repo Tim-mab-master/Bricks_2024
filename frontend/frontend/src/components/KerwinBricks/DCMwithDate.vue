@@ -26,7 +26,7 @@
             >
             <span class="tag">{{ tag.Tag_name }}</span>
             </el-tag>
-            <el-input
+            <!-- <el-input
               v-if="inputVisible"
               ref="InputRef"
               v-model="inputValue"
@@ -35,15 +35,34 @@
               type="danger"
               @keyup.enter="handleInputConfirm"
               @blur="handleInputConfirm"
+            /> -->
+            <el-input
+              v-if="inputVisible"
+              ref="inputRef"
+              v-model="inputValue"
+              class="ml-1 w-20"
+              size="small"
+              @keyup.enter="handleInputConfirm"
+              @blur="handleInputConfirm"
             />
             <el-button
-              v-else
-              class="button-new-tag ml-1"
-              size="large"
-              @click="showInput"
+              v-if="!inputVisible"
+              class="button-new-tag ml-1 addTags"
+              size="small"
+              @click="showInput('事項')"
+              :disabled="isCartDisabled"
+              @locked="isLocked"
+              >+ 事項</el-button
             >
-            <span class="tag"> + New Tag</span>
-            </el-button>
+            <el-button
+              v-if="!inputVisible"
+              class="button-new-tag ml-1 addTags"
+              size="small"
+              @click="showInput('組別')"
+              :disabled="isCartDisabled"
+              @locked="isLocked"
+              >+ 組別</el-button
+            >
           </div>
         </div>
       </div>
@@ -62,7 +81,7 @@ import axios from "axios";
         blockID: Number,
     });
     const text = ref(props.textValue);
-      const formatTime = (date) =>{
+    const formatTime = (date) =>{
       const dateInput = new Date(date);
       const year = dateInput.getFullYear();
       const month = String(dateInput.getMonth() + 1).padStart(2, '0');
@@ -81,14 +100,16 @@ import axios from "axios";
     const dateInfo = ref(formatTime(props.date));
     const timeInfo = ref(getHour(props.date));
 
-    const handleCommand = (command) => {
-      inputVisible.value = true;
-    };
+    // const handleCommand = (command) => {
+    //   inputVisible.value = true;
+    // };
 
     //tags
     const inputValue = ref("");
     const dynamicTags = ref(props.Tags[0]);
     const inputVisible = ref(false);
+    const TagClass = ref("");
+    const inputRef = ref(null);
     // const InputRef = ref < InstanceType < typeof ElInput >> new ElInput();
     const handleClose = (tag) => {
       store.dispatch('deleteTag',{
@@ -97,16 +118,32 @@ import axios from "axios";
       })
       dynamicTags.value.splice(dynamicTags.value.indexOf(tag), 1);
     };
-    const showInput = () => {
+    const showInput = (tagClass) => {
       inputVisible.value = true;
+      TagClass.value = tagClass;
+      nextTick(() => {
+        if (inputRef.value) {
+          inputRef.value.focus();
+        }
+      });
     };
-    const handleInputConfirm = () => {
+
+    const handleInputConfirm = async () => {
       if (inputValue.value) {
-        dynamicTags.value.push(inputValue.value);
-        
+        // dynamicTags.value.push(inputValue.value);
+        await store.dispatch('addTag', {
+          blockID: props.blockID, 
+          inputValue: inputValue.value, 
+          tagClass: TagClass.value
+        })
+        dynamicTags.value.push({Tag_name: inputValue.value});
       }
+      // await store.dispatch('fetchOneRecord');
       inputVisible.value = false;
       inputValue.value = "";
+      // calculateVisibleTags();
+      console.log(dynamicTags.value);
+      
     };
 
     const saveInput = debounce(async (value) => {
@@ -229,6 +266,11 @@ line-height: 24px;
 }
 .tag {
   /* margin-right: 4px; */
+  width: 68px;
+  height: 24px;
+  padding: 1px 10px;
+}
+::v-deep(.el-button.el-button--small.button-new-tag.ml-1.addTags){
   width: 68px;
   height: 24px;
   padding: 1px 10px;
