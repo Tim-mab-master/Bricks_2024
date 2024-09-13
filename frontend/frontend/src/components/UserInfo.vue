@@ -3,7 +3,7 @@
     <span class="el-dropdown-link">
       <div id="userInfo">
         <el-avatar shape="square" :size="size" :src="squareUrl" id="avatar" />
-        <p>{{ user_name }}</p>
+        <!-- <p>{{ user_name }}</p> -->
       </div>
     </span>
     <template #dropdown>

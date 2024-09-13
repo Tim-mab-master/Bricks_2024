@@ -56,8 +56,10 @@
             v-model="inputValue"
             class="ml-1 w-20"
             size="small"
+            placeholder="請輸入標籤"
             @keyup.enter="handleInputConfirm"
             @blur="handleInputConfirm"
+            style="width: 74px;"
           />
           <el-button
             v-if="!inputVisible"
@@ -69,14 +71,15 @@
             >+ 事項</el-button
           >
           <el-button
-            v-if="!inputVisible"
-            class="button-new-tag ml-1 addTags"
-            size="small"
-            @click="showInput('組別')"
-            :disabled="isCartDisabled"
-            @locked="isLocked"
-            >+ 組別</el-button
+          v-if="!inputVisible"
+          class="button-new-tag ml-1 addTags"
+          size="small"
+          @click="showInput('組別')"
+          :disabled="isCartDisabled"
+          @locked="isLocked"
+          >+ 組別</el-button
           >
+          <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
         </div>
       </div>
     </transition>
@@ -173,6 +176,7 @@ const hiddenTagCount = ref(0);
 const visibleTags = ref([]);
 const inputRef = ref(null);
 const TagClass = ref("");
+const errorMessage = ref("");
 
 const showHiddenTags = () => {
   visibleTags.value = dynamicTags.value;
@@ -221,14 +225,40 @@ const handleClose = async (tag) => {
 const showInput = (tagClass) => {
   inputVisible.value = true;
   TagClass.value = tagClass;
-  nextTick(() => {
-    if (inputRef.value) {
-      inputRef.value.focus();
-    }
-  });
+  // nextTick(() => {
+  //   if (inputRef.value) {
+  //     inputRef.value.focus();
+  //   }
+  // });
 };
 
-const handleInputConfirm = async () => {
+const handleInputConfirm = async (event) => {
+  
+  //規定inputValue不可超過 20 個字元，也不得超過 302 px，超過則阻擋輸入，且出現提示訊息「標籤文字過長」 
+  //4cm=100px
+  const maxWidth = 100; //應是302px,但我覺得太長
+  const maxLength = 20; //20個字
+  const inputElement = event.target;
+  const inputWidth = inputElement.scrollWidth;
+  console.log("inputWidth",inputWidth);
+
+  if (inputValue.value.length > maxLength || inputWidth > maxWidth )  {
+    errorMessage.value = '標籤文字過長';
+    inputValue.value="";
+    return;
+  } else {
+    errorMessage.value = '';
+  }
+
+  if (dynamicTags.value.length > 7) {
+    errorMessage.value = '標籤個數太多';
+    inputValue.value="";
+    dynamicTags.value = dynamicTags.value.slice(0, 8);
+    return;
+  }else {
+    errorMessage.value = '';
+  }
+      
   if (inputValue.value) {
     // dynamicTags.value.push(inputValue.value);
     await store.dispatch('addTag', {
@@ -303,6 +333,20 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+.button-new-tag {
+  position: relative;
+}
+
+.placeholder-text {
+  color: #ccc; /* 淺灰色 */
+  font-size: 11px;
+}
+
+.error-message {
+  color: red;
+  font-size: 12px;
+}
+
 .show-enter-active,
 .show-leave-active {
   transition: opacity 0.2s;
