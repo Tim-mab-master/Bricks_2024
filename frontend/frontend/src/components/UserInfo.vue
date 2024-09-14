@@ -276,9 +276,33 @@ export default {
   padding-left: 14px;
 }
 
+/* 結果我發現不用v-deep也可以改樣式！！！ */
+
+/* .el-message-box__btns .el-button--primary {
+  background-color: #b82c30 !important;
+  border-color: #b82c30 !important;
+  color: white !important;
+  border-radius: 15px;
+} */
+
+::v-deep .el-button--primary {
+  background-color: #b82c30 !important;
+  --el-button-bg-color: #b82c30 !important;
+}
+
+.el-message-box__title {
+  text-align: center;
+  font-weight: bold;
+}
 .material-icons {
   font-size: 18px;
 }
+.el-input__wrapper {
+  border-radius: 15px !important;
+}
+@media screen and (max-width: 1440px) and (min-width: 1240px) {
+  /* #userInfoInsid
+szd-sssn-qyt
 
 @media screen and (max-width: 1440px) and (min-width: 1240px) {
   /* #userInfoInside, .firstDrop, .dropDown, .userInfo, .firstDrop, #dropDown{
