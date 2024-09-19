@@ -33,11 +33,12 @@ export default createStore({
     blockNow: {},
     delete_confirm: false,
     terminate_confirm: false,
+    forever_delete_record_confirm: false,
     tagsDate: [],
-    tagsThing:[],
+    tagsThing: [],
     tagsTeam: [],
     saveMessage: "",
-    tagSearchResult:[],
+    tagSearchResult: [],
   },
 
   mutations: {
@@ -85,9 +86,14 @@ export default createStore({
     setTerminateConfirm(state) {
       state.terminate_confirm = !state.terminate_confirm;
     },
-    setAllTags(state, tags){
+    // 控制彈出視窗
+    setForeverDeleteRecord(state) {
+      state.forever_delete_record_confirm =
+        !state.forever_delete_record_confirm;
+    },
+    setAllTags(state, tags) {
       tags.map((tag) => {
-        switch(tag.tag_class){
+        switch (tag.tag_class) {
           case "日期":
             state.tagsDate = tag.tag_names;
           case "事項":
@@ -95,7 +101,7 @@ export default createStore({
           case "組別":
             state.tagsTeam = tag.tag_names;
         }
-      })
+      });
     },
     resetRecord(state) {
       state.currRecord = {};
@@ -105,11 +111,11 @@ export default createStore({
       state.saveMessage = message;
       setTimeout(() => {
         state.saveMessage = "";
-      }, 3000)
+      }, 3000);
     },
-    setTagSearchResult(state, result){
+    setTagSearchResult(state, result) {
       state.tagSearchResult = result;
-    }
+    },
   },
   getters: {
     getAuth(state) {
@@ -163,29 +169,28 @@ export default createStore({
     getSaveMessage(state) {
       return state.saveMessage;
     },
-    getTagsDate(state){
+    getTagsDate(state) {
       const formatted = state.tagsDate.map((tag) => {
-            return {label: tag, checked: false}
-          })
+        return { label: tag, checked: false };
+      });
       return formatted;
     },
-    getTagsThing(state){
+    getTagsThing(state) {
       const formatted = state.tagsThing.map((tag) => {
-        return {label: tag, checked: false}
-      })
+        return { label: tag, checked: false };
+      });
       return formatted;
     },
-    getTagsTeam(state){
+    getTagsTeam(state) {
       const formatted = state.tagsTeam.map((tag) => {
-        return {label: tag, checked: false}
-      })
+        return { label: tag, checked: false };
+      });
       return formatted;
     },
-    getTagSearchResult(state){
+    getTagSearchResult(state) {
       const result = state.tagSearchResult.date_unmatch;
       return result;
-    }
-
+    },
   },
   actions: {
     async fetchAllRecords({ state, commit }) {
@@ -284,7 +289,7 @@ export default createStore({
     },
     async deleteBlock({ state, dispatch }, blockID) {
       const deleteBlock = {
-        "textBox_id": blockID,
+        textBox_id: blockID,
       };
 
       const response = await axios.post(
@@ -299,46 +304,55 @@ export default createStore({
       console.log(response.data.message);
       await dispatch("fetchOneRecord");
     },
-    async fetchAllTags({state, commit}){
+    async fetchAllTags({ state, commit }) {
       const project = {
         project_id: JSON.parse(localStorage.getItem("projectID")),
-      }
-      const response = await axios.post("http://35.201.168.185:5000/tag_index", project, {
-        headers: {
-          authorization: JSON.parse(localStorage.getItem("auth")),
-        },
-      }).catch(console.log("wrong"))
-      commit('setAllTags', response.data.item);
-    },
-    async addTag({dispatch},payload){
-      const newTag = {
-        "textBox_id": payload.blockID,
-        "tag_name": payload.inputValue,
-        "tag_class": payload.tagClass
-      }
-      const response = await axios.post("http://35.201.168.185:5000/add_tag",newTag,{
-        headers: {
-          authorization: JSON.parse(localStorage.getItem("auth")),
-        },
-      })
-      await dispatch('fetchOneRecord');
-  
-    },
-    async deleteTag({dispatch},payload){
-      const deleteTag = {
-        "textBox_id": payload.blockID,
-        "tag_id": payload.tagID,
       };
-      const response = await axios.post("http://35.201.168.185:5000/delete_tag", deleteTag, {
-        headers: {
-          authorization: JSON.parse(localStorage.getItem("auth")),
-        },
-      })
-      console.log(response)
-      await dispatch('fetchOneRecord');
-    }
+      const response = await axios
+        .post("http://35.201.168.185:5000/tag_index", project, {
+          headers: {
+            authorization: JSON.parse(localStorage.getItem("auth")),
+          },
+        })
+        .catch(console.log("wrong"));
+      commit("setAllTags", response.data.item);
+    },
+    async addTag({ dispatch }, payload) {
+      const newTag = {
+        textBox_id: payload.blockID,
+        tag_name: payload.inputValue,
+        tag_class: payload.tagClass,
+      };
+      const response = await axios.post(
+        "http://35.201.168.185:5000/add_tag",
+        newTag,
+        {
+          headers: {
+            authorization: JSON.parse(localStorage.getItem("auth")),
+          },
+        }
+      );
+      await dispatch("fetchOneRecord");
+    },
+    async deleteTag({ dispatch }, payload) {
+      const deleteTag = {
+        textBox_id: payload.blockID,
+        tag_id: payload.tagID,
+      };
+      const response = await axios.post(
+        "http://35.201.168.185:5000/delete_tag",
+        deleteTag,
+        {
+          headers: {
+            authorization: JSON.parse(localStorage.getItem("auth")),
+          },
+        }
+      );
+      console.log(response);
+      await dispatch("fetchOneRecord");
+    },
   },
-  
+
   plugins: [localStoragePlugin],
 });
 
