@@ -28,6 +28,8 @@
 import { nextTick, onMounted, ref } from "vue";
 // import DeleteForever from '../KarenBricks/DeleteForever.vue';
 import { ElNotification } from "element-plus";
+import { ElMessage } from "element-plus";
+
 import store from "../store/store.js";
 import axios from "axios";
 import router, { useRoute, useRouter } from "vue-router";
@@ -67,6 +69,27 @@ export default {
       // 控制確認永久刪除彈出視窗
       store.commit("setForeverDeleteRecord");
       store.commit("setRecordID", record_id);
+
+      // const body = { record_id: record_id };
+
+      // axios
+
+      //   .post("http://35.201.168.185:5000//delete_record_permanent", body, {
+      //     headers: {
+      //       authorization: JSON.parse(localStorage.getItem("auth")),
+      //     },
+      //   })
+
+      //   .then((res) => {
+      //     ElMessage("您已永久刪除會議記錄");
+
+      //     setTimeout(() => {
+      //       unshown();
+
+      //       router.go(0);
+      //     }, 500);
+      //   });
+
       nextTick(() => {
         unshown();
       });
@@ -82,6 +105,26 @@ export default {
         })
         .then((res) => {
           setTimeout(() => {
+            //    ElNotification({
+
+            //     dangerouslyUseHTMLString: true,
+
+            //     title: "成功復原會議記錄",
+
+            //     message:
+
+            //       '<a href="/path/to/recovery/file" style="color: #67C23A; text-decoration: underline;">點擊檢視復原檔案</a>',
+
+            //     type: "success",
+
+            //     position: "bottom-right",
+
+            //   });
+
+            //   unshown();
+
+            // }, 500);
+
             router.go(0);
           }, 1000);
           ElNotification({

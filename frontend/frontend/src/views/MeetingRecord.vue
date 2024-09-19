@@ -29,7 +29,6 @@
       <tag-search-content class="searchResult"></tag-search-content>
     </div>
   </div>
-    
 </template>
 
 <script setup>
@@ -69,7 +68,6 @@ const deleteCart = async (block) => {
 
 const showInfo = (value) => {
   showedInfo.value = value;
-
 };
 
 const setBlockNow = (block) => {
@@ -85,12 +83,14 @@ const showBtn = () => {
 };
 
 onMounted(async () => {
-  await store.dispatch("fetchAllTags");
+  // await store.dispatch("fetchAllTags");
+
+  await store.dispatch("fetchOneRecord");
 });
 
-onUnmounted(() =>{
+onUnmounted(() => {
   store.commit("resetRecord");
-})
+});
 </script>
 
 <style scoped>
@@ -187,7 +187,7 @@ onUnmounted(() =>{
   /* top: 68px; */
   z-index: 5;
 }
-.searchResult{
+.searchResult {
   left: 10%;
 }
 

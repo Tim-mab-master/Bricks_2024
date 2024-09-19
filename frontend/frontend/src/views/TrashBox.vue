@@ -1,4 +1,5 @@
 <template>
+  <trash-bar class="navBar"></trash-bar>
   <div>
     <div class="terminate_confirm" v-if="close_terminate">
       <div

@@ -27,20 +27,19 @@
         </div>
         <div class="split-line" style="width: 100%"></div>
         <div class="tags" :disabled="isCartDisabled">
-          
-            <el-tag
-              v-for="tag in visibleTags"
-              :key="tag.Tag_id"
-              class="tag"
-              closable
-              :disable-transitions="false"
-              :disabled="isCartDisabled"
-              @close="handleClose(tag)"
-            >
-              <el-tooltip :content="tag.Tag_class" effect="light">
-                {{ tag.Tag_name }}
-              </el-tooltip>
-            </el-tag>
+          <el-tag
+            v-for="tag in visibleTags"
+            :key="tag.Tag_id"
+            class="tag"
+            closable
+            :disable-transitions="false"
+            :disabled="isCartDisabled"
+            @close="handleClose(tag)"
+          >
+            <el-tooltip :content="tag.Tag_class" effect="light">
+              {{ tag.Tag_name }}
+            </el-tooltip>
+          </el-tag>
 
           <el-tag
             v-if="hiddenTagCount > 0"
@@ -56,8 +55,10 @@
             v-model="inputValue"
             class="ml-1 w-20"
             size="small"
+            placeholder="請輸入標籤"
             @keyup.enter="handleInputConfirm"
             @blur="handleInputConfirm"
+            style="width: 74px"
           />
           <el-button
             v-if="!inputVisible"
@@ -77,6 +78,7 @@
             @locked="isLocked"
             >+ 組別</el-button
           >
+          <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
         </div>
       </div>
     </transition>
@@ -132,12 +134,15 @@ const emit = defineEmits(["add_cart", "deleteCart"]);
 const textValue = ref(props.content);
 
 const saveInput = debounce(async (value) => {
-      try {
-        await axios.post('http://35.201.168.185:5000/edit_textBox', { 
-          "textBox_id":props.blockID,
-          "textBox_content":textValue.value
-         },{
-          headers: {
+  try {
+    await axios.post(
+      "http://35.201.168.185:5000/edit_textBox",
+      {
+        textBox_id: props.blockID,
+        textBox_content: textValue.value,
+      },
+      {
+        headers: {
           authorization: JSON.parse(localStorage.getItem("auth")),
         },
       }
@@ -175,6 +180,8 @@ const visibleTags = ref([]);
 const inputRef = ref(null);
 const TagClass = ref("");
 
+const errorMessage = ref("");
+
 const showHiddenTags = () => {
   visibleTags.value = dynamicTags.value;
   hiddenTagCount.value = 0;
@@ -211,10 +218,10 @@ const handleClose = async (tag) => {
     const index = dynamicTags.value.indexOf(tag);
     if (index !== -1) {
       dynamicTags.value.splice(index, 1);
-      store.dispatch('deleteTag',{
+      store.dispatch("deleteTag", {
         blockID: props.blockID,
-        tagID: (tag.Tag_id).toString(),
-      })
+        tagID: tag.Tag_id.toString(),
+      });
     }
     calculateVisibleTags();
   }
@@ -230,14 +237,51 @@ const showInput = (tagClass) => {
   });
 };
 
-const handleInputConfirm = () => {
+const handleInputConfirm = async (event) => {
+  //規定inputValue不可超過 20 個字元，也不得超過 302 px，超過則阻擋輸入，且出現提示訊息「標籤文字過長」
+
+  //4cm=100px
+
+  const maxWidth = 100; //應是302px,但我覺得太長
+
+  const maxLength = 20; //20個字
+
+  const inputElement = event.target;
+
+  const inputWidth = inputElement.scrollWidth;
+
+  console.log("inputWidth", inputWidth);
+
+  if (inputValue.value.length > maxLength || inputWidth > maxWidth) {
+    errorMessage.value = "標籤文字過長";
+
+    inputValue.value = "";
+
+    return;
+  } else {
+    errorMessage.value = "";
+  }
+
+  if (dynamicTags.value.length > 7) {
+    errorMessage.value = "標籤個數太多";
+
+    inputValue.value = "";
+
+    dynamicTags.value = dynamicTags.value.slice(0, 8);
+
+    return;
+  } else {
+    errorMessage.value = "";
+  }
+
   if (inputValue.value) {
+    // dynamicTags.value.push(inputValue.value);
+    await store.dispatch("addTag", {
+      blockID: props.blockID,
+      inputValue: inputValue.value,
+      tagClass: TagClass.value,
+    });
     dynamicTags.value.push(inputValue.value);
-    store.dispatch('addTag', {
-      blockID: props.blockID, 
-      inputValue: inputValue.value, 
-      tagClass: TagClass.value
-    })
   }
   // await store.dispatch('fetchOneRecord');
   inputVisible.value = false;
@@ -304,6 +348,19 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+.button-new-tag {
+  position: relative;
+}
+
+.placeholder-text {
+  color: #ccc; /* 淺灰色 */
+  font-size: 11px;
+}
+
+.error-message {
+  color: red;
+  font-size: 12px;
+}
 .show-enter-active,
 .show-leave-active {
   transition: opacity 0.2s;

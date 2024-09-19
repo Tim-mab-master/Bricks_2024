@@ -1,5 +1,7 @@
 import { createStore } from "vuex";
 import axios from "axios";
+import createPersistedState from "vuex-persistedstate";
+import debounce from "lodash/debounce";
 
 const localStoragePlugin = (store) => {
   store.subscribe((mutation, { auth }) => {
@@ -47,7 +49,7 @@ export default createStore({
     },
     setProjectName(state, projectName) {
       state.projectName = projectName;
-      window.localStorage.setItem("projectName", JSON.stringify(projectName));
+      // window.localStorage.setItem("projectName", JSON.stringify(projectName));
     },
     setAuth(state, authorization) {
       state.auth = authorization;
@@ -76,6 +78,7 @@ export default createStore({
     },
     setRecordID(state, ID) {
       state.recordID = ID;
+      window.localStorage.setItem("recordID", ID);
     },
     setUserID(state, ID) {
       state.userID = ID;
@@ -115,6 +118,9 @@ export default createStore({
     },
     setTagSearchResult(state, result) {
       state.tagSearchResult = result;
+    },
+    resetSearchResult(state) {
+      state.tagSearchResult = [];
     },
   },
   getters: {
@@ -193,6 +199,21 @@ export default createStore({
     },
   },
   actions: {
+    resultFilter({ commit }, payload) {
+      const filtered = payload.concated.filter((item) =>
+        item.Tag.some((tagArray) =>
+          tagArray.some((tag) =>
+            payload.keywords.some((keyword) => tag.Tag_name.includes(keyword))
+          )
+        )
+      );
+
+      console.log("filter:", filtered);
+
+      console.log("keywords:", payload.keywords);
+
+      commit("setTagSearchResult", filtered);
+    },
     async fetchAllRecords({ state, commit }) {
       try {
         const body = {
@@ -265,6 +286,7 @@ export default createStore({
         }
 
         commit("setCurrRecord", payload);
+        await dispatch("fetchAllTags");
       } catch (error) {
         console.log("無法獲得單個內容");
       }
@@ -353,7 +375,11 @@ export default createStore({
     },
   },
 
-  plugins: [localStoragePlugin],
+  plugins: [
+    createPersistedState({
+      storage: window.localStorage, // 可以是 localStorage 或 sessionStorage
+    }),
+  ],
 });
 
 // export default store;

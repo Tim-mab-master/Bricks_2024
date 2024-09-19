@@ -12,7 +12,7 @@
           @keyup="keyboardEvent"
           @blur="clear_search_bar"
         />
-        
+
         <!-- show_his_search_list是壞分子，讓his_search_choosen -->
         <div class="his_search_list" v-show="show_his_search_list">
           <div
@@ -49,23 +49,23 @@
             </li>
           </ul>
         </div>
-        
+
         <div class="clear_search" @click="clear_search_bar"></div>
-        
+
         <img src="../assets/search.svg" alt="" class="search" />
         <img src="../assets/Notice/Notice_Default.svg" alt="" class="notice" />
-        <user-info :user_name="user_name" class="profile" id="userInfo" ></user-info>
+        <user-info
+          :user_name="user_name"
+          class="profile"
+          id="userInfo"
+        ></user-info>
         <!-- <router-view></router-view> -->
         <!-- <img
           src="../assets/Profile/Profile_Default.svg"
           alt=""
           class="profile" 
         /> -->
-      
-        
-        
       </div>
-      
     </div>
     <div class="left_bar">
       <div class="add_btn" @click="add_btn">新增專案</div>
@@ -82,7 +82,7 @@
 
         <label for="overview" @click="change(1)">專案總覽</label>
         <img src="../assets/icon/icon_file.svg" style="top: 26px" />
-        
+
         <input
           type="radio"
           id="over"
@@ -104,7 +104,6 @@
         <label for="trash" @click="change(3)">垃圾桶</label>
         <img src="../assets/icon/icon_trashcan.svg" style="top: 178px" />
       </div>
-        
     </div>
     <div class="add_proj_box" v-show="add_proj_show">
       <div
@@ -114,7 +113,7 @@
           close_add_proj();
         "
       ></div>
-      
+
       <p class="add_proj_title">新增專案</p>
       <div class="add_proj_pic">
         <img src="../assets/add_proj_pic_plus.svg" class="add_proj_pic_plus" />
@@ -518,7 +517,7 @@
                       v-for="(proj, index2) in cart.proj_box"
                       :key="index2"
                       @click="click_trash_project_in_month(index2, index1)"
-                      :class="{ selected: isSelected_in_month(index1, index2) }" 
+                      :class="{ selected: isSelected_in_month(index1, index2) }"
                     >
                       {{ proj.proj_name }}
                     </div>
@@ -538,7 +537,9 @@
                       v-for="(proj, index2) in cart.proj_box"
                       :key="index2"
                       @click="click_trash_project_not_in_month(index2, index1)"
-                      :class="{ selected: isSelected_not_in_month(index1, index2) }" 
+                      :class="{
+                        selected: isSelected_not_in_month(index1, index2),
+                      }"
                     >
                       {{ proj.proj_name }}
                     </div>
@@ -617,9 +618,9 @@
 </template>
 
 <script>
-import UserInfo from '../components/UserInfo.vue';
-import TinycmeEditor from '../components/tinymce.vue';
-import { reactive, ref, watch } from 'vue';
+import UserInfo from "../components/UserInfo.vue";
+import TinycmeEditor from "../components/tinymce.vue";
+import { reactive, ref, watch } from "vue";
 
 // const editorData = ref('<p>Content of the editor.</p>');
 
@@ -1426,14 +1427,18 @@ export default {
 
       // 切換有選中或沒選中
       if (this.selectedProjectsInMonth.includes(identifier)) {
-        this.selectedProjectsInMonth = this.selectedProjectsInMonth.filter(item => item !== identifier);
+        this.selectedProjectsInMonth = this.selectedProjectsInMonth.filter(
+          (item) => item !== identifier
+        );
       } else {
         this.selectedProjectsInMonth.push(identifier);
       }
-      console.log(this.selectedProjectsInMonth)
+      console.log(this.selectedProjectsInMonth);
     },
     isSelected_in_month(cartIndex, projectIndex) {
-      return this.selectedProjectsInMonth.includes(`${cartIndex}-${projectIndex}`);
+      return this.selectedProjectsInMonth.includes(
+        `${cartIndex}-${projectIndex}`
+      );
     },
     click_trash_project_not_in_month(projectIndex, cartIndex) {
       // 使用唯一标识符跟踪选中的 box
@@ -1441,14 +1446,17 @@ export default {
 
       // 切換有選中或沒選中
       if (this.selectedProjectsNotInMonth.includes(identifier)) {
-        this.selectedProjectsNotInMonth = this.selectedProjectsNotInMonth.filter(item => item !== identifier);
+        this.selectedProjectsNotInMonth =
+          this.selectedProjectsNotInMonth.filter((item) => item !== identifier);
       } else {
         this.selectedProjectsNotInMonth.push(identifier);
       }
-      console.log(this.selectedProjectsNotInMonth)
+      console.log(this.selectedProjectsNotInMonth);
     },
     isSelected_not_in_month(cartIndex, projectIndex) {
-      return this.selectedProjectsNotInMonth.includes(`${cartIndex}-${projectIndex}`);
+      return this.selectedProjectsNotInMonth.includes(
+        `${cartIndex}-${projectIndex}`
+      );
     },
 
     //刪除後的專案跑到垃圾桶
@@ -1572,62 +1580,68 @@ export default {
     recover_project() {
       let projectIds = [];
       // 遍歷所有選中的專案30天內
-    this.selectedProjectsInMonth.forEach(identifier => {
-    // 解析 cartIndex 和 projectIndex
-    const [cartIndex, projectIndex] = identifier.split('-').map(Number);
-    const projectName = this.trash_carts_in_month[cartIndex]?.proj_box[projectIndex]?.proj_name;
+      this.selectedProjectsInMonth.forEach((identifier) => {
+        // 解析 cartIndex 和 projectIndex
+        const [cartIndex, projectIndex] = identifier.split("-").map(Number);
+        const projectName =
+          this.trash_carts_in_month[cartIndex]?.proj_box[projectIndex]
+            ?.proj_name;
 
-    if (projectName) {
-      console.log("Project Name (In Month):", projectName);
-      this.all_proj.forEach(project => {
-        if (project.project_name === projectName) {
-          projectIds.push(project.id);
+        if (projectName) {
+          console.log("Project Name (In Month):", projectName);
+          this.all_proj.forEach((project) => {
+            if (project.project_name === projectName) {
+              projectIds.push(project.id);
+            }
+          });
+        } else {
+          console.error("找不到 (In Month)");
         }
       });
-    } else {
-      console.error("找不到 (In Month)");
-    }
-  });
-  // 處理近一年的專案
-  this.selectedProjectsNotInMonth.forEach(identifier => {
-    const [cartIndex, projectIndex] = identifier.split('-').map(Number);
-    const projectName = this.trash_carts_not_in_month[cartIndex]?.proj_box[projectIndex]?.proj_name;
+      // 處理近一年的專案
+      this.selectedProjectsNotInMonth.forEach((identifier) => {
+        const [cartIndex, projectIndex] = identifier.split("-").map(Number);
+        const projectName =
+          this.trash_carts_not_in_month[cartIndex]?.proj_box[projectIndex]
+            ?.proj_name;
 
-    if (projectName) {
-      console.log("Project Name (Not In Month):", projectName);
-      this.all_proj.forEach(project => {
-        if (project.project_name === projectName) {
-          projectIds.push(project.id);
+        if (projectName) {
+          console.log("Project Name (Not In Month):", projectName);
+          this.all_proj.forEach((project) => {
+            if (project.project_name === projectName) {
+              projectIds.push(project.id);
+            }
+          });
+        } else {
+          console.error("找不到 (Not In Month)");
         }
       });
-    } else {
-      console.error("找不到 (Not In Month)");
-    }
-  });
-      projectIds.forEach((projectId) =>{
-      const path = "http://35.201.168.185:5000/trashcan_recover";
-      const delete_record_permanent = {
-        project_id: projectId,
-      };
-      axios
-        .post(path, delete_record_permanent, {
-          headers: { authorization: JSON.parse(localStorage.getItem("auth")) },
-        })
-        .then((res) => {
-          if (res.data.status === "success") {
-            console.log("Projects deleted successfully");
-            setTimeout(() => {
-              this.$router.go(0);
-            }, 500);
-          } else {
-            console.error("刪除專案失敗");
-          }
-        })
-        .catch((error) => {
-          console.error("API呼叫失敗", error);
-        });
-    })
-     //個人資訊開頭
+      projectIds.forEach((projectId) => {
+        const path = "http://35.201.168.185:5000/trashcan_recover";
+        const delete_record_permanent = {
+          project_id: projectId,
+        };
+        axios
+          .post(path, delete_record_permanent, {
+            headers: {
+              authorization: JSON.parse(localStorage.getItem("auth")),
+            },
+          })
+          .then((res) => {
+            if (res.data.status === "success") {
+              console.log("Projects deleted successfully");
+              setTimeout(() => {
+                this.$router.go(0);
+              }, 500);
+            } else {
+              console.error("刪除專案失敗");
+            }
+          })
+          .catch((error) => {
+            console.error("API呼叫失敗", error);
+          });
+      });
+      //個人資訊開頭
     },
     // 垃圾桶點選永久刪除
     forever_delete_project() {
@@ -1640,44 +1654,48 @@ export default {
       this.showOverlay_trash = false;
     },
 
-     //個人資訊開頭
+    //個人資訊開頭
 
-    forever_delete(){
+    forever_delete() {
       let projectIds = [];
 
-    // 遍歷所有選中的專案30天內
-    this.selectedProjectsInMonth.forEach(identifier => {
-    // 解析 cartIndex 和 projectIndex
-    const [cartIndex, projectIndex] = identifier.split('-').map(Number);
-    const projectName = this.trash_carts_in_month[cartIndex]?.proj_box[projectIndex]?.proj_name;
+      // 遍歷所有選中的專案30天內
+      this.selectedProjectsInMonth.forEach((identifier) => {
+        // 解析 cartIndex 和 projectIndex
+        const [cartIndex, projectIndex] = identifier.split("-").map(Number);
+        const projectName =
+          this.trash_carts_in_month[cartIndex]?.proj_box[projectIndex]
+            ?.proj_name;
 
-    if (projectName) {
-      console.log("Project Name (In Month):", projectName);
-      this.all_proj.forEach(project => {
-        if (project.project_name === projectName) {
-          projectIds.push(project.id);
+        if (projectName) {
+          console.log("Project Name (In Month):", projectName);
+          this.all_proj.forEach((project) => {
+            if (project.project_name === projectName) {
+              projectIds.push(project.id);
+            }
+          });
+        } else {
+          console.error("找不到 (In Month)");
         }
       });
-    } else {
-      console.error("找不到 (In Month)");
-    }
-  });
-  // 處理近一年的專案
-  this.selectedProjectsNotInMonth.forEach(identifier => {
-    const [cartIndex, projectIndex] = identifier.split('-').map(Number);
-    const projectName = this.trash_carts_not_in_month[cartIndex]?.proj_box[projectIndex]?.proj_name;
+      // 處理近一年的專案
+      this.selectedProjectsNotInMonth.forEach((identifier) => {
+        const [cartIndex, projectIndex] = identifier.split("-").map(Number);
+        const projectName =
+          this.trash_carts_not_in_month[cartIndex]?.proj_box[projectIndex]
+            ?.proj_name;
 
-    if (projectName) {
-      console.log("Project Name (Not In Month):", projectName);
-      this.all_proj.forEach(project => {
-        if (project.project_name === projectName) {
-          projectIds.push(project.id);
+        if (projectName) {
+          console.log("Project Name (Not In Month):", projectName);
+          this.all_proj.forEach((project) => {
+            if (project.project_name === projectName) {
+              projectIds.push(project.id);
+            }
+          });
+        } else {
+          console.error("找不到 (Not In Month)");
         }
       });
-    } else {
-      console.error("找不到 (Not In Month)");
-    }
-  });
 
       // 永久刪除專案
 
@@ -1768,18 +1786,18 @@ export default {
   mounted() {
     const show_info = "http://35.201.168.185:5000/show_info";
     axios
-        .post(show_info, null,{
-            headers: { authorization: JSON.parse(localStorage.getItem("auth")) },
-        })
-        .then((res) => {
-            if (res.data.status === "success"){
-                this.user_name = res.data.user_info.user_name;
-                console.log("user_name",this.user_name)
-            }
-        })
-        .catch((error) => {
-          console.log("名字取得失敗",error)
-        })
+      .post(show_info, null, {
+        headers: { authorization: JSON.parse(localStorage.getItem("auth")) },
+      })
+      .then((res) => {
+        if (res.data.status === "success") {
+          this.user_name = res.data.user_info.user_name;
+          console.log("user_name", this.user_name);
+        }
+      })
+      .catch((error) => {
+        console.log("名字取得失敗", error);
+      });
     window.addEventListener("click", this.handleClickOutside);
     const path = "http://35.201.168.185:5000/project_index";
     const get_proj = {
@@ -1951,7 +1969,6 @@ export default {
           });
         }
       });
-
   },
   beforeUnmount() {
     window.removeEventListener("click", this.handleClickOutside);
@@ -2100,15 +2117,13 @@ export default {
 }
 
 .profile {
-  top:-3px;
+  top: -3px;
   position: absolute;
   right: -3px;
   cursor: pointer;
   -webkit-user-drag: none;
   user-select: none;
 }
-
-
 
 /* navigation bar的部分 終點 */
 
@@ -2828,17 +2843,15 @@ export default {
   letter-spacing: 1.25px;
   text-indent: 69.67px;
   user-select: none;
-  
 }
 .box:hover {
   background-color: #e1dcdc;
   border-color: #503131;
 }
 .box.selected {
-  background-color: #E1DCDC;
+  background-color: #e1dcdc;
   color: black;
   border-color: #503131;
-
 }
 .cart_title_input {
   font-size: 16px;
@@ -3243,6 +3256,4 @@ export default {
   color: black;
 }
 /* 垃圾桶的部分 終點 */
-
-
 </style>
