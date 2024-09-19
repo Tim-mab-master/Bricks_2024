@@ -235,7 +235,7 @@ export default {
   position: relative;
   left: 50%;
   transform: translate(-50%);
-  top: 28vh;
+  top: 28%;
   font-family: "Noto Sans TC";
 }
 
@@ -254,25 +254,25 @@ export default {
 
 .second_line {
   font-size: 520%;
-  font-weight: 700;
+  font-weight: 600;
   width: 100%;
   position: absolute;
   justify-content: space-around;
   display: flex;
   letter-spacing: 16px;
-  top: 14%;
+  top: 74px;
 }
 
 .third_line {
   font-size: 176%;
-  font-weight: 400;
+  font-weight: 550;
   width: 100%;
   position: absolute;
   display: flex;
   justify-content: space-around;
   left: 50%;
   transform: translate(-51%);
-  top: 50%;
+  top: 186px;
 }
 
 .try_now_first {
@@ -281,7 +281,7 @@ export default {
   background-color: #b82c30;
   border-radius: 14px;
   position: absolute;
-  bottom: 5vh;
+  top: 280px;
   left: 50%;
   transform: translate(-50%);
   text-decoration: none;
@@ -451,6 +451,7 @@ export default {
     letter-spacing: 1.25px;
     background-color: #b82c30;
     color: white;
+    padding-top: 4px;
   }
 }
 
@@ -482,7 +483,7 @@ export default {
   height: 28px;
   line-height: 28px;
   color: #b6aeae;
-  font-size: 2vw;
+  font-size: 20px;
   font-weight: 700;
 }
 
@@ -490,7 +491,7 @@ export default {
   height: 56px;
   line-height: 56px;
   color: #252525;
-  font-size: 3.2vw;
+  font-size: 41px;
   font-weight: 700;
 }
 
@@ -499,8 +500,9 @@ export default {
   top: 5vh;
   height: 100px;
   color: #252525;
-  font-size: 1.6vw;
-  font-weight: 400;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 30px;
 }
 
 .mid_try_btn {
@@ -536,10 +538,11 @@ export default {
   left: 50%;
   transform: translate(-50%);
   top: 24vh;
+  color: black;
 }
 
 .end_first_line {
-  font-size: 3.5vw;
+  font-size: 41px;
   height: 56px;
   line-height: 56px;
   font-weight: 700;
@@ -547,11 +550,12 @@ export default {
 }
 
 .end_sec_area {
-  font-size: 1.8vw;
-  font-weight: 400;
+  font-size: 24px;
+  font-weight: 550;
   text-align: center;
   position: relative;
   top: 104px;
+  line-height: 36px;
 }
 
 .end_try_btn {
@@ -658,6 +662,14 @@ export default {
 @media screen and (min-width: 1600px) {
   .bg {
     height: 100vh;
+  }
+
+  .slogan {
+    top: 34%;
+  }
+
+  .third_line {
+    top: 186px;
   }
 
   .privacy {

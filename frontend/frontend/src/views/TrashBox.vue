@@ -1,10 +1,71 @@
 <template>
-  <div>
-    <side-bar></side-bar>
-    <nav-bar-all class="navBar"></nav-bar-all>
+  <side-bar></side-bar>
+  <nav-bar-all class="navBar"></nav-bar-all>
 
-    <div class="navAndCont" id="trash">
-      <trash-bar class="navBar"></trash-bar>
+  <div class="navAndCont" id="trash">
+    <trash-bar class="navBar"></trash-bar>
+    <div class="terminate_confirm" v-if="close_terminate">
+      <div
+        class="close_terminate_delete_confirm"
+        @click="close_terminate_confirm"
+      ></div>
+      <h4 class="confirm_title">結束專案</h4>
+      <p class="confirm_content">
+        確認結束此專案？執行後請至「已結束專案」查看
+      </p>
+      <div class="confirm_button_container">
+        <div class="confirm_button cb_cancle" @click="close_terminate_confirm">
+          取消
+        </div>
+        <div
+          class="confirm_button cb_confirm"
+          @click="confirm_terminate_button"
+        >
+          確定
+        </div>
+      </div>
+    </div>
+    <div class="delete_confirm" v-if="close_delete">
+      <div
+        class="close_terminate_delete_confirm"
+        @click="close_delete_confirm"
+      ></div>
+      <h4 class="confirm_title">刪除專案</h4>
+      <p class="confirm_content">確認刪除此專案？執行後請至「垃圾桶」查看</p>
+      <div class="confirm_button_container">
+        <div class="confirm_button cb_cancle" @click="close_delete_confirm">
+          取消
+        </div>
+        <div class="confirm_button cb_confirm" @click="confirm_delete_button">
+          確定
+        </div>
+      </div>
+    </div>
+    <div class="forever_delete_confirm" v-if="forever_delete_true">
+      <div
+        class="close_forever_delete_confirm"
+        @click="close_delete_forever_confirm"
+      ></div>
+      <h4 class="forever_delete_title">永久刪除會議記錄</h4>
+      <p class="forever_delete_content">
+        確認結束此會議記錄？請注意，永久刪除後將無法復原
+      </p>
+      <div class="confirm_button_container">
+        <div
+          class="confirm_button cb_cancle"
+          @click="close_delete_forever_confirm"
+        >
+          取消
+        </div>
+        <div
+          class="confirm_button cb_confirm"
+          @click="confirm_delete_forever_button"
+        >
+          永久刪除
+        </div>
+      </div>
+    </div>
+    <div v-if="cards === null" class="navAndCont" id="trash">
       <div class="cards">
         <trash-cards
           v-for="card in cards"
