@@ -770,7 +770,7 @@ export default {
   font-weight: 500;
   letter-spacing: 1.25px;
   text-indent: 33.5px;
-  margin-bottom: 25.5px;
+  margin-bottom: 20px;
 }
 
 input::placeholder {
@@ -808,7 +808,7 @@ input::placeholder {
 }
 
 .input_password {
-  height: 60px;
+  height: 56px;
 }
 
 .input_password img {
@@ -816,7 +816,7 @@ input::placeholder {
   z-index: 9;
   user-select: none;
   position: relative;
-  top: -56px;
+  top: -52px;
   left: 90%;
   display: block;
   height: 26px;
@@ -857,13 +857,13 @@ input::placeholder {
 }
 
 .agree {
-  width: 294px;
+  width: 266px;
   height: 32px;
   position: relative;
-  left: 50%;
+  left: 38%;
   transform: translate(-50%, -30%);
-  margin-bottom: 24px;
-  font-size: 18px;
+  margin-bottom: 16px;
+  font-size: 16px;
   font-family: "Noto Sans TC";
   line-height: 32px;
   font-weight: 500;
@@ -895,7 +895,7 @@ input::placeholder {
   width: 100%;
   position: relative;
   transform: translate(0%, -60%);
-  font-size: 18px;
+  font-size: 14px;
   font-weight: 500;
   font-family: "Noto Sans TC";
   line-height: 33px;
@@ -986,13 +986,14 @@ input::placeholder {
 .title {
   width: 100%;
   height: 48px;
-  font-size: 33px;
+  font-size: 24px;
   text-align: center;
   font-family: "Noto Sans TC";
   letter-spacing: 0.25px;
   font-weight: 700;
   line-height: 48px;
   user-select: none;
+  margin-bottom: 60px;
 }
 
 .bottom {

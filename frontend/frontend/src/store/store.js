@@ -1,7 +1,7 @@
 import { createStore } from "vuex";
 import axios from "axios";
-import createPersistedState from 'vuex-persistedstate';
-import debounce from 'lodash/debounce';
+import createPersistedState from "vuex-persistedstate";
+import debounce from "lodash/debounce";
 
 const localStoragePlugin = (store) => {
   store.subscribe((mutation, { auth }) => {
@@ -28,11 +28,12 @@ export default createStore({
     blockNow: {},
     delete_confirm: false,
     terminate_confirm: false,
+    forever_delete_record_confirm: false,
     tagsDate: [],
-    tagsThing:[],
+    tagsThing: [],
     tagsTeam: [],
     saveMessage: "",
-    tagSearchResult:[],
+    tagSearchResult: [],
   },
 
   mutations: {
@@ -76,9 +77,14 @@ export default createStore({
     setTerminateConfirm(state) {
       state.terminate_confirm = !state.terminate_confirm;
     },
-    setAllTags(state, tags){
+    // 控制彈出視窗
+    setForeverDeleteRecord(state) {
+      state.forever_delete_record_confirm =
+        !state.forever_delete_record_confirm;
+    },
+    setAllTags(state, tags) {
       tags.map((tag) => {
-        switch(tag.tag_class){
+        switch (tag.tag_class) {
           case "日期":
             state.tagsDate = tag.tag_names;
           case "事項":
@@ -86,21 +92,21 @@ export default createStore({
           case "組別":
             state.tagsTeam = tag.tag_names;
         }
-      })
+      });
     },
-    resetRecord(state){
+    resetRecord(state) {
       state.currRecord = {};
       console.log("reseted");
     },
-    setSaveMessage(state, message){
+    setSaveMessage(state, message) {
       state.saveMessage = message;
       setTimeout(() => {
         state.saveMessage = "";
-      }, 3000)
+      }, 3000);
     },
-    setTagSearchResult(state, result){
+    setTagSearchResult(state, result) {
       state.tagSearchResult = result;
-    }
+    },
   },
   getters: {
     getAuth(state) {
@@ -121,7 +127,7 @@ export default createStore({
     getCurrTextBoxes(state) {
       return state.currTextBoxes;
     },
-    getRecordID(state){
+    getRecordID(state) {
       return state.recordID;
     },
     getDeleteConfirm(state) {
@@ -130,51 +136,57 @@ export default createStore({
     getTerminateConfirm(state) {
       return state.terminate_confirm;
     },
-    getBlockNow(state){
+    getBlockNow(state) {
       return state.blockNow;
     },
-    getAllTags(state){
+    getAllTags(state) {
       return state.allTags;
     },
-    getSaveMessage(state){
+    getSaveMessage(state) {
       return state.saveMessage;
     },
-    getTagsDate(state){
+    getTagsDate(state) {
       const formatted = state.tagsDate.map((tag) => {
-            return {label: tag, checked: false}
-          })
+        return { label: tag, checked: false };
+      });
       return formatted;
     },
-    getTagsThing(state){
+    getTagsThing(state) {
       const formatted = state.tagsThing.map((tag) => {
-        return {label: tag, checked: false}
-      })
+        return { label: tag, checked: false };
+      });
       return formatted;
     },
-    getTagsTeam(state){
+    getTagsTeam(state) {
       const formatted = state.tagsTeam.map((tag) => {
-        return {label: tag, checked: false}
-      })
+        return { label: tag, checked: false };
+      });
       return formatted;
     },
-    getTagSearchResult(state){
-      console.log('result',state.tagSearchResult);
-      return state.tagSearchResult;
-    }
 
+    // 比較
+    getTagSearchResult(state) {
+      console.log("result", state.tagSearchResult);
+      return state.tagSearchResult;
+    },
+    // 0919比較
+    getTagSearchResult(state) {
+      const result = state.tagSearchResult.date_unmatch;
+      return result;
+    },
   },
   actions: {
-    resultFilter({commit},payload){
-      const filtered = payload.concated.filter(item => 
-        item.Tag.some(tagArray => 
-          tagArray.some(tag => 
-            payload.keywords.some(keyword => tag.Tag_name.includes(keyword))
+    resultFilter({ commit }, payload) {
+      const filtered = payload.concated.filter((item) =>
+        item.Tag.some((tagArray) =>
+          tagArray.some((tag) =>
+            payload.keywords.some((keyword) => tag.Tag_name.includes(keyword))
           )
         )
       );
-      console.log("filter:",filtered);
-      console.log("keywords:",payload.keywords);
-      commit("setTagSearchResult",filtered);
+      console.log("filter:", filtered);
+      console.log("keywords:", payload.keywords);
+      commit("setTagSearchResult", filtered);
     },
     async fetchAllRecords({ state, commit }) {
       console.log("fetchAllrecords");
@@ -228,7 +240,7 @@ export default createStore({
       try {
         const body = {
           project_id: JSON.parse(localStorage.getItem("projectID")),
-          record_id: JSON.parse(localStorage.getItem('recordID')),
+          record_id: JSON.parse(localStorage.getItem("recordID")),
         };
 
         const response = await axios.post(
@@ -247,13 +259,13 @@ export default createStore({
         };
 
         if (response.data.textBox.length == 0) {
-          dispatch('addBlock');
+          dispatch("addBlock");
         } else {
           payload.boxes = response.data.textBox;
         }
 
         commit("setCurrRecord", payload);
-        await dispatch('fetchAllTags');
+        await dispatch("fetchAllTags");
       } catch (error) {
         console.log("無法獲得單個內容");
       }
@@ -266,7 +278,9 @@ export default createStore({
       };
 
       const response = await axios.post(
-        "http://35.201.168.185:5000/add_textBox",newBlock,{
+        "http://35.201.168.185:5000/add_textBox",
+        newBlock,
+        {
           headers: {
             authorization: JSON.parse(localStorage.getItem("auth")),
           },
@@ -277,11 +291,13 @@ export default createStore({
     },
     async deleteBlock({ state, dispatch }, blockID) {
       const deleteBlock = {
-        "textBox_id": blockID,
+        textBox_id: blockID,
       };
 
       const response = await axios.post(
-        "http://35.201.168.185:5000/delete_textBox",deleteBlock,{
+        "http://35.201.168.185:5000/delete_textBox",
+        deleteBlock,
+        {
           headers: {
             authorization: JSON.parse(localStorage.getItem("auth")),
           },
@@ -290,48 +306,57 @@ export default createStore({
       console.log(response.data.message);
       await dispatch("fetchOneRecord");
     },
-    async fetchAllTags({state, commit}){
+    async fetchAllTags({ state, commit }) {
       const project = {
         project_id: JSON.parse(localStorage.getItem("projectID")),
-      }
-      const response = await axios.post("http://35.201.168.185:5000/tag_index", project, {
-        headers: {
-          authorization: JSON.parse(localStorage.getItem("auth")),
-        },
-      }).catch(console.log("wrong"))
-      commit('setAllTags', response.data.item);
-    },
-    async addTag({dispatch},payload){
-      const newTag = {
-        "textBox_id": payload.blockID,
-        "tag_name": payload.inputValue,
-        "tag_class": payload.tagClass
-      }
-      const response = await axios.post("http://35.201.168.185:5000/add_tag",newTag,{
-        headers: {
-          authorization: JSON.parse(localStorage.getItem("auth")),
-        },
-      })
-      await dispatch('fetchOneRecord');
-      // await dispatch('fetchAllTags');
-  
-    },
-    async deleteTag({dispatch},payload){
-      const deleteTag = {
-        "textBox_id": payload.blockID,
-        "tag_id": payload.tagID,
       };
-      const response = await axios.post("http://35.201.168.185:5000/delete_tag", deleteTag, {
-        headers: {
-          authorization: JSON.parse(localStorage.getItem("auth")),
-        },
-      })
-      console.log(response)
-      await dispatch('fetchOneRecord');
+      const response = await axios
+        .post("http://35.201.168.185:5000/tag_index", project, {
+          headers: {
+            authorization: JSON.parse(localStorage.getItem("auth")),
+          },
+        })
+        .catch(console.log("wrong"));
+      commit("setAllTags", response.data.item);
+    },
+    async addTag({ dispatch }, payload) {
+      const newTag = {
+        textBox_id: payload.blockID,
+        tag_name: payload.inputValue,
+        tag_class: payload.tagClass,
+      };
+      const response = await axios.post(
+        "http://35.201.168.185:5000/add_tag",
+        newTag,
+        {
+          headers: {
+            authorization: JSON.parse(localStorage.getItem("auth")),
+          },
+        }
+      );
+      await dispatch("fetchOneRecord");
       // await dispatch('fetchAllTags');
-    }
+    },
+    async deleteTag({ dispatch }, payload) {
+      const deleteTag = {
+        textBox_id: payload.blockID,
+        tag_id: payload.tagID,
+      };
+      const response = await axios.post(
+        "http://35.201.168.185:5000/delete_tag",
+        deleteTag,
+        {
+          headers: {
+            authorization: JSON.parse(localStorage.getItem("auth")),
+          },
+        }
+      );
+      console.log(response);
+      await dispatch("fetchOneRecord");
+      // await dispatch('fetchAllTags');
+    },
   },
-  
+
   plugins: [
     createPersistedState({
       storage: window.localStorage, // 可以是 localStorage 或 sessionStorage

@@ -457,8 +457,9 @@ export default {
 
 .title {
   width: 100%;
+  margin-top: 4px;
   height: 36px;
-  font-size: 24.75px;
+  font-size: 24px;
   text-align: center;
   font-family: "Noto Sans TC";
   letter-spacing: 0.1875px;
@@ -640,11 +641,11 @@ input::placeholder {
 }
 
 .other_resource div {
-  width: 44%;
+  width: 40%;
   height: 100%;
   border: 1px solid #b6aeae;
   border-radius: 14px;
-  font-size: 13.5px;
+  font-size: 14.5px;
   line-height: 34.5px;
   color: #b6aeae;
   font-weight: 500;
@@ -652,13 +653,13 @@ input::placeholder {
   letter-spacing: 0.9375px;
   float: left;
   position: relative;
-  text-indent: 33px;
+  text-indent: 38px;
   background-color: white;
   cursor: pointer;
 }
 
 #FB_login_btn {
-  width: 146.25px;
+  width: 160px;
   float: right;
 }
 
@@ -780,7 +781,7 @@ input::placeholder {
 
 @media screen and (min-width: 1920px) {
   .middle {
-    width: 432px;
+    width: 576px;
     height: 402px;
     position: absolute;
     top: 108.75px;
@@ -805,12 +806,17 @@ input::placeholder {
   }
 }
 
+/* 機房螢幕大小 */
 @media screen and (min-width: 1600px) {
+  .title {
+    font-size: 36px;
+  }
+
   .middle {
-    width: 352.5px;
+    width: 470px;
     height: 402px;
     position: absolute;
-    top: 108.75px;
+    top: 26vh;
     left: 50%;
     transform: translate(-50%);
   }
@@ -836,7 +842,7 @@ input::placeholder {
 @media screen and (min-width: 768px) and (max-width: 1599px) {
   /* OKay */
   .middle {
-    width: 312px;
+    width: 360px;
     height: 402px;
     position: absolute;
     top: 108.75px;
