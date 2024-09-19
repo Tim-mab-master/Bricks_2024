@@ -266,7 +266,7 @@ const handleInputConfirm = async (event) => {
       inputValue: inputValue.value, 
       tagClass: TagClass.value
     })
-    dynamicTags.value.push(inputValue.value);
+    dynamicTags.value.push({Tag_name:inputValue.value});
   }
   // await store.dispatch('fetchOneRecord');
   inputVisible.value = false;

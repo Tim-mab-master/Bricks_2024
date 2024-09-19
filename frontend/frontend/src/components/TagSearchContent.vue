@@ -4,7 +4,14 @@
         <ordering @Selection="orderMode"/>
         <sort @Selection="sortMode"/>
       </div>
-      <document-with-info v-for="block in results" :key="block.TextBox_id" :Tags="block.Tag" :textValue="block.textBox_content" :date="block.upload_time" :blockID="block.TextBox_id"/>
+      <transition name="fade" appear>
+        <div v-if="ordered || sorted" class="results">
+          <document-with-info v-for="block in results" :key="block.TextBox_id" :Tags="block.Tag" :textValue="block.textBox_content" :date="block.upload_time" :blockID="block.TextBox_id"/>
+        </div>
+        <div v-else class="results">
+          <document-with-info v-for="block in getResult" :key="block.TextBox_id" :Tags="block.Tag" :textValue="block.textBox_content" :date="block.upload_time" :blockID="block.TextBox_id"/>
+        </div>
+      </transition>
     </div>
   
 </template>
@@ -13,37 +20,42 @@
 import Ordering from "../components/SharonBricks/Ordering.vue";
 import sort from "../components/SharonBricks/Sort.vue";
 import DocumentWithInfo from "@/components/KerwinBricks/DCMwithDate.vue";
-import { computed,ref } from "vue";
+import { computed,nextTick,ref, onMounted, onUnmounted } from "vue";
 import store from "@/store/store.js";
 import { now } from "lodash";
 
-const getResult = computed(() => store.getters.getTagSearchResult);
+const getResult = computed(() => {
+  return store.getters.getTagSearchResult
+});
+
+
 const results = ref(getResult.value);
 
-const sorting = ref(false);
-const ordering = ref(false);
+// const sorting = ref(false);
+// const ordering = ref(false);
+const sorted = ref(false);
+const ordered = ref(false);
 
 const orderMode = (status) =>{
-  // ordering.value = true;
-  results.value = orderingData(status, getResult.value);
+  ordered.value = true;
   
+  if(sorted){
+    results.value = orderingData(status, results.value);
+  }
+  results.value = orderingData(status, getResult.value);
 }
 
 const sortMode = (status) => {
-  // sorting.value = true;
-  results.value = sortingData(status, getResult.value);
+  sorted.value = true;
   
+  if(ordered){
+    results.value = sortingData(status, results.value);
+  }
+  results.value = sortingData(status, getResult.value);
 }
 
-
-
 const orderingData = (orderMode,data) => {
-  // if(sorting.value){
-  //   sortingData(orderMode,results.value);
-  //   // sorting.value = false;
-  // }
   data.sort((a, b) => {
-
     const dateA = new Date(a.upload_time);
     const dateB = new Date(b.upload_time);
     if(orderMode === 'recently'){
@@ -131,6 +143,10 @@ const sortingData = (sortingMode, data) => {
     }
 };
 
+onUnmounted(() =>{
+  store.commit("resetSearchResult");
+})
+
 
 </script>
 
@@ -152,6 +168,20 @@ const sortingData = (sortingMode, data) => {
   justify-content: right;
   text-align: right;
   /* width: 1fr; */
+}
+
+.results{
+  display: grid;
+  grid-template-rows: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: transform 0.5s ease;
+}
+
+.fade-enter, .fade-leave-to {
+  opacity: 0;
 }
 
 </style>

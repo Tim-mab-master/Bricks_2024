@@ -8,7 +8,7 @@
         :options="options1"
         placeholder="點擊選擇或輸入標籤"
         multiple = "true"
-        autocomplete="false"
+        autocomplete = 'off'
         automatic-dropdown="false"
         @remove-tag="deleteTag"
       >
@@ -116,6 +116,7 @@ import axios from "axios";
 import { useRouter } from "vue-router";
 import store from '../../store/store';
 import { indexOf, isNull } from 'lodash';
+import { watchEffect,nextTick } from "vue";
 
 export default {
   name: "TagSearchArea",
@@ -144,49 +145,51 @@ export default {
     }
     
     const onChange = async (tag, idx) => {
-      if(tag === "tagD"){
-        const tagNow = tagsDate.value[idx];
-        tagNow.checked = !tagsDate.value[idx].checked;
-        tagsDate.value.sort((a,b) => b.checked - a.checked);
-        if(tagNow.checked){
-          selectedOptions.value.push(tagNow);
-          searchQuery.date.push(tagNow.label);
-        }else{
-          searchQuery.date.splice(searchQuery.date.indexOf(tagNow),1);
+      
+        if(tag === "tagD"){
+          const tagNow = tagsDate.value[idx];
+          tagNow.checked = !tagsDate.value[idx].checked;
+          tagsDate.value.sort((a,b) => b.checked - a.checked);
+          if(tagNow.checked){
+            selectedOptions.value.push(tagNow);
+            searchQuery.date.push(tagNow.label);
+          }else{
+            searchQuery.date.splice(searchQuery.date.indexOf(tagNow),1);
+            tagsDate.value.splice(tagsDate.value.indexOf(tagNow),1);
+          }
         }
-      }
-      else if(tag === "tag2"){
-        const tagNow = tagsThing.value[idx];
-        tagNow.checked = !tagsThing.value[idx].checked;
-        tagsThing.value.sort((a,b) => b.checked - a.checked);
-        if(tagNow.checked){
-          selectedOptions.value.push(tagNow);
-          searchQuery.things.push(tagNow.label);
-        }else{
-          searchQuery.things.splice(searchQuery.things.indexOf(tagNow),1);
+        else if(tag === "tag2"){
+          const tagNow = tagsThing.value[idx];
+          tagNow.checked = !tagsThing.value[idx].checked;
+          tagsThing.value.sort((a,b) => b.checked - a.checked);
+          if(tagNow.checked){
+            selectedOptions.value.push(tagNow);
+            searchQuery.things.push(tagNow.label);
+          }else{
+            searchQuery.things.splice(searchQuery.things.indexOf(tagNow),1);
+            tagsThing.value.splice(tagsThing.value.indexOf(tagNow),1);
+          }
         }
-      }
-      else{
-        const tagNow = tagsTeam.value[idx];
-        tagNow.checked = !tagsTeam.value[idx].checked;
-        arraySorter(tagsTeam);
-        // tagsTeam.value.sort((a,b) => b.checked - a.checked);
-        if(tagNow.checked){
-          selectedOptions.value.push(tagNow);
-          searchQuery.team.push(tagNow.label);
-        }else{
-          searchQuery.team.splice(searchQuery.team.indexOf(tagNow),1);
+        else{
+          const tagNow = tagsTeam.value[idx];
+          tagNow.checked = !tagsTeam.value[idx].checked;
+          arraySorter(tagsTeam);
+          // tagsTeam.value.sort((a,b) => b.checked - a.checked);
+          if(tagNow.checked){
+            selectedOptions.value.push(tagNow);
+            searchQuery.team.push(tagNow.label);
+          }else{
+            searchQuery.team.splice(searchQuery.team.indexOf(tagNow),1);
+            tagsTeam.value.splice(tagsTeam.value.indexOf(tagNow),1);
+          }
         }
-      }
-      arrayFilter();
-      console.log("searchQuery", searchQuery);
-      goSearch();
+        arrayFilter();
+        console.log("searchQuery", searchQuery);
+        goSearch();
     };
-
     
     const concated = ref([]);
     const keywords = ref([]);
-    
     const goSearch = async () => {
       if(selectedOptions.value.length > 0) {
         emit('showBlock',false);
@@ -214,7 +217,7 @@ export default {
         console.log(concated);
         keywords.value = [...searchQuery.date, ...searchQuery.things, ...searchQuery.team];
 
-        store.dispatch('resultFilter', {
+        await store.dispatch('resultFilter', {
           concated:concated.value,
           keywords: keywords.value,
         })
@@ -224,9 +227,14 @@ export default {
       }
     };
 
-    // watchEffect(() => {
+    watchEffect(() => {
+      store.dispatch('resultFilter', {
+        concated:concated.value,
+        keywords: keywords.value,
+      })
+      // await store.commit('resetSearchResult');
       
-    // });
+    });
 
     const arraySorter = (arrayGroup) => {
       arrayGroup.value.sort((a,b) => b.checked - a.checked);
@@ -247,6 +255,13 @@ export default {
       }
       goSearch();
     };
+
+    onMounted(() =>{
+      store.dispatch('resultFilter', {
+        concated:concated.value,
+        keywords: keywords.value,
+      })
+    })
 
     return {
       selectedOptions,

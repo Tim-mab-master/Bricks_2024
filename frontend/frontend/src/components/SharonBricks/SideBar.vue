@@ -28,7 +28,7 @@
             <el-icon><list /></el-icon>
             <span>會議記錄</span>
           </template>
-            <el-menu-item index="1-1">全部</el-menu-item>
+            <el-menu-item index="1-1" @click="() => store.dispatch('fetchAllRecords')">全部</el-menu-item>
             <el-menu-item index="1-2">垃圾桶</el-menu-item>
             <!-- @click="goTrashBox" -->
         </el-sub-menu>

@@ -107,6 +107,12 @@ export default createStore({
     setTagSearchResult(state, result) {
       state.tagSearchResult = result;
     },
+<<<<<<< HEAD
+    resetSearchResult(state){
+      state.tagSearchResult = [];
+    }
+=======
+>>>>>>> FE-DEV
   },
   getters: {
     getAuth(state) {
@@ -265,7 +271,11 @@ export default createStore({
         }
 
         commit("setCurrRecord", payload);
+<<<<<<< HEAD
+        // await dispatch('fetchAllTags');
+=======
         await dispatch("fetchAllTags");
+>>>>>>> 76a44528cfe9dd1e5e66ff92a0242087e0023d08
       } catch (error) {
         console.log("無法獲得單個內容");
       }
@@ -309,6 +319,55 @@ export default createStore({
     async fetchAllTags({ state, commit }) {
       const project = {
         project_id: JSON.parse(localStorage.getItem("projectID")),
+<<<<<<< HEAD
+<<<<<<< HEAD
+      }
+      const response = await axios.post("http://35.201.168.185:5000/tag_index", project, {
+        headers: {
+          authorization: JSON.parse(localStorage.getItem("auth")),
+        },
+      }).catch(console.log("wrong"))
+      commit('setAllTags', response.data.item);
+    },
+    async addTag({dispatch},payload){
+      const newTag = {
+        "textBox_id": payload.blockID,
+        "tag_name": payload.inputValue,
+        "tag_class": payload.tagClass
+      }
+      const response = await axios.post("http://35.201.168.185:5000/add_tag",newTag,{
+        headers: {
+          authorization: JSON.parse(localStorage.getItem("auth")),
+        },
+      })
+      // await dispatch('fetchOneRecord');
+      await dispatch('fetchAllTags');
+  
+    },
+    async deleteTag({dispatch},payload){
+      const deleteTag = {
+        "textBox_id": payload.blockID,
+        "tag_id": payload.tagID,
+      };
+      const response = await axios.post("http://35.201.168.185:5000/delete_tag", deleteTag, {
+        headers: {
+          authorization: JSON.parse(localStorage.getItem("auth")),
+        },
+      })
+      console.log(response)
+      // await dispatch('fetchOneRecord');
+      await dispatch('fetchAllTags');
+    }
+  },
+  
+  plugins: [
+    createPersistedState({
+      storage: window.localStorage, // 可以是 localStorage 或 sessionStorage
+    }),
+  ],
+=======
+=======
+>>>>>>> 76a44528cfe9dd1e5e66ff92a0242087e0023d08
       };
       const response = await axios
         .post("http://35.201.168.185:5000/tag_index", project, {
@@ -357,11 +416,16 @@ export default createStore({
     },
   },
 
+<<<<<<< HEAD
+  plugins: [localStoragePlugin],
+>>>>>>> FE-DEV
+=======
   plugins: [
     createPersistedState({
       storage: window.localStorage, // 可以是 localStorage 或 sessionStorage
     }),
   ],
+>>>>>>> 76a44528cfe9dd1e5e66ff92a0242087e0023d08
 });
 
 // export default store;
