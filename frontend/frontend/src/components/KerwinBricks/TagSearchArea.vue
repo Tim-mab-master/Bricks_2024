@@ -111,7 +111,7 @@
 </template>
 
 <script>
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref, computed,watch } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
 import store from '../../store/store';
@@ -136,6 +136,7 @@ export default {
     const tagsDate = computed(() => store.getters.getTagsDate);
     const tagsThing = computed(() => store.getters.getTagsThing);
     const tagsTeam = computed(() => store.getters.getTagsTeam);
+
     const searchQuery = {
       date: [],
       things: [],
@@ -181,9 +182,13 @@ export default {
       console.log("searchQuery", searchQuery);
       goSearch();
     };
+
+    
+    const concated = ref([]);
+    const keywords = ref([]);
     
     const goSearch = async () => {
-      if(selectedOptions.value != null) {
+      if(selectedOptions.value.length > 0) {
         emit('showBlock',false);
         const searchCont = {
           "日期": searchQuery.date.join(','),
@@ -205,26 +210,23 @@ export default {
             authorization: JSON.parse(localStorage.getItem("auth")),
           },
         })
-        const concated = response.data.item.date_match.concat(response.data.item.date_unmatch)
+        concated.value = response.data.item.date_match.concat(response.data.item.date_unmatch)
         console.log(concated);
-        // const keyWords = [...searchQuery.date, ...searchQuery.things, ...searchQuery.team]
-        // const filterred = concated.filter((item) =>{
-        //   item.Tag.some(tagArray =>
-        //     // 遍历每个 Tag 对象
-        //     tagArray.some(tag =>
-        //     // 检查 Tag_name 是否包含关键字
-        //       keyWords.some(keyword => tag.Tag_name.includes(keyword))
-        //     )
-        //   )
-        // })
-        // console.log("filter:",filterred);
-        // console.log("keywords:",keyWords);
-        store.commit("setTagSearchResult",response.data.item);
+        keywords.value = [...searchQuery.date, ...searchQuery.things, ...searchQuery.team];
+
+        store.dispatch('resultFilter', {
+          concated:concated.value,
+          keywords: keywords.value,
+        })
       }
       else{
         emit('showBlock',true);
       }
     };
+
+    // watchEffect(() => {
+      
+    // });
 
     const arraySorter = (arrayGroup) => {
       arrayGroup.value.sort((a,b) => b.checked - a.checked);
@@ -239,9 +241,12 @@ export default {
       // arraySorter();  //刪除後想要重新排序內部
       arrayFilter();
       console.log(tag.label);
+      
+      if(selectedOptions.value.length == 0){
+        emit('showBlock',true);
+      }
       goSearch();
     };
-    
 
     return {
       selectedOptions,

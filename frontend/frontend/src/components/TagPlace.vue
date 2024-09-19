@@ -21,6 +21,8 @@ export default {
         const showTags = () =>{
             // console.log(recordID);
             tagShowed.value = !tagShowed.value;
+            // 
+            
         }
         const showInfo = (value) =>{
           emit('show', value);

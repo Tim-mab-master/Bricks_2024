@@ -18,7 +18,7 @@
             placeholder="請輸入內容"
             v-model="textValue"
             :disabled="isCartDisabled"
-            @keyup="handleKeyup"
+            @keyup= "handleKeyup"
           ></resize-textarea>
           <!-- 顯示鎖定、刪除文字區塊按鈕 -->
           <el-button class="edit_textButton" @click="show"
@@ -56,8 +56,10 @@
             v-model="inputValue"
             class="ml-1 w-20"
             size="small"
+            placeholder="請輸入標籤"
             @keyup.enter="handleInputConfirm"
             @blur="handleInputConfirm"
+            style="width: 74px;"
           />
           <el-button
             v-if="!inputVisible"
@@ -69,14 +71,15 @@
             >+ 事項</el-button
           >
           <el-button
-            v-if="!inputVisible"
-            class="button-new-tag ml-1 addTags"
-            size="small"
-            @click="showInput('組別')"
-            :disabled="isCartDisabled"
-            @locked="isLocked"
-            >+ 組別</el-button
+          v-if="!inputVisible"
+          class="button-new-tag ml-1 addTags"
+          size="small"
+          @click="showInput('組別')"
+          :disabled="isCartDisabled"
+          @locked="isLocked"
+          >+ 組別</el-button
           >
+          <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
         </div>
       </div>
     </transition>
@@ -110,13 +113,13 @@ import {
   nextTick,
   computed,
   defineEmits,
-  watch,
+  watch
 } from "vue";
 import EditTextara from "./EditTextara.vue";
 import Unlock from "./Unlock.vue";
 import axios from "axios";
 import store from "../store/store";
-import debounce from "lodash/debounce";
+import debounce from 'lodash/debounce';
 
 const props = defineProps({
   isShowed: Boolean,
@@ -140,20 +143,19 @@ const saveInput = debounce(async (value) => {
           headers: {
           authorization: JSON.parse(localStorage.getItem("auth")),
         },
+        });
+        console.log('Data saved:', textValue.value);
+        store.commit('setSaveMessage', "文字方塊變動已儲存");
+      } catch (error) {
+        console.error('Error saving data:', error);
+        store.commit('setSaveMessage', "文字方塊儲存失敗");
+      } finally {
+        // store.commit('setSaveMessage', "");
       }
-    );
-    console.log("Data saved:", textValue.value);
-    store.commit("setSaveMessage", "文字方塊變動已儲存");
-  } catch (error) {
-    console.error("Error saving data:", error);
-    store.commit("setSaveMessage", "文字方塊儲存失敗");
-  } finally {
-    // store.commit('setSaveMessage', "");
-  }
-  console.log(store.getters.getSaveMessage);
-}, 500); // 500 毫秒延遲
+      console.log(store.getters.getSaveMessage);
+    }, 500); // 500 毫秒延遲
 
-// 處理 keyup 事件
+    // 處理 keyup 事件
 const handleKeyup = (event) => {
   saveInput(textValue.value);
   // setTimeout(store.commit('setSaveMessage', ""), 1000)
@@ -164,7 +166,7 @@ const textarea1 = ref("");
 const inputVisible = ref(false);
 const inputValue = ref("");
 const tagArray = ref([]);
-const blockNow = computed(() => store.getters.getBlockNow);
+const blockNow = computed(() => store.getters.getBlockNow)
 
 const dynamicTags = computed(() => props.tags);
 const isShowed = ref(false);
@@ -174,6 +176,7 @@ const hiddenTagCount = ref(0);
 const visibleTags = ref([]);
 const inputRef = ref(null);
 const TagClass = ref("");
+const errorMessage = ref("");
 
 const showHiddenTags = () => {
   visibleTags.value = dynamicTags.value;
@@ -181,29 +184,28 @@ const showHiddenTags = () => {
   window.removeEventListener("resize", calculateVisibleTags);
 };
 
+
 const calculateVisibleTags = () => {
   // nextTick(() => {
-  const container = document.querySelector(".tags");
-  if (!container) return;
+    const container = document.querySelector(".tags");
+    if (!container) return;
 
-  const containerWidth = container.clientWidth;
-  const tagWidth = 75;
-  const maxVisibleTags = Math.floor(containerWidth / tagWidth);
+    const containerWidth = container.clientWidth;
+    const tagWidth = 75;
+    const maxVisibleTags = Math.floor(containerWidth / tagWidth);
 
-  if (dynamicTags.value) {
-    console.log("dynamicTags:", dynamicTags.value);
-    if (dynamicTags.value.length >= maxVisibleTags) {
-      visibleTags.value = dynamicTags.value.slice(0, maxVisibleTags);
-      hiddenTagCount.value =
-        dynamicTags.value.length - visibleTags.value.length;
-    } else {
-      visibleTags.value = dynamicTags.value;
-      hiddenTagCount.value = 0;
+    if(dynamicTags.value){
+      console.log("dynamicTags:", dynamicTags.value);
+      if (dynamicTags.value.length >= maxVisibleTags) {
+        visibleTags.value = dynamicTags.value.slice(0, maxVisibleTags);
+        hiddenTagCount.value = dynamicTags.value.length - visibleTags.value.length;
+      } else {
+        visibleTags.value = dynamicTags.value;
+        hiddenTagCount.value = 0;
+      }
     }
-  }
-  console.log("visibleTag:", visibleTags.value);
-  console.log("hiddenTag:", hiddenTagCount.value);
   // })
+    
 };
 
 const handleClose = async (tag) => {
@@ -211,7 +213,7 @@ const handleClose = async (tag) => {
     const index = dynamicTags.value.indexOf(tag);
     if (index !== -1) {
       dynamicTags.value.splice(index, 1);
-      store.dispatch('deleteTag',{
+      await store.dispatch('deleteTag',{
         blockID: props.blockID,
         tagID: (tag.Tag_id).toString(),
       })
@@ -223,27 +225,55 @@ const handleClose = async (tag) => {
 const showInput = (tagClass) => {
   inputVisible.value = true;
   TagClass.value = tagClass;
-  nextTick(() => {
-    if (inputRef.value) {
-      inputRef.value.focus();
-    }
-  });
+  // nextTick(() => {
+  //   if (inputRef.value) {
+  //     inputRef.value.focus();
+  //   }
+  // });
 };
 
-const handleInputConfirm = () => {
+const handleInputConfirm = async (event) => {
+  
+  //規定inputValue不可超過 20 個字元，也不得超過 302 px，超過則阻擋輸入，且出現提示訊息「標籤文字過長」 
+  //4cm=100px
+  const maxWidth = 100; //應是302px,但我覺得太長
+  const maxLength = 20; //20個字
+  const inputElement = event.target;
+  const inputWidth = inputElement.scrollWidth;
+  console.log("inputWidth",inputWidth);
+
+  if (inputValue.value.length > maxLength || inputWidth > maxWidth )  {
+    errorMessage.value = '標籤文字過長';
+    inputValue.value="";
+    return;
+  } else {
+    errorMessage.value = '';
+  }
+
+  if (dynamicTags.value.length > 7) {
+    errorMessage.value = '標籤個數太多';
+    inputValue.value="";
+    dynamicTags.value = dynamicTags.value.slice(0, 8);
+    return;
+  }else {
+    errorMessage.value = '';
+  }
+      
   if (inputValue.value) {
-    dynamicTags.value.push(inputValue.value);
-    store.dispatch('addTag', {
+    // dynamicTags.value.push(inputValue.value);
+    await store.dispatch('addTag', {
       blockID: props.blockID, 
       inputValue: inputValue.value, 
       tagClass: TagClass.value
     })
+    dynamicTags.value.push(inputValue.value);
   }
   // await store.dispatch('fetchOneRecord');
   inputVisible.value = false;
   inputValue.value = "";
   calculateVisibleTags();
   console.log(dynamicTags.value);
+  
 };
 
 const show = () => {
@@ -290,12 +320,11 @@ const add_cart = () => {
 
 onMounted(() => {
   calculateVisibleTags();
-  if (props.tags) {
+  if(props.tags){
     tagArray.value = props.tags.map((element) => element.Tag_name);
   }
   window.addEventListener("resize", calculateVisibleTags);
   document.addEventListener("click", handleClickOutside);
-  console.log("tags", visibleTags.value);
 });
 
 onUnmounted(() => {
@@ -304,6 +333,20 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+.button-new-tag {
+  position: relative;
+}
+
+.placeholder-text {
+  color: #ccc; /* 淺灰色 */
+  font-size: 11px;
+}
+
+.error-message {
+  color: red;
+  font-size: 12px;
+}
+
 .show-enter-active,
 .show-leave-active {
   transition: opacity 0.2s;
