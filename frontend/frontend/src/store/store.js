@@ -1,7 +1,7 @@
 import { createStore } from "vuex";
 import axios from "axios";
-import createPersistedState from 'vuex-persistedstate';
-import debounce from 'lodash/debounce';
+import createPersistedState from "vuex-persistedstate";
+import debounce from "lodash/debounce";
 
 const localStoragePlugin = (store) => {
   store.subscribe((mutation, { auth }) => {
@@ -94,11 +94,11 @@ export default createStore({
         }
       });
     },
-    resetRecord(state){
+    resetRecord(state) {
       state.currRecord = {};
       console.log("reseted");
     },
-    setSaveMessage(state, message){
+    setSaveMessage(state, message) {
       state.saveMessage = message;
       setTimeout(() => {
         state.saveMessage = "";
@@ -133,7 +133,7 @@ export default createStore({
     getCurrTextBoxes(state) {
       return state.currTextBoxes;
     },
-    getRecordID(state){
+    getRecordID(state) {
       return state.recordID;
     },
     getDeleteConfirm(state) {
@@ -142,13 +142,13 @@ export default createStore({
     getTerminateConfirm(state) {
       return state.terminate_confirm;
     },
-    getBlockNow(state){
+    getBlockNow(state) {
       return state.blockNow;
     },
-    getAllTags(state){
+    getAllTags(state) {
       return state.allTags;
     },
-    getSaveMessage(state){
+    getSaveMessage(state) {
       return state.saveMessage;
     },
     getTagsDate(state) {
@@ -169,38 +169,30 @@ export default createStore({
       });
       return formatted;
     },
-    // getTagSearchResult(state){
-    //   // console.log('result',state.tagSearchResult);
-    //   return state.tagSearchResult;
-    // },
-    
 
-    // getTagSearchResult(state) {
-    //   const result = state.tagSearchResult.date_unmatch;
-    //   return result;
-    // },
+    // 比較
+    getTagSearchResult(state) {
+      console.log("result", state.tagSearchResult);
+      return state.tagSearchResult;
+    },
+    // 0919比較
+    getTagSearchResult(state) {
+      const result = state.tagSearchResult.date_unmatch;
+      return result;
+    },
   },
   actions: {
-    async resultFilter({ commit }, payload) {
-      const filtered = payload.concated
-        .map(item => {
-          // 计算每个 item 中 Tag_name 符合关键词的数量
-          const matchCount = item.Tag.reduce((count, tagArray) => {
-            return count + tagArray.reduce((innerCount, tag) => {
-              return innerCount + payload.keywords.reduce((keywordCount, keyword) => {
-                return keywordCount + (tag.Tag_name.includes(keyword) ? 1 : 0);
-              }, 0);
-            }, 0);
-          }, 0);
-    
-          return { ...item, matchCount }; // 添加匹配计数
-        })
-        .filter(item => item.matchCount > 0)  // 保留至少符合一个关键字的项
-        .sort((a, b) => b.matchCount - a.matchCount); // 根据匹配计数降序排列
-    
-      commit("setTagSearchResult", filtered);
-      console.log("filterResult:", filtered);
+    resultFilter({ commit }, payload) {
+      const filtered = payload.concated.filter((item) =>
+        item.Tag.some((tagArray) =>
+          tagArray.some((tag) =>
+            payload.keywords.some((keyword) => tag.Tag_name.includes(keyword))
+          )
+        )
+      );
+      console.log("filter:", filtered);
       console.log("keywords:", payload.keywords);
+      commit("setTagSearchResult", filtered);
     },
     async fetchAllRecords({ state, commit }) {
       console.log("fetchAllrecords");
@@ -254,7 +246,7 @@ export default createStore({
       try {
         const body = {
           project_id: JSON.parse(localStorage.getItem("projectID")),
-          record_id: JSON.parse(localStorage.getItem('recordID')),
+          record_id: JSON.parse(localStorage.getItem("recordID")),
         };
 
         const response = await axios.post(
@@ -273,13 +265,17 @@ export default createStore({
         };
 
         if (response.data.textBox.length == 0) {
-          dispatch('addBlock');
+          dispatch("addBlock");
         } else {
           payload.boxes = response.data.textBox;
         }
 
         commit("setCurrRecord", payload);
+<<<<<<< HEAD
         // await dispatch('fetchAllTags');
+=======
+        await dispatch("fetchAllTags");
+>>>>>>> 76a44528cfe9dd1e5e66ff92a0242087e0023d08
       } catch (error) {
         console.log("無法獲得單個內容");
       }
@@ -292,7 +288,9 @@ export default createStore({
       };
 
       const response = await axios.post(
-        "http://35.201.168.185:5000/add_textBox",newBlock,{
+        "http://35.201.168.185:5000/add_textBox",
+        newBlock,
+        {
           headers: {
             authorization: JSON.parse(localStorage.getItem("auth")),
           },
@@ -307,7 +305,9 @@ export default createStore({
       };
 
       const response = await axios.post(
-        "http://35.201.168.185:5000/delete_textBox",deleteBlock,{
+        "http://35.201.168.185:5000/delete_textBox",
+        deleteBlock,
+        {
           headers: {
             authorization: JSON.parse(localStorage.getItem("auth")),
           },
@@ -319,6 +319,7 @@ export default createStore({
     async fetchAllTags({ state, commit }) {
       const project = {
         project_id: JSON.parse(localStorage.getItem("projectID")),
+<<<<<<< HEAD
 <<<<<<< HEAD
       }
       const response = await axios.post("http://35.201.168.185:5000/tag_index", project, {
@@ -365,6 +366,8 @@ export default createStore({
     }),
   ],
 =======
+=======
+>>>>>>> 76a44528cfe9dd1e5e66ff92a0242087e0023d08
       };
       const response = await axios
         .post("http://35.201.168.185:5000/tag_index", project, {
@@ -391,6 +394,7 @@ export default createStore({
         }
       );
       await dispatch("fetchOneRecord");
+      // await dispatch('fetchAllTags');
     },
     async deleteTag({ dispatch }, payload) {
       const deleteTag = {
@@ -408,11 +412,20 @@ export default createStore({
       );
       console.log(response);
       await dispatch("fetchOneRecord");
+      // await dispatch('fetchAllTags');
     },
   },
 
+<<<<<<< HEAD
   plugins: [localStoragePlugin],
 >>>>>>> FE-DEV
+=======
+  plugins: [
+    createPersistedState({
+      storage: window.localStorage, // 可以是 localStorage 或 sessionStorage
+    }),
+  ],
+>>>>>>> 76a44528cfe9dd1e5e66ff92a0242087e0023d08
 });
 
 // export default store;
