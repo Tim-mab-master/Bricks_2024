@@ -60,14 +60,12 @@ const reload = (value) => {
 };
 
 const deleteCart = async (block) => {
-  // await store.commit("setBlockNow", block);
-  // console.log("blockNow:",store.state.blockNow);
-  // console.log(store.state.records.blockNow);
   store.dispatch("deleteBlock", block.TextBox_id);
 };
 
 const showInfo = (value) => {
   showedInfo.value = value;
+  console.log(showedInfo.value);
 };
 
 const setBlockNow = (block) => {
@@ -84,7 +82,6 @@ const showBtn = () => {
 
 onMounted(async () => {
   // await store.dispatch("fetchAllTags");
-
   await store.dispatch("fetchOneRecord");
 });
 

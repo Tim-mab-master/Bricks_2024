@@ -3,7 +3,7 @@
     <span class="el-dropdown-link">
       <div id="userInfo">
         <el-avatar shape="square" :size="size" :src="squareUrl" id="avatar" />
-        <p>{{ user_name }}</p>
+        <!-- <p>{{ user_name }}</p> -->
       </div>
     </span>
     <template #dropdown>
@@ -76,6 +76,7 @@ export default {
         "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
     };
   },
+  // 個人資訊開頭
   methods: {
     log_out() {
       this.$confirm(
@@ -126,15 +127,18 @@ export default {
         beforeClose: (action, instance, done) => {
           const form = EditInfoFormInstance.component.proxy;
           if (action === "confirm") {
-            if (!this.validateEmail(form.email)) {
-              console.log("信箱格式不正確");
-              instance.message = "信箱格式不正確";
-              // done(false);
+            // 校验输入
+            if (
+              !form.email.match(
+                /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/
+              )
+            ) {
+              instance.message = "信箱格式不正确";
+            } else if (form.password.length < 6) {
+              instance.message = "密碼至少需要6位字符";
+              // } else if (){
             } else {
-              this.submitForm(form);
-              done(() => {
-                console.log("修改中");
-              });
+              done(); //回傳後端
             }
           } else {
             done();
@@ -142,10 +146,16 @@ export default {
         },
       })
         .then(() => {
+          const form = EditInfoFormInstance.component.proxy;
           this.$message({
             type: "success",
             message: "修改完成！",
           });
+
+          // 更新
+          console.log("Email:", form.email);
+          console.log("Password:", form.password);
+          console.log("Name:", form.user_name);
         })
         .catch(() => {
           this.$message({
@@ -154,35 +164,21 @@ export default {
           });
         });
     },
-
-    validateEmail(email) {
-      const emailRegex =
-        /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/;
-      return emailRegex.test(email);
-    },
-
-    submitForm(form) {
-      console.log("edit api");
+    done() {
+      //呼叫後端api
       const edit_info = "http://35.201.168.185:5000/edit_info";
       const edited_info = {
-        user_name: form.user_name,
-        user_email: form.email,
+        user_name: "abc",
+        user_email: "abc@gmail.com",
       };
-
       axios
         .post(edit_info, edited_info, {
           headers: { authorization: JSON.parse(localStorage.getItem("auth")) },
         })
         .then((res) => {
-          console.log("更改結果", res.data);
           if (res.data.status === "success") {
-            console.log("更改個人資訊成功");
-          } else {
-            console.log("更改個人資訊失敗");
+            console.log("haha");
           }
-        })
-        .catch((error) => {
-          console.error("API呼叫失敗", error);
         });
     },
     mounted() {
@@ -196,9 +192,6 @@ export default {
             this.user_name = res.data.user_info.user_name;
             console.log("user_name", this.user_name);
           }
-        })
-        .catch((error) => {
-          console.log("名字或信箱取得失敗", error);
         });
     },
     // 個人資訊開頭
@@ -207,9 +200,9 @@ export default {
 </script>
 
 <style scoped>
-/* #all {
-  zoom:75%;
-} */
+#all {
+  /* zoom:75%; */
+}
 #userInfo {
   display: flex;
   /* padding: 0px 0px; */
@@ -284,15 +277,19 @@ export default {
 }
 
 /* 結果我發現不用v-deep也可以改樣式！！！ */
-.el-message-box__btns .el-button--primary {
+
+/* .el-message-box__btns .el-button--primary {
   background-color: #b82c30 !important;
   border-color: #b82c30 !important;
   color: white !important;
   border-radius: 15px;
+} */
+
+::v-deep .el-button--primary {
+  background-color: #b82c30 !important;
+  --el-button-bg-color: #b82c30 !important;
 }
-.el-button {
-  border-radius: 15px !important;
-}
+
 .el-message-box__title {
   text-align: center;
   font-weight: bold;
@@ -300,10 +297,13 @@ export default {
 .material-icons {
   font-size: 18px;
 }
-
 .el-input__wrapper {
   border-radius: 15px !important;
 }
+@media screen and (max-width: 1440px) and (min-width: 1240px) {
+  /* #userInfoInsid
+szd-sssn-qyt
+
 @media screen and (max-width: 1440px) and (min-width: 1240px) {
   /* #userInfoInside, .firstDrop, .dropDown, .userInfo, .firstDrop, #dropDown{
             transform: scale(0.8);

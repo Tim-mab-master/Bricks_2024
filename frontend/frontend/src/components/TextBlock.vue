@@ -179,6 +179,7 @@ const hiddenTagCount = ref(0);
 const visibleTags = ref([]);
 const inputRef = ref(null);
 const TagClass = ref("");
+const errorMessage = ref("");
 
 const errorMessage = ref("");
 
@@ -208,8 +209,6 @@ const calculateVisibleTags = () => {
       hiddenTagCount.value = 0;
     }
   }
-  console.log("visibleTag:", visibleTags.value);
-  console.log("hiddenTag:", hiddenTagCount.value);
   // })
 };
 
@@ -218,7 +217,7 @@ const handleClose = async (tag) => {
     const index = dynamicTags.value.indexOf(tag);
     if (index !== -1) {
       dynamicTags.value.splice(index, 1);
-      store.dispatch("deleteTag", {
+      await store.dispatch("deleteTag", {
         blockID: props.blockID,
         tagID: tag.Tag_id.toString(),
       });
@@ -230,33 +229,25 @@ const handleClose = async (tag) => {
 const showInput = (tagClass) => {
   inputVisible.value = true;
   TagClass.value = tagClass;
-  nextTick(() => {
-    if (inputRef.value) {
-      inputRef.value.focus();
-    }
-  });
+  // nextTick(() => {
+  //   if (inputRef.value) {
+  //     inputRef.value.focus();
+  //   }
+  // });
 };
 
 const handleInputConfirm = async (event) => {
   //規定inputValue不可超過 20 個字元，也不得超過 302 px，超過則阻擋輸入，且出現提示訊息「標籤文字過長」
-
   //4cm=100px
-
   const maxWidth = 100; //應是302px,但我覺得太長
-
   const maxLength = 20; //20個字
-
   const inputElement = event.target;
-
   const inputWidth = inputElement.scrollWidth;
-
   console.log("inputWidth", inputWidth);
 
   if (inputValue.value.length > maxLength || inputWidth > maxWidth) {
     errorMessage.value = "標籤文字過長";
-
     inputValue.value = "";
-
     return;
   } else {
     errorMessage.value = "";
@@ -264,11 +255,8 @@ const handleInputConfirm = async (event) => {
 
   if (dynamicTags.value.length > 7) {
     errorMessage.value = "標籤個數太多";
-
     inputValue.value = "";
-
     dynamicTags.value = dynamicTags.value.slice(0, 8);
-
     return;
   } else {
     errorMessage.value = "";
@@ -281,7 +269,7 @@ const handleInputConfirm = async (event) => {
       inputValue: inputValue.value,
       tagClass: TagClass.value,
     });
-    dynamicTags.value.push(inputValue.value);
+    dynamicTags.value.push({ Tag_name: inputValue.value });
   }
   // await store.dispatch('fetchOneRecord');
   inputVisible.value = false;
@@ -339,7 +327,6 @@ onMounted(() => {
   }
   window.addEventListener("resize", calculateVisibleTags);
   document.addEventListener("click", handleClickOutside);
-  console.log("tags", visibleTags.value);
 });
 
 onUnmounted(() => {
