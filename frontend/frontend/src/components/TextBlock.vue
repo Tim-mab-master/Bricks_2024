@@ -181,8 +181,6 @@ const inputRef = ref(null);
 const TagClass = ref("");
 const errorMessage = ref("");
 
-const errorMessage = ref("");
-
 const showHiddenTags = () => {
   visibleTags.value = dynamicTags.value;
   hiddenTagCount.value = 0;

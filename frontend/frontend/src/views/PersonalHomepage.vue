@@ -612,7 +612,7 @@
 
 <script>
 import UserInfo from "../components/UserInfo.vue";
-import TinycmeEditor from "../components/tinymce.vue";
+//import TinycmeEditor from "../components/tinymce.vue";
 import { reactive, ref, watch } from "vue";
 
 // const editorData = ref('<p>Content of the editor.</p>');
