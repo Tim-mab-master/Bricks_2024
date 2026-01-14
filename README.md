@@ -34,6 +34,16 @@ As Product Lead, my primary contributions in this repository focused on frontend
 
 Project documentation and issue discussions were conducted primarily in **Chinese**, reflecting the working language of the development team.
 
+## Product & Workflow Snapshots
+
+Below are selected snapshots illustrating the product interface and development workflow of Bricks.
+
+### Product Interface (Meeting Minutes & Tag-Based Organization)
+![Bricks UI]()
+
+### Issue Tracking & Cross-Functional Coordination
+![Bricks Issues]()
+
 ## Key Contributions & Impact
 
 - Standardized a reusable frontend component system, reducing rework and improving UI consistency
