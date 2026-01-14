@@ -38,11 +38,12 @@ Project documentation and issue discussions were conducted primarily in **Chines
 
 Below are selected snapshots illustrating the product interface and development workflow of Bricks.
 
-### Product Interface (Meeting Minutes & Tag-Based Organization)
-![Bricks UI]()
+### Product Interface (Tag-Based Meeting Minutes)
+<img width="1440" height="800" alt="截圖 2026-01-14 下午12 20 54" src="https://github.com/user-attachments/assets/d386f7fe-c24c-4c1c-8280-e7b748b7ea9b" />
 
 ### Issue Tracking & Cross-Functional Coordination
-![Bricks Issues]()
+<img width="1007" height="929" alt="截圖 2026-01-14 下午12 10 11" src="https://github.com/user-attachments/assets/69f98513-383e-4b90-8578-3324126005f5" />
+
 
 ## Key Contributions & Impact
 
